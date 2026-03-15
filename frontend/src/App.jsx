@@ -1,250 +1,585 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer
-} from "recharts"
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts"
+import Navbar from "./Navbar"
 
 const API = import.meta.env.VITE_API_URL
 
 const GESTURE_COLORS = {
-  "index flex":  "#60a5fa",
-  "middle flex": "#34d399",
-  "ring flex":   "#a78bfa",
-  "pinky flex":  "#f472b6",
-  "thumb flex":  "#fbbf24",
-  "fist":        "#f87171",
+  "index flex": "#B8FF00", "middle flex": "#00E5FF",
+  "ring flex": "#FF4545", "pinky flex": "#FF9F00",
+  "thumb flex": "#C084FC", "fist": "#FFFFFF",
 }
 
 const GESTURES = [
-  { id: 1, name: "index flex" },
-  { id: 2, name: "middle flex" },
-  { id: 3, name: "ring flex" },
-  { id: 4, name: "pinky flex" },
-  { id: 5, name: "thumb flex" },
-  { id: 6, name: "fist" },
+  { id: 1, name: "index flex",  action: "CURSOR LEFT",  key: "←" },
+  { id: 2, name: "middle flex", action: "CURSOR RIGHT", key: "→" },
+  { id: 3, name: "ring flex",   action: "SCROLL DOWN",  key: "↓" },
+  { id: 4, name: "pinky flex",  action: "SCROLL UP",    key: "↑" },
+  { id: 5, name: "thumb flex",  action: "LEFT CLICK",   key: "◉" },
+  { id: 6, name: "fist",        action: "SPACEBAR",     key: "▬" },
 ]
 
 function windowToChart(window) {
-  return window.map((sample, i) => ({
-    t: i,
-    ch1: sample[0],
-    ch2: sample[1],
-    ch3: sample[2],
-  }))
+  return window.map((s, i) => ({ t: i, ch1: s[0], ch2: s[1], ch3: s[2] }))
 }
 
-function GestureCard({ name, confidence, isActive, onClick }) {
-  const color = GESTURE_COLORS[name] || "#94a3b8"
-  return (
-    <div onClick={onClick} style={{
-      background: isActive ? `${color}22` : "#1e2130",
-      border: `1px solid ${isActive ? color : "#2d3148"}`,
-      borderRadius: 12, padding: "14px 18px",
-      display: "flex", justifyContent: "space-between", alignItems: "center",
-      transition: "all 0.3s ease", cursor: "pointer",
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <div style={{
-          width: 10, height: 10, borderRadius: "50%",
-          background: isActive ? color : "#4b5563"
-        }}/>
-        <span style={{
-          fontSize: 15,
-          color: isActive ? color : "#94a3b8",
-          fontWeight: isActive ? 600 : 400
-        }}>{name}</span>
-      </div>
-      <span style={{ fontSize: 14, color: isActive ? color : "#4b5563", fontWeight: 600 }}>
-        {isActive && confidence ? `${(confidence * 100).toFixed(0)}%` : "—"}
-      </span>
-    </div>
+function generateSimEMG(length = 200, channels = 16) {
+  return Array.from({ length }, () =>
+    Array.from({ length: channels }, () => (Math.random() - 0.5) * 0.8)
   )
 }
 
 export default function App() {
   const navigate = useNavigate()
+  const [mode, setMode] = useState("dataset")
   const [prediction, setPrediction] = useState(null)
   const [chartData, setChartData] = useState([])
   const [allProbs, setAllProbs] = useState({})
-  const [isLive, setIsLive] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [isLive, setIsLive] = useState(false)
+  const [actionLog, setActionLog] = useState([])
+  const [serialPort, setSerialPort] = useState(null)
+  const [serialStatus, setSerialStatus] = useState("disconnected")
   const intervalRef = useRef(null)
+  const serialBufferRef = useRef([])
+  const logRef = useRef(null)
 
-  const fetchAndPredict = useCallback(async (gestureId = null) => {
+  const addLog = useCallback((gesture, confidence) => {
+    const color = GESTURE_COLORS[gesture] || "#fff"
+    const g = GESTURES.find(g => g.name === gesture)
+    setActionLog(prev => [{
+      id: Date.now(),
+      gesture, confidence, color,
+      action: g?.action || "—",
+      key: g?.key || "?",
+      time: new Date().toLocaleTimeString("en-US", { hour12: false })
+    }, ...prev].slice(0, 40))
+  }, [])
+
+  const predict = useCallback(async (emgWindow) => {
+    try {
+      const { data: result } = await axios.post(`${API}/predict`, {
+        emg_window: emgWindow
+      })
+      setPrediction(result)
+      setAllProbs(result.all_probabilities)
+      setChartData(windowToChart(emgWindow))
+      addLog(result.gesture_name, result.confidence)
+      return result
+    } catch (e) {
+      setError("Backend unreachable — is the server running?")
+    }
+  }, [addLog])
+
+  const fetchDataset = useCallback(async (gestureId = null) => {
     setLoading(true)
     setError(null)
     try {
-      const url = gestureId
-        ? `${API}/sample?gesture_id=${gestureId}`
-        : `${API}/sample`
+      const url = gestureId ? `${API}/sample?gesture_id=${gestureId}` : `${API}/sample`
       const { data: sample } = await axios.get(url)
-      const { data: result } = await axios.post(`${API}/predict`, {
-        emg_window: sample.emg_window
-      })
-      setChartData(windowToChart(sample.emg_window))
-      setPrediction(result)
-      setAllProbs(result.all_probabilities)
+      await predict(sample.emg_window)
     } catch (e) {
-      setError("Backend not reachable. Is uvicorn running on port 8000?")
+      setError("Backend unreachable — check that Render is running.")
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [predict])
 
-  useEffect(() => { fetchAndPredict() }, [fetchAndPredict])
-
+  // Dataset live mode
   useEffect(() => {
-    if (isLive) {
-      intervalRef.current = setInterval(() => fetchAndPredict(), 800)
+    if (mode === "dataset" && isLive) {
+      intervalRef.current = setInterval(() => fetchDataset(), 900)
     } else {
       clearInterval(intervalRef.current)
     }
     return () => clearInterval(intervalRef.current)
-  }, [isLive, fetchAndPredict])
+  }, [mode, isLive, fetchDataset])
 
-  const activeName = prediction?.gesture_name
-  const activeColor = GESTURE_COLORS[activeName] || "#60a5fa"
+  // Simulate mode
+  useEffect(() => {
+    if (mode === "simulate" && isLive) {
+      intervalRef.current = setInterval(() => {
+        const emg = generateSimEMG()
+        setChartData(windowToChart(emg))
+        predict(emg)
+      }, 900)
+    } else {
+      clearInterval(intervalRef.current)
+    }
+    return () => clearInterval(intervalRef.current)
+  }, [mode, isLive, predict])
+
+  // Auto-scroll log
+  useEffect(() => {
+    if (logRef.current) logRef.current.scrollTop = 0
+  }, [actionLog])
+
+  // Load initial sample
+  useEffect(() => { fetchDataset() }, [])
+
+  // WebSerial connect
+  async function connectSensor() {
+    if (!("serial" in navigator)) {
+      setError("WebSerial not supported. Use Chrome or Edge.")
+      return
+    }
+    try {
+      const port = await navigator.serial.requestPort()
+      await port.open({ baudRate: 9600 })
+      setSerialPort(port)
+      setSerialStatus("connected")
+      setMode("sensor")
+      readSerial(port)
+    } catch (e) {
+      setError("Sensor connection cancelled or failed.")
+    }
+  }
+
+  async function disconnectSensor() {
+    if (serialPort) {
+      try { await serialPort.close() } catch (_) {}
+      setSerialPort(null)
+    }
+    setSerialStatus("disconnected")
+    setIsLive(false)
+  }
+
+  async function readSerial(port) {
+    const decoder = new TextDecoderStream()
+    port.readable.pipeTo(decoder.writable)
+    const reader = decoder.readable.getReader()
+    let line = ""
+    try {
+      while (true) {
+        const { value, done } = await reader.read()
+        if (done) break
+        line += value
+        const lines = line.split("\n")
+        line = lines.pop()
+        for (const l of lines) {
+          const vals = l.trim().split(",").map(Number).filter(n => !isNaN(n))
+          if (vals.length > 0) {
+            // replicate single-channel to 16 channels if needed
+            const channels = vals.length >= 16
+              ? vals.slice(0, 16)
+              : Array(16).fill(vals[0] / 1023.0 - 0.5)
+            serialBufferRef.current.push(channels)
+            if (serialBufferRef.current.length >= 200) {
+              const window = serialBufferRef.current.splice(0, 200)
+              setChartData(windowToChart(window))
+              predict(window)
+            }
+          }
+        }
+      }
+    } catch (e) {
+      setSerialStatus("disconnected")
+    }
+  }
+
+  const activeColor = prediction ? (GESTURE_COLORS[prediction.gesture_name] || "#B8FF00") : "#B8FF00"
 
   return (
-    <div style={{ maxWidth: 1000, margin: "0 auto", padding: "40px 24px" }}>
+    <div style={{ minHeight: "100vh", paddingTop: 58 }}>
+      <div className="grid-bg" />
+      <Navbar />
 
-      <button
-        onClick={() => navigate("/")}
-        style={{
-          background: "none", border: "none", color: "#64748b",
-          fontSize: 14, cursor: "pointer", marginBottom: 24,
-          padding: 0, display: "flex", alignItems: "center", gap: 6
-        }}
-      >
-        ← back
-      </button>
+      <div style={{
+        maxWidth: 1280, margin: "0 auto",
+        padding: "32px 40px",
+        position: "relative", zIndex: 1
+      }}>
 
-      <div style={{ marginBottom: 40 }}>
-        <h1 style={{ fontSize: 28, letterSpacing: "-0.5px" }}>
-          Myo<span style={{ color: "#60a5fa" }}>Signal</span>
-        </h1>
-        <p style={{ color: "#64748b", marginTop: 6, fontSize: 15 }}>
-          Real-time EMG gesture classification for assistive control
-        </p>
-        {error && (
-          <p style={{ color: "#f87171", marginTop: 8, fontSize: 13 }}>{error}</p>
-        )}
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: 24 }}>
-        <div>
-          <div style={{
-            background: "#1e2130", borderRadius: 16,
-            padding: "24px", border: "1px solid #2d3148"
-          }}>
-            <div style={{
-              display: "flex", justifyContent: "space-between",
-              alignItems: "center", marginBottom: 20
+        {/* Page header */}
+        <div style={{
+          display: "flex", justifyContent: "space-between",
+          alignItems: "flex-end", marginBottom: 32,
+          borderBottom: "1px solid var(--border)", paddingBottom: 20
+        }}>
+          <div>
+            <h1 style={{
+              fontFamily: "var(--font)", fontWeight: 800,
+              fontSize: 36, letterSpacing: "-1px", lineHeight: 1
             }}>
-              <div>
-                <h2 style={{ fontSize: 16, fontWeight: 600 }}>EMG signal</h2>
-                <p style={{ fontSize: 13, color: "#64748b", marginTop: 3 }}>
-                  Channels 1–3 of 16 · 200 Hz · real Ninapro data
-                </p>
-              </div>
-              <div style={{ display: "flex", gap: 10 }}>
-                <button
-                  onClick={() => fetchAndPredict()}
-                  disabled={loading}
-                  style={{
-                    background: "#1e293b", border: "1px solid #334155",
-                    color: "#94a3b8", borderRadius: 8, padding: "6px 14px",
-                    fontSize: 13, cursor: loading ? "not-allowed" : "pointer"
-                  }}
-                >
-                  {loading ? "..." : "↺ New sample"}
-                </button>
-                <button
-                  onClick={() => setIsLive(l => !l)}
-                  style={{
-                    background: isLive ? "#ef444422" : "#1e293b",
-                    border: `1px solid ${isLive ? "#ef4444" : "#334155"}`,
-                    color: isLive ? "#ef4444" : "#94a3b8",
-                    borderRadius: 8, padding: "6px 14px",
-                    fontSize: 13, cursor: "pointer", fontWeight: 500
-                  }}
-                >
-                  {isLive ? "■ Stop" : "▶ Live mode"}
-                </button>
-              </div>
-            </div>
-
-            <ResponsiveContainer width="100%" height={220}>
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis dataKey="t" hide />
-                <YAxis hide />
-                <Tooltip
-                  contentStyle={{ background: "#1e2130", border: "1px solid #2d3148", borderRadius: 8 }}
-                  labelStyle={{ display: "none" }}
-                  formatter={(v) => [v.toFixed(4), ""]}
-                />
-                <Line type="monotone" dataKey="ch1" stroke="#60a5fa" dot={false} strokeWidth={1.5} isAnimationActive={false} />
-                <Line type="monotone" dataKey="ch2" stroke="#34d399" dot={false} strokeWidth={1.5} isAnimationActive={false} />
-                <Line type="monotone" dataKey="ch3" stroke="#a78bfa" dot={false} strokeWidth={1.5} isAnimationActive={false} />
-              </LineChart>
-            </ResponsiveContainer>
-
-            <div style={{ display: "flex", gap: 20, marginTop: 12 }}>
-              {[["ch1","#60a5fa"], ["ch2","#34d399"], ["ch3","#a78bfa"]].map(([label, color]) => (
-                <div key={label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <div style={{ width: 16, height: 2, background: color, borderRadius: 1 }}/>
-                  <span style={{ fontSize: 12, color: "#64748b" }}>Channel {label.slice(2)}</span>
-                </div>
-              ))}
-            </div>
+              SIGNAL DEMO
+            </h1>
+            <p style={{
+              fontFamily: "var(--mono)", fontSize: 11,
+              color: "var(--text2)", marginTop: 6, letterSpacing: "0.08em"
+            }}>
+              REAL-TIME EMG GESTURE CLASSIFICATION
+            </p>
           </div>
 
-          {prediction && (
-            <div style={{
-              background: `${activeColor}18`,
-              border: `1px solid ${activeColor}55`,
-              borderRadius: 12, padding: "18px 24px",
-              marginTop: 16, display: "flex",
-              justifyContent: "space-between", alignItems: "center"
-            }}>
-              <div>
-                <p style={{ fontSize: 13, color: "#64748b" }}>Detected gesture</p>
-                <p style={{ fontSize: 26, fontWeight: 700, color: activeColor, marginTop: 2 }}>
-                  {activeName}
-                </p>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <p style={{ fontSize: 13, color: "#64748b" }}>Confidence</p>
-                <p style={{ fontSize: 26, fontWeight: 700, color: activeColor, marginTop: 2 }}>
-                  {(prediction.confidence * 100).toFixed(0)}%
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div>
-          <h2 style={{ fontSize: 15, fontWeight: 600, marginBottom: 12, color: "#94a3b8" }}>
-            Gestures
-          </h2>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {GESTURES.map(g => (
-              <GestureCard
-                key={g.id}
-                name={g.name}
-                isActive={activeName === g.name}
-                confidence={allProbs[g.name]}
-                onClick={() => fetchAndPredict(g.id)}
-              />
+          {/* Mode switcher */}
+          <div style={{
+            display: "flex", gap: 2,
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 6, padding: 3
+          }}>
+            {[["dataset", "DATASET"], ["simulate", "SIMULATE"], ["sensor", "SENSOR"]].map(([m, label]) => (
+              <button key={m} onClick={() => { setMode(m); setIsLive(false) }} style={{
+                background: mode === m ? "var(--border2)" : "transparent",
+                border: "none", color: mode === m ? "var(--text)" : "var(--text2)",
+                borderRadius: 4, padding: "6px 16px",
+                fontFamily: "var(--mono)", fontSize: 11,
+                letterSpacing: "0.08em", cursor: "pointer",
+                transition: "all 0.15s"
+              }}>{label}</button>
             ))}
           </div>
-          <p style={{ fontSize: 12, color: "#374151", marginTop: 16, lineHeight: 1.6 }}>
-            Click any gesture to load a real sample from the Ninapro dataset and run it through the model.
-          </p>
+        </div>
+
+        {error && (
+          <div style={{
+            background: "#FF454518", border: "1px solid #FF454544",
+            borderRadius: 6, padding: "10px 16px",
+            fontFamily: "var(--mono)", fontSize: 12,
+            color: "#FF4545", marginBottom: 20
+          }}>{error}</div>
+        )}
+
+        {/* Sensor mode banner */}
+        {mode === "sensor" && (
+          <div style={{
+            background: serialStatus === "connected" ? "#B8FF0012" : "var(--surface)",
+            border: `1px solid ${serialStatus === "connected" ? "#B8FF0044" : "var(--border)"}`,
+            borderRadius: 8, padding: "16px 20px",
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+            marginBottom: 20
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{
+                width: 8, height: 8, borderRadius: "50%",
+                background: serialStatus === "connected" ? "var(--accent)" : "var(--text3)",
+                boxShadow: serialStatus === "connected" ? "0 0 8px var(--accent)" : "none"
+              }}/>
+              <span style={{
+                fontFamily: "var(--mono)", fontSize: 12,
+                color: serialStatus === "connected" ? "var(--accent)" : "var(--text2)",
+                letterSpacing: "0.08em"
+              }}>
+                {serialStatus === "connected" ? "SENSOR CONNECTED" : "NO SENSOR CONNECTED"}
+              </span>
+              {serialStatus === "connected" && (
+                <span style={{
+                  fontFamily: "var(--mono)", fontSize: 11,
+                  color: "var(--text2)"
+                }}>9600 BAUD · 16CH</span>
+              )}
+            </div>
+            <button
+              onClick={serialStatus === "connected" ? disconnectSensor : connectSensor}
+              style={{
+                background: serialStatus === "connected" ? "#FF454518" : "var(--accent)",
+                border: serialStatus === "connected" ? "1px solid #FF454544" : "none",
+                color: serialStatus === "connected" ? "#FF4545" : "#000",
+                borderRadius: 4, padding: "7px 18px",
+                fontFamily: "var(--mono)", fontSize: 11,
+                letterSpacing: "0.08em", cursor: "pointer"
+              }}>
+              {serialStatus === "connected" ? "DISCONNECT" : "CONNECT SENSOR"}
+            </button>
+          </div>
+        )}
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 16 }}>
+
+          {/* Left column */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+            {/* Waveform card */}
+            <div style={{
+              background: "var(--surface)", border: "1px solid var(--border)",
+              borderRadius: 8, padding: 24
+            }}>
+              <div style={{
+                display: "flex", justifyContent: "space-between",
+                alignItems: "center", marginBottom: 20
+              }}>
+                <div>
+                  <div style={{
+                    fontFamily: "var(--mono)", fontSize: 11,
+                    color: "var(--text2)", letterSpacing: "0.1em", marginBottom: 4
+                  }}>EMG WAVEFORM</div>
+                  <div style={{
+                    fontFamily: "var(--mono)", fontSize: 10,
+                    color: "var(--text3)", letterSpacing: "0.08em"
+                  }}>
+                    {mode === "sensor" ? "LIVE SENSOR · 16CH · 9600 BAUD"
+                      : mode === "simulate" ? "SIMULATED · 16CH · 200HZ"
+                      : "NINAPRO DB5 · 16CH · 200HZ"}
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {mode === "dataset" && (
+                    <button onClick={() => fetchDataset()} disabled={loading} style={{
+                      background: "transparent", border: "1px solid var(--border2)",
+                      color: loading ? "var(--text3)" : "var(--text2)",
+                      borderRadius: 4, padding: "6px 14px",
+                      fontFamily: "var(--mono)", fontSize: 11,
+                      letterSpacing: "0.06em", cursor: loading ? "not-allowed" : "pointer"
+                    }}>{loading ? "..." : "↺ NEW SAMPLE"}</button>
+                  )}
+                  {(mode === "dataset" || mode === "simulate") && (
+                    <button onClick={() => setIsLive(l => !l)} style={{
+                      background: isLive ? "#FF454518" : "var(--accent)",
+                      border: isLive ? "1px solid #FF454544" : "none",
+                      color: isLive ? "#FF4545" : "#000",
+                      borderRadius: 4, padding: "6px 16px",
+                      fontFamily: "var(--mono)", fontSize: 11,
+                      letterSpacing: "0.06em", cursor: "pointer", fontWeight: 700
+                    }}>{isLive ? "■ STOP" : "▶ LIVE"}</button>
+                  )}
+                </div>
+              </div>
+
+              <ResponsiveContainer width="100%" height={180}>
+                <LineChart data={chartData}>
+                  <XAxis dataKey="t" hide />
+                  <YAxis hide />
+                  <Tooltip
+                    contentStyle={{
+                      background: "var(--surface2)", border: "1px solid var(--border2)",
+                      borderRadius: 4, fontFamily: "var(--mono)", fontSize: 11
+                    }}
+                    formatter={v => [v.toFixed(4), ""]}
+                    labelStyle={{ display: "none" }}
+                  />
+                  <Line type="monotone" dataKey="ch1" stroke="var(--accent)" dot={false} strokeWidth={1.5} isAnimationActive={false} />
+                  <Line type="monotone" dataKey="ch2" stroke="#00E5FF" dot={false} strokeWidth={1} isAnimationActive={false} />
+                  <Line type="monotone" dataKey="ch3" stroke="#FF4545" dot={false} strokeWidth={1} isAnimationActive={false} opacity={0.7} />
+                </LineChart>
+              </ResponsiveContainer>
+
+              <div style={{ display: "flex", gap: 20, marginTop: 12 }}>
+                {[["CH1", "var(--accent)"], ["CH2", "#00E5FF"], ["CH3", "#FF4545"]].map(([l, c]) => (
+                  <div key={l} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <div style={{ width: 14, height: 2, background: c }}/>
+                    <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--text2)" }}>{l}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Prediction banner */}
+            {prediction && (
+              <div style={{
+                background: "var(--surface)", border: `1px solid var(--border)`,
+                borderLeft: `3px solid ${activeColor}`,
+                borderRadius: 8, padding: "20px 24px",
+                display: "grid", gridTemplateColumns: "1fr 1fr 1fr",
+                gap: 20, alignItems: "center"
+              }}>
+                <div>
+                  <div style={{
+                    fontFamily: "var(--mono)", fontSize: 10,
+                    color: "var(--text2)", letterSpacing: "0.1em", marginBottom: 6
+                  }}>DETECTED GESTURE</div>
+                  <div style={{
+                    fontFamily: "var(--font)", fontWeight: 800,
+                    fontSize: 28, color: activeColor, letterSpacing: "-0.5px"
+                  }}>{prediction.gesture_name.toUpperCase()}</div>
+                </div>
+                <div>
+                  <div style={{
+                    fontFamily: "var(--mono)", fontSize: 10,
+                    color: "var(--text2)", letterSpacing: "0.1em", marginBottom: 6
+                  }}>ASSISTIVE ACTION</div>
+                  <div style={{
+                    fontFamily: "var(--mono)", fontSize: 18,
+                    color: "var(--text)", letterSpacing: "0.05em"
+                  }}>
+                    {GESTURES.find(g => g.name === prediction.gesture_name)?.action || "—"}
+                  </div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{
+                    fontFamily: "var(--mono)", fontSize: 10,
+                    color: "var(--text2)", letterSpacing: "0.1em", marginBottom: 6
+                  }}>CONFIDENCE</div>
+                  <div style={{
+                    fontFamily: "var(--font)", fontWeight: 800,
+                    fontSize: 36, color: activeColor, letterSpacing: "-1px"
+                  }}>{(prediction.confidence * 100).toFixed(0)}%</div>
+                </div>
+              </div>
+            )}
+
+            {/* Probability bars */}
+            {prediction && (
+              <div style={{
+                background: "var(--surface)", border: "1px solid var(--border)",
+                borderRadius: 8, padding: 20
+              }}>
+                <div style={{
+                  fontFamily: "var(--mono)", fontSize: 10,
+                  color: "var(--text2)", letterSpacing: "0.1em", marginBottom: 16
+                }}>CLASS PROBABILITIES</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {GESTURES.map(g => {
+                    const prob = allProbs[g.name] || 0
+                    const isActive = prediction.gesture_name === g.name
+                    const color = GESTURE_COLORS[g.name]
+                    return (
+                      <div key={g.id} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                        <span style={{
+                          fontFamily: "var(--mono)", fontSize: 11,
+                          color: isActive ? color : "var(--text2)",
+                          width: 100, letterSpacing: "0.04em"
+                        }}>{g.name}</span>
+                        <div style={{
+                          flex: 1, height: 4, background: "var(--border2)",
+                          borderRadius: 2, overflow: "hidden"
+                        }}>
+                          <div style={{
+                            width: `${prob * 100}%`, height: "100%",
+                            background: isActive ? color : "var(--text3)",
+                            borderRadius: 2, transition: "width 0.3s ease"
+                          }}/>
+                        </div>
+                        <span style={{
+                          fontFamily: "var(--mono)", fontSize: 11,
+                          color: isActive ? color : "var(--text3)",
+                          width: 36, textAlign: "right"
+                        }}>{(prob * 100).toFixed(0)}%</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right column */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+            {/* Gesture map */}
+            <div style={{
+              background: "var(--surface)", border: "1px solid var(--border)",
+              borderRadius: 8, padding: 20
+            }}>
+              <div style={{
+                fontFamily: "var(--mono)", fontSize: 10,
+                color: "var(--text2)", letterSpacing: "0.1em", marginBottom: 14
+              }}>GESTURE → ACTION MAP</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {GESTURES.map(g => {
+                  const isActive = prediction?.gesture_name === g.name
+                  const color = GESTURE_COLORS[g.name]
+                  return (
+                    <div
+                      key={g.id}
+                      onClick={() => mode === "dataset" && fetchDataset(g.id)}
+                      style={{
+                        display: "flex", justifyContent: "space-between",
+                        alignItems: "center",
+                        background: isActive ? `${color}14` : "var(--surface2)",
+                        border: `1px solid ${isActive ? color + "44" : "var(--border)"}`,
+                        borderRadius: 6, padding: "10px 14px",
+                        cursor: mode === "dataset" ? "pointer" : "default",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <div style={{
+                          width: 7, height: 7, borderRadius: "50%",
+                          background: isActive ? color : "var(--text3)",
+                          boxShadow: isActive ? `0 0 6px ${color}` : "none",
+                          transition: "all 0.2s"
+                        }}/>
+                        <span style={{
+                          fontFamily: "var(--mono)", fontSize: 11,
+                          color: isActive ? color : "var(--text2)",
+                          letterSpacing: "0.04em"
+                        }}>{g.name}</span>
+                      </div>
+                      <span style={{
+                        fontFamily: "var(--mono)", fontSize: 11,
+                        color: isActive ? color : "var(--text3)"
+                      }}>{g.key}</span>
+                    </div>
+                  )
+                })}
+              </div>
+              {mode === "dataset" && (
+                <p style={{
+                  fontFamily: "var(--mono)", fontSize: 10,
+                  color: "var(--text3)", marginTop: 12, lineHeight: 1.6
+                }}>CLICK ANY GESTURE TO LOAD A REAL NINAPRO SAMPLE</p>
+              )}
+            </div>
+
+            {/* Live action log */}
+            <div style={{
+              background: "var(--surface)", border: "1px solid var(--border)",
+              borderRadius: 8, padding: 20, flex: 1
+            }}>
+              <div style={{
+                display: "flex", justifyContent: "space-between",
+                alignItems: "center", marginBottom: 14
+              }}>
+                <div style={{
+                  fontFamily: "var(--mono)", fontSize: 10,
+                  color: "var(--text2)", letterSpacing: "0.1em"
+                }}>ACTION LOG</div>
+                {actionLog.length > 0 && (
+                  <button onClick={() => setActionLog([])} style={{
+                    background: "none", border: "none",
+                    fontFamily: "var(--mono)", fontSize: 10,
+                    color: "var(--text3)", cursor: "pointer",
+                    letterSpacing: "0.06em"
+                  }}>CLEAR</button>
+                )}
+              </div>
+              <div ref={logRef} style={{
+                maxHeight: 280, overflowY: "auto",
+                display: "flex", flexDirection: "column", gap: 4
+              }}>
+                {actionLog.length === 0 ? (
+                  <div style={{
+                    fontFamily: "var(--mono)", fontSize: 11,
+                    color: "var(--text3)", padding: "20px 0",
+                    textAlign: "center", letterSpacing: "0.06em"
+                  }}>NO ACTIVITY YET</div>
+                ) : actionLog.map(entry => (
+                  <div key={entry.id} style={{
+                    display: "flex", justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "7px 10px",
+                    background: "var(--surface2)",
+                    borderRadius: 4,
+                    borderLeft: `2px solid ${entry.color}`
+                  }}>
+                    <div>
+                      <div style={{
+                        fontFamily: "var(--mono)", fontSize: 11,
+                        color: entry.color, letterSpacing: "0.04em"
+                      }}>{entry.gesture}</div>
+                      <div style={{
+                        fontFamily: "var(--mono)", fontSize: 9,
+                        color: "var(--text3)", letterSpacing: "0.06em"
+                      }}>{entry.action}</div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{
+                        fontFamily: "var(--mono)", fontSize: 11,
+                        color: "var(--text2)"
+                      }}>{(entry.confidence * 100).toFixed(0)}%</div>
+                      <div style={{
+                        fontFamily: "var(--mono)", fontSize: 9,
+                        color: "var(--text3)"
+                      }}>{entry.time}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
