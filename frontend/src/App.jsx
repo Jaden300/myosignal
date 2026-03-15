@@ -190,7 +190,7 @@ export default function App() {
               fontFamily: "var(--font)", fontWeight: 800,
               fontSize: 36, letterSpacing: "-1px", lineHeight: 1
             }}>
-              SIGNAL DEMO
+              METRO DEMO
             </h1>
             <p style={{
               fontFamily: "var(--mono)", fontSize: 11,

@@ -174,7 +174,7 @@ export default function Landing() {
         <span style={{
           fontFamily: "var(--mono)", fontSize: 11,
           color: "var(--text3)", letterSpacing: "0.08em"
-        }}>MYOSIGNAL — OPEN SOURCE ASSISTIVE TECHNOLOGY</span>
+        }}>MYOMETRO — OPEN SOURCE ASSISTIVE TECHNOLOGY</span>
         <span style={{
           fontFamily: "var(--mono)", fontSize: 11,
           color: "var(--text3)", letterSpacing: "0.08em"
