@@ -2,146 +2,109 @@ import Navbar from "./Navbar"
 
 export default function Contact() {
   return (
-    <div style={{ minHeight: "100vh" }}>
-      <div className="grid-bg" />
+    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
 
-      <div style={{
-        maxWidth: 700, margin: "0 auto",
-        padding: "120px 40px 80px",
-        position: "relative", zIndex: 1
-      }}>
+      <div style={{ maxWidth: 600, margin: "0 auto", padding: "120px 32px 80px" }}>
 
-        <div style={{ marginBottom: 64 }}>
-          <div style={{
-            fontFamily: "var(--mono)", fontSize: 11,
-            color: "var(--accent)", letterSpacing: "0.12em", marginBottom: 20
-          }}>GET IN TOUCH</div>
-          <h1 style={{
-            fontFamily: "var(--font)", fontWeight: 800,
-            fontSize: "clamp(40px, 7vw, 72px)",
-            letterSpacing: "-2px", lineHeight: 0.95,
-            marginBottom: 24
-          }}>
-            CONTACT<br />
-            <span style={{
-              WebkitTextStroke: "2px var(--accent)",
-              color: "transparent"
-            }}>US.</span>
-          </h1>
-          <p style={{
-            fontSize: 16, color: "var(--text2)", lineHeight: 1.8
-          }}>
-            Questions about the project, research collaboration, or building on
-            top of MyoMetro? Reach out.
-          </p>
-        </div>
+        <p style={{
+          fontSize: 13, fontWeight: 500, color: "var(--accent)",
+          letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 16
+        }}>Contact</p>
 
-        {/* Contact options */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 48 }}>
+        <h1 style={{
+          fontSize: "clamp(36px, 6vw, 60px)", fontWeight: 600,
+          letterSpacing: "-2px", lineHeight: 1.05, marginBottom: 24
+        }}>Get in touch.</h1>
+
+        <p style={{
+          fontSize: 16, color: "var(--text-secondary)", lineHeight: 1.7,
+          fontWeight: 300, marginBottom: 56
+        }}>Questions about the project, research collaboration, or building on top of myojam? Reach out.</p>
+
+        {/* Links */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 56 }}>
           {[
-            ["GITHUB", "Open an issue or pull request", "https://github.com/Jaden300/myosignal", "github.com/Jaden300/myosignal ↗"],
-            ["DATASET", "Ninapro DB5 source data", "https://ninapro.hevs.ch", "ninapro.hevs.ch ↗"],
-          ].map(([label, desc, href, display]) => (
+            ["GitHub", "Open an issue or pull request", "https://github.com/Jaden300/myosignal"],
+            ["Ninapro dataset", "Source data for the model", "https://ninapro.hevs.ch"],
+          ].map(([label, desc, href]) => (
             <a key={label} href={href} target="_blank" rel="noreferrer"
               style={{
-                background: "var(--surface)", border: "1px solid var(--border)",
-                borderRadius: 8, padding: "24px 28px",
+                background: "var(--bg-secondary)", border: "1px solid var(--border)",
+                borderRadius: "var(--radius)", padding: "20px 24px",
                 display: "flex", justifyContent: "space-between",
                 alignItems: "center", textDecoration: "none",
-                transition: "border-color 0.15s"
+                transition: "border-color 0.15s, box-shadow 0.15s"
               }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = "var(--accent)"}
-              onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = "rgba(255,45,120,0.3)"
+                e.currentTarget.style.boxShadow = "0 4px 24px rgba(255,45,120,0.08)"
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = "var(--border)"
+                e.currentTarget.style.boxShadow = "none"
+              }}
             >
               <div>
-                <div style={{
-                  fontFamily: "var(--mono)", fontSize: 10,
-                  color: "var(--accent)", letterSpacing: "0.12em", marginBottom: 6
-                }}>{label}</div>
-                <div style={{
-                  fontFamily: "var(--font)", fontSize: 15,
-                  color: "var(--text)", fontWeight: 600
-                }}>{desc}</div>
+                <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>{label}</div>
+                <div style={{ fontSize: 13, color: "var(--text-secondary)", fontWeight: 300 }}>{desc}</div>
               </div>
-              <span style={{
-                fontFamily: "var(--mono)", fontSize: 12,
-                color: "var(--text2)"
-              }}>{display}</span>
+              <span style={{ fontSize: 18, color: "var(--text-tertiary)" }}>↗</span>
             </a>
           ))}
         </div>
 
-        {/* Email form */}
+        {/* Message form */}
         <div style={{
-          background: "var(--surface)", border: "1px solid var(--border)",
-          borderRadius: 8, padding: 32
+          background: "var(--bg-secondary)", borderRadius: "var(--radius)",
+          padding: "32px", border: "1px solid var(--border)"
         }}>
-          <div style={{
-            fontFamily: "var(--mono)", fontSize: 10,
-            color: "var(--accent)", letterSpacing: "0.12em", marginBottom: 20
-          }}>SEND A MESSAGE</div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {[["NAME", "text", "Your name"], ["EMAIL", "email", "your@email.com"]].map(([label, type, placeholder]) => (
+          <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 24 }}>Send a message</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {[["Name", "text", "Your name"], ["Email", "email", "your@email.com"]].map(([label, type, placeholder]) => (
               <div key={label}>
-                <div style={{
-                  fontFamily: "var(--mono)", fontSize: 10,
-                  color: "var(--text2)", letterSpacing: "0.1em", marginBottom: 6
-                }}>{label}</div>
+                <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)", marginBottom: 6 }}>{label}</div>
                 <input type={type} placeholder={placeholder} style={{
-                  width: "100%", background: "var(--surface2)",
-                  border: "1px solid var(--border2)", borderRadius: 6,
+                  width: "100%", background: "var(--surface)",
+                  border: "1px solid var(--border-mid)", borderRadius: "var(--radius-sm)",
                   padding: "10px 14px", color: "var(--text)",
-                  fontFamily: "var(--mono)", fontSize: 13,
-                  outline: "none"
+                  fontFamily: "var(--font)", fontSize: 14, outline: "none"
                 }}
                   onFocus={e => e.target.style.borderColor = "var(--accent)"}
-                  onBlur={e => e.target.style.borderColor = "var(--border2)"}
+                  onBlur={e => e.target.style.borderColor = "var(--border-mid)"}
                 />
               </div>
             ))}
             <div>
-              <div style={{
-                fontFamily: "var(--mono)", fontSize: 10,
-                color: "var(--text2)", letterSpacing: "0.1em", marginBottom: 6
-              }}>MESSAGE</div>
-              <textarea rows={5} placeholder="What's on your mind?" style={{
-                width: "100%", background: "var(--surface2)",
-                border: "1px solid var(--border2)", borderRadius: 6,
+              <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)", marginBottom: 6 }}>Message</div>
+              <textarea rows={4} placeholder="What's on your mind?" style={{
+                width: "100%", background: "var(--surface)",
+                border: "1px solid var(--border-mid)", borderRadius: "var(--radius-sm)",
                 padding: "10px 14px", color: "var(--text)",
-                fontFamily: "var(--mono)", fontSize: 13,
-                outline: "none", resize: "vertical"
+                fontFamily: "var(--font)", fontSize: 14, outline: "none", resize: "vertical"
               }}
                 onFocus={e => e.target.style.borderColor = "var(--accent)"}
-                onBlur={e => e.target.style.borderColor = "var(--border2)"}
+                onBlur={e => e.target.style.borderColor = "var(--border-mid)"}
               />
             </div>
             <button
               onClick={() => window.location.href = "mailto:your@email.com"}
               style={{
-                background: "var(--accent)", color: "#000",
-                border: "none", borderRadius: 4,
-                padding: "12px 28px", fontSize: 13,
-                fontFamily: "var(--mono)", fontWeight: 700,
-                letterSpacing: "0.06em", cursor: "pointer",
-                alignSelf: "flex-start"
-              }}>SEND MESSAGE →</button>
+                background: "var(--accent)", color: "#fff",
+                border: "none", borderRadius: 100,
+                padding: "11px 28px", fontSize: 14,
+                fontFamily: "var(--font)", fontWeight: 500,
+                cursor: "pointer", alignSelf: "flex-start"
+              }}>Send message</button>
           </div>
         </div>
 
-        <div style={{
-          marginTop: 48, borderTop: "1px solid var(--border)",
-          paddingTop: 24
+        <p style={{
+          marginTop: 40, fontSize: 13, color: "var(--text-tertiary)",
+          lineHeight: 1.6, fontWeight: 300
         }}>
-          <p style={{
-            fontFamily: "var(--mono)", fontSize: 11,
-            color: "var(--text3)", lineHeight: 1.7
-          }}>
-            MyoMetro is an open-source student research project. MIT License.
-            Built on the Ninapro DB5 dataset. Not a medical device.
-          </p>
-        </div>
+          myojam is an open-source student research project. MIT License. Not a medical device.
+        </p>
       </div>
     </div>
   )

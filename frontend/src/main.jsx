@@ -7,6 +7,7 @@ import App from "./App"
 import About from "./About"
 import HowItWorks from "./HowItWorks"
 import Contact from "./Contact"
+import Team from "./Team"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/about" element={<About />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/team" element={<Team />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
