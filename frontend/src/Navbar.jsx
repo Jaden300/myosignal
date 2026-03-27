@@ -38,19 +38,14 @@ export default function Navbar() {
             transition: "color 0.15s"
           }}>{label}</span>
         ))}
-        <a href="https://github.com/Jaden300/myojam"
-          target="_blank" rel="noreferrer"
+        <a href="https://github.com/user-attachments/files/26291771/myojam-mac.zip"
           style={{
-            fontSize: 14, color: "var(--text-secondary)",
+            background: "var(--accent)", color: "#fff",
+            border: "none", borderRadius: 100,
+            padding: "7px 20px", fontSize: 14,
+            fontFamily: "var(--font)", fontWeight: 500,
             textDecoration: "none"
-          }}>GitHub</a>
-        <button onClick={() => navigate("/demo")} style={{
-          background: "var(--accent)", color: "#fff",
-          border: "none", borderRadius: 100,
-          padding: "7px 20px", fontSize: 14,
-          fontFamily: "var(--font)", fontWeight: 500,
-          cursor: "pointer", letterSpacing: "-0.1px"
-        }}>Try demo</button>
+          }}>Download for Mac</a>
       </div>
     </nav>
   )

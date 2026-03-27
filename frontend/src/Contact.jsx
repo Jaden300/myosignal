@@ -107,6 +107,8 @@ export default function Contact() {
           myojam is an open-source student research project. MIT License. Not a medical device.
         </p>
       </div>
+
+    <Footer />
     </div>
   )
 }

@@ -120,6 +120,8 @@ export default function HowItWorks() {
           © 2025 myojam™. All rights reserved.
         </div>
       </div>
+
+    <Footer />
     </div>
   )
 }

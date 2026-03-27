@@ -136,6 +136,8 @@ export default function HowItWorks() {
           }}>View source</a>
         </div>
       </div>
+
+    <Footer />
     </div>
   )
 }

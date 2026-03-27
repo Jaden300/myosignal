@@ -23,7 +23,6 @@ export default function Footer() {
             {[
               ["Terms of Service", "/terms"],
               ["Privacy Policy", "/privacy"],
-              ["Team", "/team"],
               ["GitHub", "https://github.com/Jaden300/myosignal"],
             ].map(([label, href]) => (
               href.startsWith("http")

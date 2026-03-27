@@ -237,7 +237,7 @@ export default function App() {
     const color = GESTURE_COLORS[gesture] || "var(--accent)"
     const g = GESTURES.find(g => g.name === gesture)
     setActionLog(prev => [{
-      id: Date.now(), gesture, confidence, color,
+      id: Date.now() + Math.random(), gesture, confidence, color,
       action: g?.action || "—", key: g?.key || "?",
       time: new Date().toLocaleTimeString("en-US", { hour12: false })
     }, ...prev].slice(0, 40))
