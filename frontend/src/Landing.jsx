@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import Navbar from "./Navbar"
 import HeroSphere from "./HeroSphere"
 import Footer from "./Footer"
+import EMGPulseCanvas from "./EMGPulseCanvas"
 
 const STATS = [
   ["84.85%", "Cross-subject accuracy", "Tested across 10 clinical subjects"],
@@ -122,10 +123,23 @@ export default function Landing() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             {HOW.map(([title, desc], i) => (
-              <div key={title} style={{
-                background: "var(--surface)", borderRadius: "var(--radius)",
-                padding: "32px", border: "1px solid var(--border)", boxShadow: "var(--shadow)"
-              }}>
+              <div key={title}
+                style={{
+                  background: "var(--surface)", borderRadius: "var(--radius)",
+                  padding: "32px", border: "1px solid var(--border)", boxShadow: "var(--shadow)",
+                  transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = "translateY(-4px)"
+                  e.currentTarget.style.boxShadow = "0 12px 40px rgba(255,45,120,0.1)"
+                  e.currentTarget.style.borderColor = "rgba(255,45,120,0.2)"
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = "translateY(0)"
+                  e.currentTarget.style.boxShadow = "var(--shadow)"
+                  e.currentTarget.style.borderColor = "var(--border)"
+                }}
+              >
                 <div style={{
                   width: 32, height: 32, borderRadius: "50%",
                   background: "var(--accent-soft)", display: "flex",
@@ -141,8 +155,23 @@ export default function Landing() {
       </section>
 
       {/* CTA */}
-      <section style={{ padding: "100px 32px", textAlign: "center" }}>
-        <div style={{ maxWidth: 560, margin: "0 auto" }}>
+      <section style={{
+        padding: "100px 32px",
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        <EMGPulseCanvas />
+        <div style={{
+          position: "relative", zIndex: 1, maxWidth: 560, margin: "0 auto",
+          background: "rgba(255, 255, 255, 0.72)",
+          backdropFilter: "blur(3px)",
+          WebkitBackdropFilter: "blur(3px)",
+          borderRadius: "var(--radius)",
+          padding: "48px 40px",
+          border: "1px solid rgba(255, 255, 255, 0.6)",
+        }}>
+ 
           <h2 style={{ fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 600, letterSpacing: "-1px", marginBottom: 20 }}>
             See it in action
           </h2>

@@ -4,40 +4,52 @@ import Footer from "./Footer"
 
 const STEPS = [
   {
-    num: "01", title: "Signal capture", subtitle: "The hardware layer",
-    body: "Surface EMG electrodes — adhesive stickers, no needles — are placed on the forearm. When muscles contract, they produce tiny electrical potentials. The MyoWare 2.0 sensor amplifies and conditions this signal across 16 channels at 200 samples per second.",
-    tags: ["16 differential EMG channels", "200 Hz sampling rate", "Passive surface electrodes", "MyoWare 2.0 sensor"]
+    num: "01",
+    title: "Signal capture",
+    subtitle: "Hardware layer",
+    body: "Surface EMG electrodes — adhesive stickers, no needles — pick up the electrical activity of your forearm muscles as you move. The MyoWare 2.0 sensor amplifies and conditions this signal across 16 channels at 200 Hz, fed into an Arduino Uno over USB.",
+    tags: ["MyoWare 2.0 sensor", "16 EMG channels", "200 Hz sampling", "Arduino Uno R3"],
   },
   {
-    num: "02", title: "Signal processing", subtitle: "Filtering and windowing",
-    body: "Raw EMG is contaminated with noise — powerline interference, motion artifacts, and baseline drift. A 4th-order Butterworth bandpass filter (20–90 Hz) isolates the relevant frequency band. The cleaned signal is segmented into 200-sample windows with 50-sample steps.",
-    tags: ["Butterworth bandpass: 20–90 Hz", "Window size: 200 samples", "Step size: 50 samples", "75% window overlap"]
+    num: "02",
+    title: "Filtering & windowing",
+    subtitle: "Signal processing",
+    body: "Raw EMG is noisy — powerline hum, motion artifacts, baseline drift. A 4th-order Butterworth bandpass filter (20–90 Hz) strips it down to the biologically meaningful band. The cleaned signal is then sliced into 200-sample windows with 50-sample steps, ready for feature extraction.",
+    tags: ["Butterworth 20–90 Hz", "200-sample windows", "50-sample step", "75% overlap"],
   },
   {
-    num: "03", title: "Feature extraction", subtitle: "From waveform to numbers",
-    body: "Each window is compressed into 64 numbers — four time-domain features per channel. These capture the essential character of the EMG burst: activation level, signal power, frequency content, and total variation.",
-    tags: ["MAV — Mean Absolute Value", "RMS — Root Mean Square", "ZC — Zero Crossings", "WL — Waveform Length"]
+    num: "03",
+    title: "Feature extraction",
+    subtitle: "From waveform to numbers",
+    body: "Each window is compressed into a 64-number vector — four time-domain features computed across all 16 channels. These capture activation level (MAV), signal power (RMS), frequency content (ZC), and complexity (WL). Together they form a compact fingerprint of the gesture.",
+    tags: ["MAV · RMS · ZC · WL", "64-dimensional vector", "16 channels × 4 features"],
   },
   {
-    num: "04", title: "Classification", subtitle: "The machine learning model",
-    body: "A Random Forest classifier with 500 decision trees takes the 64-feature vector and outputs a probability distribution across 6 gesture classes. Trained on 16,269 labeled windows from 10 subjects in the Ninapro DB5 dataset with cross-validated hyperparameter tuning.",
-    tags: ["Random Forest (500 trees)", "16,269 training samples", "10 subjects", "84.85% cross-subject accuracy"]
+    num: "04",
+    title: "Gesture classification",
+    subtitle: "Machine learning",
+    body: "A Random Forest classifier (500 trees, hyperparameter-tuned via 100-configuration RandomizedSearchCV) maps the 64-feature vector to one of 6 gesture classes. Trained on 16,269 labeled windows from 10 subjects in the public Ninapro DB5 dataset — achieving 84.85% cross-subject accuracy.",
+    tags: ["Random Forest · 500 trees", "16,269 training windows", "10 subjects · Ninapro DB5", "84.85% accuracy"],
   },
   {
-    num: "05", title: "Assistive output", subtitle: "Gesture to action",
-    body: "The predicted gesture maps to a configurable computer action. The entire inference pipeline runs in under 5ms, making the response feel instantaneous for the user.",
-    tags: ["Index flex → cursor left", "Middle flex → cursor right", "Thumb flex → click", "Fist → spacebar"]
+    num: "05",
+    title: "Assistive action",
+    subtitle: "Gesture to computer control",
+    body: "The predicted gesture maps to a real computer action in under 50ms end-to-end. Cursor movement uses the macOS CoreGraphics API for hardware-level repositioning. Clicks fire via cliclick. Keypresses are injected through osascript. No accessibility overlays — direct system-level control.",
+    tags: ["< 50ms latency", "CoreGraphics cursor", "osascript keypresses", "6 mapped actions"],
   },
 ]
 
 export default function HowItWorks() {
   const navigate = useNavigate()
+
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "120px 32px 80px" }}>
 
+        {/* Header */}
         <p style={{
           fontSize: 13, fontWeight: 500, color: "var(--accent)",
           letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 16
@@ -45,22 +57,25 @@ export default function HowItWorks() {
 
         <h1 style={{
           fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 600,
-          letterSpacing: "-2px", lineHeight: 1.05, marginBottom: 28
-        }}>From muscle signal<br />to gesture in 5ms.</h1>
+          letterSpacing: "-2px", lineHeight: 1.05, marginBottom: 28, color: "var(--text)"
+        }}>From muscle signal<br />to action in 50ms.</h1>
 
         <p style={{
           fontSize: 17, color: "var(--text-secondary)", lineHeight: 1.75,
-          fontWeight: 300, marginBottom: 64
-        }}>A full technical breakdown of the myojam pipeline — signal capture to classification.</p>
+          fontWeight: 300, marginBottom: 56
+        }}>
+          How myojam turns a forearm twitch into a cursor move, click, or keypress —
+          from raw electrode data to system-level control.
+        </p>
 
-        {/* Pipeline bar */}
+        {/* Pipeline breadcrumb */}
         <div style={{
           display: "flex", alignItems: "center", flexWrap: "wrap", gap: 6,
           background: "var(--bg-secondary)", borderRadius: "var(--radius-sm)",
           padding: "14px 20px", marginBottom: 56,
           border: "1px solid var(--border)"
         }}>
-          {["Capture", "Filter", "Extract", "Classify", "Output"].map((s, i) => (
+          {["Capture", "Filter", "Extract", "Classify", "Act"].map((s, i) => (
             <div key={s} style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span style={{
                 fontSize: 13, fontWeight: 500,
@@ -77,8 +92,20 @@ export default function HowItWorks() {
             <div key={step.num} style={{
               background: "var(--bg-secondary)",
               borderRadius: "var(--radius)", padding: "32px",
-              border: "1px solid var(--border)"
-            }}>
+              border: "1px solid var(--border)",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
+            }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = "translateY(-4px)"
+                e.currentTarget.style.boxShadow = "0 12px 40px rgba(255,45,120,0.1)"
+                e.currentTarget.style.borderColor = "rgba(255,45,120,0.2)"
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = "translateY(0)"
+                e.currentTarget.style.boxShadow = "none"
+                e.currentTarget.style.borderColor = "var(--border)"
+              }}
+            >
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                 <div style={{
                   width: 32, height: 32, borderRadius: "50%",
@@ -114,30 +141,38 @@ export default function HowItWorks() {
           borderRadius: "var(--radius)", padding: "28px 32px",
           border: "1px solid rgba(255,45,120,0.15)"
         }}>
-          <div style={{ fontSize: 12, fontWeight: 500, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 10 }}>Dataset — Ninapro DB5</div>
+          <div style={{ fontSize: 12, fontWeight: 500, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 10 }}>
+            Dataset — Ninapro DB5
+          </div>
           <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.75, fontWeight: 300 }}>
-            The Ninapro database is a publicly available benchmark for EMG-based gesture recognition research. 
-            DB5 contains recordings from 10 intact subjects performing 52 hand movements, each repeated 6 times. 
-            Available at <a href="https://ninapro.hevs.ch" target="_blank" rel="noreferrer" style={{ color: "var(--accent)" }}>ninapro.hevs.ch</a>.
+            The Ninapro database is a publicly available benchmark for EMG-based gesture recognition research.
+            DB5 contains recordings from 10 intact subjects performing 52 hand movements, each repeated 6 times.
+            Available at{" "}
+            <a href="https://ninapro.hevs.ch" target="_blank" rel="noreferrer" style={{ color: "var(--accent)" }}>
+              ninapro.hevs.ch
+            </a>.
           </p>
         </div>
 
-        <div style={{ marginTop: 40, display: "flex", gap: 12 }}>
+        {/* CTA */}
+        <div style={{ marginTop: 56, display: "flex", gap: 12 }}>
           <button onClick={() => navigate("/demo")} style={{
-            background: "var(--accent)", color: "#fff",
-            border: "none", borderRadius: 100,
-            padding: "11px 28px", fontSize: 14,
-            fontFamily: "var(--font)", fontWeight: 500, cursor: "pointer"
+            background: "var(--accent)", color: "#fff", border: "none",
+            borderRadius: 100, padding: "13px 32px", fontSize: 15,
+            fontFamily: "var(--font)", fontWeight: 500, cursor: "pointer",
+            boxShadow: "0 4px 24px rgba(255,45,120,0.3)"
           }}>Try the demo</button>
-          <a href="https://github.com/Jaden300/myosignal" target="_blank" rel="noreferrer" style={{
-            background: "var(--bg-secondary)", color: "var(--text)",
+          <button onClick={() => navigate("/about")} style={{
+            background: "transparent", color: "var(--text)",
             border: "1px solid var(--border-mid)", borderRadius: 100,
-            padding: "10px 24px", fontSize: 14, textDecoration: "none", fontWeight: 400
-          }}>View source</a>
+            padding: "13px 28px", fontSize: 15,
+            fontFamily: "var(--font)", fontWeight: 400, cursor: "pointer",
+          }}>About the project</button>
         </div>
+
       </div>
 
-    <Footer />
+      <Footer />
     </div>
   )
 }

@@ -8,6 +8,7 @@ import time
 import numpy as np
 import scipy.io as sio
 from scipy.signal import butter, filtfilt
+from hand3d import Hand3DWidget
 
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
@@ -178,6 +179,21 @@ def execute_action(gesture_name):
     elif gesture_name == "fist":
         press_space()
     time.sleep(0.02)
+
+
+def computeFingerCurls(emg_window):
+    if not emg_window:
+        return [0,0,0,0,0]
+    nCh = len(emg_window[0])
+    mav = [sum(abs(row[ch]) for row in emg_window) / len(emg_window) for ch in range (nCh)]
+    peak = max(mav+[0.0001])
+    n = [v / peak for v in mav]
+    return [(n[0] + n[1]) / 2,   # index
+         (n[2] + n[3]) / 2,   # middle
+         (n[4] + n[5]) / 2,   # ring
+         (n[6] + n[7]) / 2,   # pinky
+         (n[8] + n[9]) / 2,   # thumb
+     ]
 
 class WaveformWidget(QWidget):
     def __init__(self):
@@ -537,6 +553,9 @@ class MyojamWindow(QMainWindow):
         root.addWidget(lbl)
         self.waveform = WaveformWidget()
         root.addWidget(self.waveform)
+        self.hand3d = Hand3DWidget()
+        root.addWidget(self.hand3d)
+ 
 
         # Prediction card
         pred_frame = QFrame()
@@ -673,6 +692,7 @@ class MyojamWindow(QMainWindow):
                 "font-size:36px; font-weight:600; color:#FF2D78; letter-spacing:-1px;")
             self.conf_bar.set_value(0, ACCENT)
             self.waveform._data = [0.0] * 200
+            self.hand3d.reset()
             self.waveform._prev = [0.0] * 200
             self.waveform._progress = 1.0
             self.waveform.update()
@@ -714,6 +734,10 @@ class MyojamWindow(QMainWindow):
         for gname, btn in self.gesture_buttons.items():
             btn.set_active(gname == gesture_name)
         self.last_gesture = gesture_name
+
+        from desktop_app.myojam import computeFingerCurls
+        curls = computeFingerCurls(window) if window else [0,0,0,0,0]
+        self.hand3d.update_gesture(gesture_name, curls)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:

@@ -1,127 +1,207 @@
 import Navbar from "./Navbar"
+import { useNavigate } from "react-router-dom"
 import Footer from "./Footer"
 
-const steps = [
+const VALUES = [
   {
-    number: "01",
-    title: "Surface EMG acquisition",
-    body: "Bipolar Ag/AgCl surface electrodes are placed over the flexor digitorum superficialis and extensor carpi radialis muscle groups of the forearm. The MyoWare 2.0 sensor amplifies and rectifies the raw differential EMG signal, which is then digitized at 200 Hz via an Arduino Uno R3 and transmitted over USB serial at 9600 baud.",
-    tag: "Hardware"
+    title: "Technology should adapt to people",
+    body: "Most assistive tech forces users to conform to hardware constraints. We believe the opposite — the system should learn to understand you, not the other way around.",
   },
   {
-    number: "02",
-    title: "Bandpass filtering & windowing",
-    body: "The raw signal undergoes 4th-order Butterworth bandpass filtering between 20–90 Hz to attenuate DC offset, movement artefact, and high-frequency noise while preserving the physiologically relevant EMG frequency band. A sliding window of 200 samples (1 second at 200 Hz) with 50% overlap is applied to segment the continuous signal stream into discrete classification epochs.",
-    tag: "Signal Processing"
+    title: "Open source by default",
+    body: "Every line of code, every model weight decision, every dataset choice is public. If myojam helps someone, we want them to be able to understand, modify, and build on it.",
   },
   {
-    number: "03",
-    title: "Feature extraction",
-    body: "For each epoch across all 16 input channels, we extract a 64-dimensional feature vector comprising time-domain descriptors — Mean Absolute Value (MAV), Root Mean Square (RMS), Zero Crossing rate (ZC), and Waveform Length (WL). These features encode the signal's amplitude envelope, frequency content, and morphological complexity, providing a compact yet discriminative representation of muscular activation state.",
-    tag: "Feature Engineering"
-  },
-  {
-    number: "04",
-    title: "Random Forest classification",
-    body: "The feature vector is passed to a hyperparameter-tuned Random Forest classifier trained on the Ninapro DB5 dataset — 16,269 labeled windows across 10 subjects and 3 exercise protocols. RandomizedSearchCV over 100 parameter configurations optimized tree depth, ensemble size, and split criteria. The model achieves 84.85% cross-subject accuracy across 6 gesture classes, outputting both a class prediction and a full posterior probability distribution.",
-    tag: "Machine Learning"
-  },
-  {
-    number: "05",
-    title: "Action mapping & system control",
-    body: "The predicted gesture label is mapped to a discrete computer interaction primitive via a configurable action table. Cursor translation is implemented through the macOS CoreGraphics CGEventCreateMouseEvent API, enabling hardware-level pointer repositioning. Keyboard events are synthesized via osascript key code injection. The full inference-to-actuation latency is under 50ms.",
-    tag: "System Integration"
-  },
-  {
-    number: "06",
-    title: "Real-time visualization",
-    body: "The web platform renders live EMG waveforms, per-class probability distributions, and a MAV-driven 3D hand kinematic model via Three.js. The desktop application mirrors this feedback locally, displaying the classified gesture, confidence score, and a scrolling waveform widget — giving users immediate, intuitive confirmation of the system's interpretation of their muscular intent.",
-    tag: "Interface"
+    title: "Research-grade, human-scale",
+    body: "The underlying science — EMG signal processing, gesture classification, real-time inference — is rigorous. But the experience should feel as simple as flexing a finger.",
   },
 ]
 
-export default function HowItWorks() {
+const TIMELINE = [
+  { when: "Late 2024", what: "Project started as a personal challenge: build a working EMG classifier from scratch using public data." },
+  { when: "Early 2025", what: "First working pipeline — raw Arduino signal to gesture prediction in under 50ms. Trained on Ninapro DB5 across 10 subjects." },
+  { when: "March 2025", what: "Full-stack web demo launched at myojam.com. Live EMG visualization, 3D hand model, and no-hardware dataset mode." },
+  { when: "Now", what: "Open source, actively maintained. Personal model training (collect your own data, retrain on your own arm) in progress." },
+]
+
+export default function About() {
+  const navigate = useNavigate()
+
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
-      <div style={{ maxWidth: 820, margin: "0 auto", padding: "100px 32px 80px" }}>
 
-        <div style={{ marginBottom: 72 }}>
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 6,
-            background: "var(--accent-soft)", border: "1px solid rgba(255,45,120,0.15)",
-            borderRadius: 100, padding: "5px 16px",
-            fontSize: 13, color: "var(--accent)", fontWeight: 500, marginBottom: 24
-          }}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)", display: "inline-block" }}/>
-            Technical architecture
-          </div>
-          <h1 style={{
-            fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 600,
-            letterSpacing: "-1.5px", color: "var(--text)", marginBottom: 20
-          }}>How myojam works</h1>
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: "120px 32px 80px" }}>
+
+        {/* Header */}
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 6,
+          background: "var(--accent-soft)", border: "1px solid rgba(255,45,120,0.15)",
+          borderRadius: 100, padding: "5px 16px",
+          fontSize: 13, color: "var(--accent)", fontWeight: 500, marginBottom: 32
+        }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)", display: "inline-block" }} />
+          Open source · Assistive technology
+        </div>
+
+        <h1 style={{
+          fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 600,
+          letterSpacing: "-2px", lineHeight: 1.05, marginBottom: 28, color: "var(--text)"
+        }}>
+          We believe muscle<br />signals shouldn't be<br />
+          <span style={{ color: "var(--accent)" }}>a barrier.</span>
+        </h1>
+
+        <p style={{
+          fontSize: 17, color: "var(--text-secondary)", lineHeight: 1.75,
+          fontWeight: 300, marginBottom: 64
+        }}>
+          myojam is an open-source assistive technology project that lets people control a computer
+          using surface EMG signals from their forearm — no keyboard, no mouse, no hands required.
+          It started as a personal research project and grew into something we think could genuinely
+          help people.
+        </p>
+
+        {/* Mission */}
+        <div style={{
+          background: "var(--bg-secondary)", borderRadius: "var(--radius)",
+          padding: "40px", border: "1px solid var(--border)", marginBottom: 64
+        }}>
           <p style={{
-            fontSize: 17, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7
+            fontSize: 13, fontWeight: 500, color: "var(--accent)",
+            letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 16
+          }}>Our mission</p>
+          <p style={{
+            fontSize: 20, fontWeight: 500, color: "var(--text)",
+            lineHeight: 1.6, letterSpacing: "-0.3px"
           }}>
-            From electrode to action — the full signal processing and inference pipeline, 
-            documented in technical detail.
+            To make gesture-based human-computer interaction accessible, open, and free —
+            starting with people who need it most.
           </p>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-          {steps.map((step, i) => (
-            <div key={step.number} style={{
-              display: "grid", gridTemplateColumns: "80px 1fr",
-              gap: 32, padding: "40px 0",
-              borderBottom: i < steps.length - 1 ? "1px solid var(--border)" : "none"
-            }}>
-              {/* Number + line */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0 }}>
-                <div style={{
-                  width: 44, height: 44, borderRadius: "50%",
-                  background: "var(--accent-soft)", border: "1px solid rgba(255,45,120,0.2)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 13, fontWeight: 600, color: "var(--accent)", flexShrink: 0
-                }}>
-                  {step.number}
-                </div>
-                {i < steps.length - 1 && (
-                  <div style={{ width: 1, flex: 1, background: "var(--border)", marginTop: 12 }}/>
-                )}
-              </div>
+        {/* What it is */}
+        <h2 style={{
+          fontSize: 26, fontWeight: 600, letterSpacing: "-0.5px",
+          color: "var(--text)", marginBottom: 20
+        }}>What myojam actually does</h2>
+        <p style={{
+          fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.75,
+          fontWeight: 300, marginBottom: 48
+        }}>
+          myojam reads electrical signals from your muscles using surface EMG electrodes — 
+          the same technology used in clinical prosthetics research, made accessible with 
+          consumer hardware. A machine learning model trained on public research data classifies 
+          which hand gesture you're making, and maps it to a real computer action: moving the cursor, 
+          clicking, or pressing a key. The whole pipeline runs in under 50ms, locally on your machine.
+          No cloud, no subscription, no data sent anywhere.
+        </p>
 
-              {/* Content */}
-              <div style={{ paddingBottom: i < steps.length - 1 ? 0 : 0 }}>
-                <div style={{
-                  display: "inline-block",
-                  fontSize: 11, fontWeight: 500, color: "var(--accent)",
-                  background: "var(--accent-soft)", border: "1px solid rgba(255,45,120,0.15)",
-                  borderRadius: 100, padding: "2px 10px", marginBottom: 12
-                }}>
-                  {step.tag}
-                </div>
-                <h3 style={{
-                  fontSize: 18, fontWeight: 600, color: "var(--text)",
-                  letterSpacing: "-0.3px", marginBottom: 12
-                }}>
-                  {step.title}
-                </h3>
-                <p style={{
-                  fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.75, fontWeight: 300
-                }}>
-                  {step.body}
-                </p>
-              </div>
+        {/* Values */}
+        <h2 style={{
+          fontSize: 26, fontWeight: 600, letterSpacing: "-0.5px",
+          color: "var(--text)", marginBottom: 24
+        }}>What we believe</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 64 }}>
+          {VALUES.map((v, i) => (
+            <div key={i} style={{
+              background: "var(--bg-secondary)", borderRadius: "var(--radius)",
+              padding: "28px 32px", border: "1px solid var(--border)",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
+            }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = "translateY(-3px)"
+                e.currentTarget.style.boxShadow = "0 10px 32px rgba(255,45,120,0.08)"
+                e.currentTarget.style.borderColor = "rgba(255,45,120,0.18)"
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = "translateY(0)"
+                e.currentTarget.style.boxShadow = "none"
+                e.currentTarget.style.borderColor = "var(--border)"
+              }}
+            >
+              <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>{v.title}</div>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, fontWeight: 300 }}>{v.body}</p>
             </div>
           ))}
         </div>
 
-        <div style={{ marginTop: 64, textAlign: "center", fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300 }}>
-          © 2025 myojam™. All rights reserved.
+        {/* Timeline */}
+        <h2 style={{
+          fontSize: 26, fontWeight: 600, letterSpacing: "-0.5px",
+          color: "var(--text)", marginBottom: 32
+        }}>How we got here</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 64 }}>
+          {TIMELINE.map((entry, i) => (
+            <div key={i} style={{
+              display: "grid", gridTemplateColumns: "120px 1fr",
+              gap: 24, padding: "24px 0",
+              borderBottom: i < TIMELINE.length - 1 ? "1px solid var(--border)" : "none"
+            }}>
+              <div style={{
+                fontSize: 13, fontWeight: 500, color: "var(--accent)",
+                paddingTop: 2
+              }}>{entry.when}</div>
+              <div style={{
+                fontSize: 14, color: "var(--text-secondary)",
+                lineHeight: 1.7, fontWeight: 300
+              }}>{entry.what}</div>
+            </div>
+          ))}
         </div>
+
+        {/* Open source callout */}
+        <div style={{
+          background: "var(--accent-soft)", borderRadius: "var(--radius)",
+          padding: "36px 40px", border: "1px solid rgba(255,45,120,0.15)",
+          marginBottom: 48
+        }}>
+          <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 10 }}>
+            myojam is fully open source
+          </div>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, fontWeight: 300, marginBottom: 20 }}>
+            The full codebase — signal processing pipeline, ML model, web frontend, FastAPI backend,
+            and macOS desktop app — is public on GitHub under the MIT license. Fork it, build on it,
+            improve it.
+          </p>
+          <a
+            href="https://github.com/Jaden300/myojam"
+            target="_blank" rel="noreferrer"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              fontSize: 14, fontWeight: 500, color: "var(--accent)",
+              textDecoration: "none"
+            }}
+          >
+            View on GitHub ↗
+          </a>
+        </div>
+
+        {/* CTAs */}
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          <button onClick={() => navigate("/demo")} style={{
+            background: "var(--accent)", color: "#fff", border: "none",
+            borderRadius: 100, padding: "13px 32px", fontSize: 15,
+            fontFamily: "var(--font)", fontWeight: 500, cursor: "pointer",
+            boxShadow: "0 4px 24px rgba(255,45,120,0.3)"
+          }}>Try the demo</button>
+          <button onClick={() => navigate("/how-it-works")} style={{
+            background: "transparent", color: "var(--text)",
+            border: "1px solid var(--border-mid)", borderRadius: 100,
+            padding: "13px 28px", fontSize: 15,
+            fontFamily: "var(--font)", fontWeight: 400, cursor: "pointer",
+          }}>How it works</button>
+          <button onClick={() => navigate("/team")} style={{
+            background: "transparent", color: "var(--text)",
+            border: "1px solid var(--border-mid)", borderRadius: 100,
+            padding: "13px 28px", fontSize: 15,
+            fontFamily: "var(--font)", fontWeight: 400, cursor: "pointer",
+          }}>Meet the team</button>
+        </div>
+
       </div>
 
-    <Footer />
+      <Footer />
     </div>
   )
 }
