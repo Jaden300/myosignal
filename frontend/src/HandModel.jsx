@@ -48,7 +48,8 @@ export default function HandModel({ gestureName, fingerCurls, skinColor = "#f5dc
 
     function makePalm() {
       const g = new THREE.BufferGeometry()
-      const wW = 0.30, fW = 0.40, palmH = 0.26, d = 0.095
+      // CHANGE: wW narrowed 0.30→0.24 to reduce horizontal span
+      const wW = 0.24, fW = 0.40, palmH = 0.26, d = 0.095
       const wZ = d * 0.38, fZ = d * 0.5
       const archY = 0.012
       const v = new Float32Array([
@@ -85,7 +86,7 @@ export default function HandModel({ gestureName, fingerCurls, skinColor = "#f5dc
     palm.position.y = -0.15
     handGroup.add(palm)
 
-    // NO palmEdge cylinders — those were the rogue piece
+    // NO palmEdge cylinders
 
     function seg(len, rTop, rBot, segs = 12) {
       const g = new THREE.CylinderGeometry(rTop, rBot, len, segs)
@@ -138,8 +139,8 @@ export default function HandModel({ gestureName, fingerCurls, skinColor = "#f5dc
     })
 
     const thumbGroup = new THREE.Group()
-    thumbGroup.position.set(0.238, -0.065, 0.010)
-    thumbGroup.rotation.z = -Math.PI * 0.18
+    thumbGroup.position.set(0.205, -0.090, 0.010)
+    thumbGroup.rotation.z = -Math.PI * 0.22
     thumbGroup.rotation.y =  Math.PI * 0.12
     thumbGroup.rotation.x = -Math.PI * 0.04
     handGroup.add(thumbGroup)
@@ -213,7 +214,10 @@ export default function HandModel({ gestureName, fingerCurls, skinColor = "#f5dc
       })
 
       const tc = s.current[4] * MAX * 0.75
-      if (s.thumbPivots[0]) s.thumbPivots[0].rotation.x = tc * 0.38
+      if (s.thumbPivots[0]) {
+        s.thumbPivots[0].rotation.x = tc * 0.38
+        s.thumbPivots[0].rotation.z = -tc * 0.28
+      }
       if (s.thumbPivots[1]) s.thumbPivots[1].rotation.x = tc * 0.68
 
       s.targetRotSpeed = s.autoRotate && !s.isDragging ? 0.0018 : 0
@@ -251,9 +255,9 @@ export default function HandModel({ gestureName, fingerCurls, skinColor = "#f5dc
   }, [autoRotate])
 
   useEffect(() => {
-  if (!stateRef.current) return
-  stateRef.current.skinMat.color.set(skinColor)
-}, [skinColor])
+    if (!stateRef.current) return
+    stateRef.current.skinMat.color.set(skinColor)
+  }, [skinColor])
 
   function handleToggle() {
     setSpinning(true)

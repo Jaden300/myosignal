@@ -473,34 +473,49 @@ class MyojamWindow(QMainWindow):
         self._sensor_mode = False
 
         self.setWindowTitle("myojam")
-        self.setMinimumSize(520, 680)
-        self.resize(520, 680)
+        self.resize(820, 680)
+        self.setMinimumSize(700, 600)
         self.setWindowFlags(Qt.WindowType.Window)
 
-        # Transparent title bar, keep traffic lights
         QTimer.singleShot(150, self._setup_titlebar)
 
-        # Central widget
         central = QWidget()
         central.setStyleSheet("background: #FFFFFF;")
         self.setCentralWidget(central)
 
-        # Remove focus rectangles from all widgets
-        app_instance = QApplication.instance()
-        app_instance.setStyleSheet("* { outline: 0; }")
-
-        # Force title bar transparent via unified toolbar trick
+        QApplication.instance().setStyleSheet("* { outline: 0; }")
         self.setUnifiedTitleAndToolBarOnMac(True)
         self.setStyleSheet("QMainWindow { background: #FFFFFF; }")
 
-        root = QVBoxLayout(central)
-        central.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        root.setContentsMargins(28, 48, 28, 24)
-        root.setSpacing(16)
+        root = QHBoxLayout(central)
+        root.setContentsMargins(0, 0, 0, 0)
+        root.setSpacing(0)
 
-        # Header
+        # LEFT COLUMN (2/3)
+        left_widget = QWidget()
+        left_widget.setStyleSheet("background: #FFFFFF;")
+        left = QVBoxLayout(left_widget)
+        left.setContentsMargins(28, 48, 16, 24)
+        left.setSpacing(16)
+        root.addWidget(left_widget, 2)   # <-- was left.addWidget, that was the bug
+
+        # RIGHT COLUMN (1/3)
+        right_widget = QWidget()
+        right_widget.setStyleSheet("background: #FAFAFA; border-left: 1px solid rgba(0,0,0,0.06);")
+        right = QVBoxLayout(right_widget)
+        right.setContentsMargins(12, 48, 12, 24)
+        right.setSpacing(8)
+        root.addWidget(right_widget, 1)  # <-- was left.addWidget, that was the bug
+
+        hand_label = QLabel("3D model")
+        hand_label.setStyleSheet("font-size: 13px; font-weight: 500; color: #1D1D1F; border: none; background: transparent;")
+        right.addWidget(hand_label)
+        self.hand3d = Hand3DWidget()
+        right.addWidget(self.hand3d, 1)
+        right.addStretch()
+
+        # Header (goes into left)
         header = QHBoxLayout()
-
         logo_icon  = QLabel()
         logo_px    = QPixmap(26, 26)
         logo_px.fill(Qt.GlobalColor.transparent)
@@ -531,7 +546,6 @@ class MyojamWindow(QMainWindow):
         self.mode_label = QLabel("Dataset mode")
         self.mode_label.setStyleSheet("font-size: 12px; color: #AEAEB2; background: #F5F5F7; padding: 4px 12px; border-radius: 100px; border: none;")
         header.addWidget(self.mode_label)
-        root.addLayout(header)
 
         self.sensor_btn = QPushButton("Connect sensor")
         self.sensor_btn.setFixedHeight(32)
@@ -544,18 +558,15 @@ class MyojamWindow(QMainWindow):
         """)
         self.sensor_btn.clicked.connect(self.toggle_sensor)
         header.addWidget(self.sensor_btn)
+        left.addLayout(header)
 
-        root.addWidget(self._divider())
+        left.addWidget(self._divider())
 
-        # Waveform
         lbl = QLabel("EMG signal")
         lbl.setStyleSheet("font-size: 13px; font-weight: 500; color: #1D1D1F;")
-        root.addWidget(lbl)
+        left.addWidget(lbl)
         self.waveform = WaveformWidget()
-        root.addWidget(self.waveform)
-        self.hand3d = Hand3DWidget()
-        root.addWidget(self.hand3d)
- 
+        left.addWidget(self.waveform)
 
         # Prediction card
         pred_frame = QFrame()
@@ -592,17 +603,16 @@ class MyojamWindow(QMainWindow):
         right_pred.addWidget(conf_title)
         right_pred.addWidget(self.conf_label)
         pred_layout.addLayout(right_pred)
-        root.addWidget(pred_frame)
+        left.addWidget(pred_frame)
 
         self.conf_bar = ConfidenceBar()
-        root.addWidget(self.conf_bar)
+        left.addWidget(self.conf_bar)
 
-        root.addWidget(self._divider())
+        left.addWidget(self._divider())
 
-        # Gesture buttons
         glbl = QLabel("Gesture map")
         glbl.setStyleSheet("font-size:13px; font-weight:500; color:#1D1D1F;")
-        root.addWidget(glbl)
+        left.addWidget(glbl)
 
         btn_row = QHBoxLayout()
         btn_row.setSpacing(8)
@@ -610,10 +620,10 @@ class MyojamWindow(QMainWindow):
         for gid, gname, action, symbol in GESTURES:
             btn = GestureButton(gid, gname, action, symbol)
             self.gesture_buttons[gname] = btn
+            btn.mousePressEvent = lambda e, g=gid: self._on_gesture_btn_click(g)
             btn_row.addWidget(btn)
-        root.addLayout(btn_row)
+        left.addLayout(btn_row)
 
-        # Start button
         self.start_btn = QPushButton("Start")
         self.start_btn.setFixedHeight(48)
         self.start_btn.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -624,19 +634,17 @@ class MyojamWindow(QMainWindow):
             QPushButton:pressed { background:#C21B52; }
         """)
         self.start_btn.clicked.connect(self.toggle_active)
-        root.addWidget(self.start_btn)
+        left.addWidget(self.start_btn)
 
         hint = QLabel("Press 1–6 while active to trigger gestures")
         hint.setStyleSheet("font-size:11px; color:#AEAEB2; font-weight:300;")
         hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        root.addWidget(hint)
+        left.addWidget(hint)
 
         for w in central.findChildren(QLabel):
             w.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gesture_done.connect(self._on_gesture_done)
-
-        # Global key listener
         self.global_keys = GlobalKeyListener()
         self.global_keys.key_pressed.connect(self.on_global_key)
         self.global_keys.start()
@@ -734,8 +742,6 @@ class MyojamWindow(QMainWindow):
         for gname, btn in self.gesture_buttons.items():
             btn.set_active(gname == gesture_name)
         self.last_gesture = gesture_name
-
-        from desktop_app.myojam import computeFingerCurls
         curls = computeFingerCurls(window) if window else [0,0,0,0,0]
         self.hand3d.update_gesture(gesture_name, curls)
 
@@ -816,6 +822,18 @@ class MyojamWindow(QMainWindow):
                 pass
             except Exception:
                 time.sleep(0.01)
+
+
+    def _on_gesture_btn_click(self, gesture_id):
+        """Trigger a dataset sample when a gesture button is clicked."""
+        if self._sensor_mode:
+            return  # sensor mode — don't override
+        if not self._busy:
+            self._busy = True
+            def run():
+                self._process_gesture(gesture_id)
+                self._busy = False
+            threading.Thread(target=run, daemon=True).start()
 
 
 if __name__ == "__main__":
