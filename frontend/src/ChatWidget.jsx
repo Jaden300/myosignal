@@ -2,11 +2,17 @@ import { useState, useRef, useEffect } from "react"
 
 const API = import.meta.env.VITE_API_URL
 
+const STARTERS = [
+  "What is myojam?",
+  "How do I use it?",
+  "Do I need special hardware?",
+  "Is it free?",
+]
+
 function SillyFace({ blinking }) {
   return (
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
       <circle cx="14" cy="14" r="13" fill="#FF2D78"/>
-      {/* Eyes */}
       {blinking ? (
         <>
           <rect x="7.5" y="12" width="4" height="1.5" rx="1" fill="white"/>
@@ -20,13 +26,35 @@ function SillyFace({ blinking }) {
           <circle cx="19" cy="12.5" r="1" fill="#1D1D1F"/>
         </>
       )}
-      {/* Smile */}
       <path d="M9 17.5 Q14 22 19 17.5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-      {/* Rosy cheeks */}
       <circle cx="7" cy="16" r="2" fill="rgba(255,255,255,0.25)"/>
       <circle cx="21" cy="16" r="2" fill="rgba(255,255,255,0.25)"/>
     </svg>
   )
+}
+
+function StreamingText({ text }) {
+  const [displayed, setDisplayed] = useState("")
+  const [done, setDone] = useState(false)
+  const idx = useRef(0)
+
+  useEffect(() => {
+    idx.current = 0
+    setDisplayed("")
+    setDone(false)
+    if (!text) return
+    const interval = setInterval(() => {
+      idx.current++
+      setDisplayed(text.slice(0, idx.current))
+      if (idx.current >= text.length) {
+        clearInterval(interval)
+        setDone(true)
+      }
+    }, 8) // ~125 chars/sec — fast but visible
+    return () => clearInterval(interval)
+  }, [text])
+
+  return <span>{displayed}{!done && <span style={{ opacity: 0.4 }}>▍</span>}</span>
 }
 
 export default function ChatWidget() {
@@ -35,12 +63,12 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState([
     { role: "assistant", content: "Hey! 👋 I'm the myojam assistant. Ask me anything about the project, setup, or how it works!" }
   ])
+  const [showStarters, setShowStarters] = useState(true)
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [blinking, setBlinking] = useState(false)
   const bottomRef = useRef(null)
 
-  // Handle open/close animation
   useEffect(() => {
     if (open) {
       setVisible(true)
@@ -50,7 +78,6 @@ export default function ChatWidget() {
     }
   }, [open])
 
-  // Random blink
   useEffect(() => {
     const blink = () => {
       setBlinking(true)
@@ -63,11 +90,12 @@ export default function ChatWidget() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+  }, [messages, loading])
 
-  async function send() {
-    const text = input.trim()
+  async function send(text) {
+    text = (text || input).trim()
     if (!text || loading) return
+    setShowStarters(false)
     const newMessages = [...messages, { role: "user", content: text }]
     setMessages(newMessages)
     setInput("")
@@ -97,10 +125,9 @@ export default function ChatWidget() {
           from { opacity: 1; transform: scale(1) translateY(0); }
           to   { opacity: 0; transform: scale(0.92) translateY(12px); }
         }
-        @keyframes popIn {
-          0%   { transform: scale(1); }
-          40%  { transform: scale(1.15); }
-          100% { transform: scale(1); }
+        @keyframes dotBounce {
+          0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+          40%            { transform: translateY(-5px); opacity: 1; }
         }
       `}</style>
 
@@ -113,9 +140,7 @@ export default function ChatWidget() {
           background: "transparent", border: "none",
           cursor: "pointer", padding: 0,
           boxShadow: "0 4px 24px rgba(255,45,120,0.4)",
-          borderRadius: "50%",
-          animation: open ? "none" : "popIn 0.3s ease",
-          transition: "transform 0.2s ease, box-shadow 0.2s ease",
+          transition: "transform 0.2s ease",
         }}
         onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
         onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
@@ -135,7 +160,7 @@ export default function ChatWidget() {
       {visible && (
         <div style={{
           position: "fixed", bottom: 88, right: 24, zIndex: 200,
-          width: 340, height: 480,
+          width: 340, height: 500,
           background: "var(--bg)", border: "1px solid var(--border)",
           borderRadius: "var(--radius)", boxShadow: "0 8px 48px rgba(0,0,0,0.12)",
           display: "flex", flexDirection: "column", overflow: "hidden",
@@ -148,7 +173,6 @@ export default function ChatWidget() {
           <div style={{
             padding: "14px 18px", borderBottom: "1px solid var(--border)",
             display: "flex", alignItems: "center", gap: 10,
-            background: "var(--bg)"
           }}>
             <SillyFace blinking={blinking} />
             <div>
@@ -171,27 +195,56 @@ export default function ChatWidget() {
                 borderRadius: m.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
                 padding: "10px 14px", fontSize: 13, lineHeight: 1.6, fontWeight: 300
               }}>
-                {m.content}
+                {/* Stream only the latest assistant message */}
+                {m.role === "assistant" && i === messages.length - 1
+                  ? <StreamingText text={m.content} />
+                  : m.content
+                }
               </div>
             ))}
+
             {loading && (
               <div style={{
                 alignSelf: "flex-start", background: "var(--bg-secondary)",
-                borderRadius: "16px 16px 16px 4px", padding: "10px 16px",
-                fontSize: 18, letterSpacing: 2
+                borderRadius: "16px 16px 16px 4px", padding: "12px 16px",
+                display: "flex", gap: 4
               }}>
-                <span style={{ animation: "popIn 0.8s infinite" }}>·</span>
-                <span style={{ animation: "popIn 0.8s 0.15s infinite" }}>·</span>
-                <span style={{ animation: "popIn 0.8s 0.3s infinite" }}>·</span>
+                {[0, 0.15, 0.3].map((delay, i) => (
+                  <div key={i} style={{
+                    width: 6, height: 6, borderRadius: "50%",
+                    background: "var(--accent)",
+                    animation: `dotBounce 1s ${delay}s infinite`
+                  }}/>
+                ))}
               </div>
             )}
+
+            {/* Starter prompts — only shown before first user message */}
+            {showStarters && !loading && (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 }}>
+                {STARTERS.map(s => (
+                  <button key={s} onClick={() => send(s)} style={{
+                    background: "var(--accent-soft)",
+                    border: "1px solid rgba(255,45,120,0.2)",
+                    borderRadius: 100, padding: "6px 12px",
+                    fontSize: 12, color: "var(--accent)", fontWeight: 400,
+                    cursor: "pointer", fontFamily: "var(--font)",
+                    transition: "background 0.15s"
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.background = "rgba(255,45,120,0.12)"}
+                    onMouseLeave={e => e.currentTarget.style.background = "var(--accent-soft)"}
+                  >{s}</button>
+                ))}
+              </div>
+            )}
+
             <div ref={bottomRef}/>
           </div>
 
           {/* Input */}
           <div style={{
             padding: "12px 14px", borderTop: "1px solid var(--border)",
-            display: "flex", gap: 8, background: "var(--bg)"
+            display: "flex", gap: 8
           }}>
             <input
               value={input}
@@ -209,7 +262,7 @@ export default function ChatWidget() {
               onBlur={e => e.target.style.borderColor = "var(--border)"}
             />
             <button
-              onClick={send}
+              onClick={() => send()}
               disabled={loading || !input.trim()}
               style={{
                 background: "var(--accent)", color: "#fff", border: "none",
