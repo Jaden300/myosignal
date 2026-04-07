@@ -737,8 +737,6 @@ export default function App() {
         {/* Feedback button */}
         <button
           data-tally-open="jaWR24"
-          data-tally-emoji-text="💬"
-          data-tally-emoji-animation="wave"
           data-tally-width="400"
           style={{
             position: "fixed", bottom: 24, left: 24, zIndex: 100,

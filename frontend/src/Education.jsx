@@ -210,7 +210,7 @@ export default function Education() {
             padding: "0 24px"
           }}>
             <iframe
-              src="https://tally.so/embed/jaWRk1?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+              src="https://tally.so/embed/jaWRk1?hideTitle=1&transparentBackground=1&dynamicHeight=1"
               width="100%"
               height="600"
               frameBorder="0"

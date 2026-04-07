@@ -60,7 +60,7 @@ export default function Contact() {
           border: "1px solid var(--border)", overflow: "hidden"
         }}>
           <iframe
-            src="https://tally.so/embed/gDZlkJ?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+            src="https://tally.so/embed/gDZlkJ?hideTitle=1&transparentBackground=1&dynamicHeight=1"
             width="100%"
             height="500"
             frameBorder="0"

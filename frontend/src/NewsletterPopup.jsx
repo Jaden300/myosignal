@@ -99,7 +99,7 @@ export default function NewsletterPopup() {
         {/* Tally embed */}
         <div style={{ overflowY: "auto" }}>
           <iframe
-            src="https://tally.so/embed/NEWSLETTER_ID?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+            src="https://tally.so/embed/rjL4pR?hideTitle=1&transparentBackground=1&dynamicHeight=1"
             width="100%"
             height="280"
             frameBorder="0"
