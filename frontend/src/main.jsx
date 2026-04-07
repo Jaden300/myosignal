@@ -12,12 +12,14 @@ import Terms from "./Terms"
 import Privacy from "./Privacy"
 import Footer from "./Footer"
 import ScrollToTop from "./ScrollToTop"
+import ChatWidget from "./ChatWidget"
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <ScrollToTop />
+      <ChatWidget /> 
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/demo" element={<App />} />

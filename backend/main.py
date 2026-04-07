@@ -6,6 +6,9 @@ import pickle
 from scipy.signal import butter, filtfilt
 import os
 import random
+from openai import OpenAI
+from pydantic import BaseModel
+from typing import List
 
 app = FastAPI(title="myojam API")
 
@@ -16,6 +19,40 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+SYSTEM_PROMPT = """You are a helpful assistant for myojam, an open-source assistive technology project that lets people control their computer using surface EMG signals from their forearm muscles.
+
+Key facts about myojam:
+- Classifies 6 hand gestures: index flex, middle flex, ring flex, pinky flex, thumb flex, fist
+- Each gesture maps to a computer action: cursor movement, left click, or spacebar
+- Uses a Random Forest model trained on the Ninapro DB5 dataset (10 subjects, 84.85% accuracy)
+- Requires a MyoWare 2.0 sensor + Arduino Uno R3 for real use (sensor is optional for the web demo)
+- Free, open source, MIT license — available at github.com/Jaden300/myojam
+- Web demo available at myojam.com/demo — no hardware needed
+- macOS desktop app available for download
+- Built by Jaden W., a student developer
+
+Keep answers concise and friendly. If you don't know something specific, say so honestly."""
+
+class Message(BaseModel):
+    role: str
+    content: str
+
+class ChatRequest(BaseModel):
+    messages: List[Message]
+
+@app.post("/chat")
+async def chat(req: ChatRequest):
+    response = openai_client.chat.completions.create(
+        model="gpt-4o-mini",  # cheap and fast — good for customer service
+        messages=[{"role": "system", "content": SYSTEM_PROMPT}] +
+                 [{"role": m.role, "content": m.content} for m in req.messages],
+        max_tokens=400,
+        temperature=0.7,
+    )
+    return {"reply": response.choices[0].message.content}
 
 # Load model and config once on startup
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "../model/gesture_classifier.pkl")

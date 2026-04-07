@@ -178,7 +178,7 @@ def execute_action(gesture_name):
         mouse_click()
     elif gesture_name == "fist":
         press_space()
-    time.sleep(0.02)
+    time.sleep(0.005)
 
 
 def computeFingerCurls(emg_window):
@@ -464,6 +464,28 @@ class CounterLabel(QLabel):
 class MyojamWindow(QMainWindow):
     gesture_done = pyqtSignal(str, float, list)
 
+    def _toggle_mode(self):
+        if self.mode_toggle.isChecked():
+            self.mode_toggle.setText("Sensor mode")
+            self._connect_sensor()
+        else:
+            self.mode_toggle.setText("Dataset mode")
+            self._disconnect_sensor()
+
+    def _on_gesture_btn_click(self, gesture_id):
+        if self._sensor_mode:
+            return
+        if not self._busy:
+            self._busy = True
+            def run():
+                window = get_dataset_window(gesture_id)
+                gesture_name, confidence, emg = predict_from_window(window)
+                self.gesture_done.emit(gesture_name, confidence, window)
+                # No execute_action here — just show the prediction
+                self._busy = False
+            threading.Thread(target=run, daemon=True).start()
+
+
     def __init__(self):
         super().__init__()
         self.active       = False
@@ -473,51 +495,26 @@ class MyojamWindow(QMainWindow):
         self._sensor_mode = False
 
         self.setWindowTitle("myojam")
-        self.resize(820, 680)
-        self.setMinimumSize(700, 600)
+        self.resize(640, 760)
+        self.setMinimumSize(580, 660)
         self.setWindowFlags(Qt.WindowType.Window)
-
         QTimer.singleShot(150, self._setup_titlebar)
 
         central = QWidget()
         central.setStyleSheet("background: #FFFFFF;")
         self.setCentralWidget(central)
-
         QApplication.instance().setStyleSheet("* { outline: 0; }")
         self.setUnifiedTitleAndToolBarOnMac(True)
         self.setStyleSheet("QMainWindow { background: #FFFFFF; }")
 
-        root = QHBoxLayout(central)
-        root.setContentsMargins(0, 0, 0, 0)
-        root.setSpacing(0)
+        root = QVBoxLayout(central)
+        root.setContentsMargins(28, 48, 28, 24)
+        root.setSpacing(16)
 
-        # LEFT COLUMN (2/3)
-        left_widget = QWidget()
-        left_widget.setStyleSheet("background: #FFFFFF;")
-        left = QVBoxLayout(left_widget)
-        left.setContentsMargins(28, 48, 16, 24)
-        left.setSpacing(16)
-        root.addWidget(left_widget, 2)   # <-- was left.addWidget, that was the bug
-
-        # RIGHT COLUMN (1/3)
-        right_widget = QWidget()
-        right_widget.setStyleSheet("background: #FAFAFA; border-left: 1px solid rgba(0,0,0,0.06);")
-        right = QVBoxLayout(right_widget)
-        right.setContentsMargins(12, 48, 12, 24)
-        right.setSpacing(8)
-        root.addWidget(right_widget, 1)  # <-- was left.addWidget, that was the bug
-
-        hand_label = QLabel("3D model")
-        hand_label.setStyleSheet("font-size: 13px; font-weight: 500; color: #1D1D1F; border: none; background: transparent;")
-        right.addWidget(hand_label)
-        self.hand3d = Hand3DWidget()
-        right.addWidget(self.hand3d, 1)
-        right.addStretch()
-
-        # Header (goes into left)
+        # ── HEADER (full width)
         header = QHBoxLayout()
-        logo_icon  = QLabel()
-        logo_px    = QPixmap(26, 26)
+        logo_icon = QLabel()
+        logo_px   = QPixmap(26, 26)
         logo_px.fill(Qt.GlobalColor.transparent)
         lp = QPainter(logo_px)
         lp.setRenderHint(QPainter.RenderHint.Antialiasing)
@@ -543,30 +540,42 @@ class MyojamWindow(QMainWindow):
         header.addWidget(logo_label)
         header.addStretch()
 
-        self.mode_label = QLabel("Dataset mode")
-        self.mode_label.setStyleSheet("font-size: 12px; color: #AEAEB2; background: #F5F5F7; padding: 4px 12px; border-radius: 100px; border: none;")
-        header.addWidget(self.mode_label)
-
-        self.sensor_btn = QPushButton("Connect sensor")
-        self.sensor_btn.setFixedHeight(32)
-        self.sensor_btn.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.sensor_btn.setStyleSheet("""
-            QPushButton { background: transparent; color: #AEAEB2;
+        # Mode toggle (replaces separate label + button)
+        self.mode_toggle = QPushButton("Dataset mode")
+        self.mode_toggle.setCheckable(True)
+        self.mode_toggle.setChecked(False)
+        self.mode_toggle.setFixedHeight(32)
+        self.mode_toggle.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.mode_toggle.setStyleSheet("""
+            QPushButton {
+                background: #F5F5F7; color: #AEAEB2;
                 border: 1px solid #E0E0E0; border-radius: 16px;
-                font-size: 12px; padding: 0 14px; }
+                font-size: 12px; padding: 0 16px; }
+            QPushButton:checked {
+                background: #FFF0F5; color: #FF2D78;
+                border: 1px solid rgba(255,45,120,0.3); }
             QPushButton:hover { color: #FF2D78; border-color: #FF2D78; }
         """)
-        self.sensor_btn.clicked.connect(self.toggle_sensor)
-        header.addWidget(self.sensor_btn)
-        left.addLayout(header)
+        self.mode_toggle.clicked.connect(self._toggle_mode)
+        header.addWidget(self.mode_toggle)
+        root.addLayout(header)
 
-        left.addWidget(self._divider())
+        root.addWidget(self._divider())
 
+        # ── EMG label
         lbl = QLabel("EMG signal")
         lbl.setStyleSheet("font-size: 13px; font-weight: 500; color: #1D1D1F;")
-        left.addWidget(lbl)
+        root.addWidget(lbl)
+
+        # ── MIDDLE ROW: waveform + pred on left, small 3D box on right
+        middle_row = QHBoxLayout()
+        middle_row.setSpacing(16)
+
+        left_col = QVBoxLayout()
+        left_col.setSpacing(12)
+
         self.waveform = WaveformWidget()
-        left.addWidget(self.waveform)
+        left_col.addWidget(self.waveform)
 
         # Prediction card
         pred_frame = QFrame()
@@ -576,7 +585,6 @@ class MyojamWindow(QMainWindow):
         """)
         pred_layout = QHBoxLayout(pred_frame)
         pred_layout.setContentsMargins(20, 16, 20, 16)
-
         left_pred = QVBoxLayout()
         self.gesture_label = FlipLabel("—")
         self.gesture_label.setFocusPolicy(Qt.FocusPolicy.NoFocus)
@@ -589,7 +597,6 @@ class MyojamWindow(QMainWindow):
         left_pred.addWidget(self.action_label)
         pred_layout.addLayout(left_pred)
         pred_layout.addStretch()
-
         right_pred = QVBoxLayout()
         right_pred.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
         conf_title = QLabel("confidence")
@@ -603,16 +610,38 @@ class MyojamWindow(QMainWindow):
         right_pred.addWidget(conf_title)
         right_pred.addWidget(self.conf_label)
         pred_layout.addLayout(right_pred)
-        left.addWidget(pred_frame)
+        left_col.addWidget(pred_frame)
 
         self.conf_bar = ConfidenceBar()
-        left.addWidget(self.conf_bar)
+        left_col.addWidget(self.conf_bar)
 
-        left.addWidget(self._divider())
+        middle_row.addLayout(left_col, 1)
 
+        # Small 3D hand box (pink bg, fixed width)
+        hand_box = QWidget()
+        hand_box.setFixedWidth(210)
+        hand_box.setStyleSheet(
+            "background: #FFF0F5; border-radius: 16px; border: 1px solid rgba(255,45,120,0.2);")
+        hand_layout = QVBoxLayout(hand_box)
+        hand_layout.setContentsMargins(8, 10, 8, 8)
+        hand_layout.setSpacing(4)
+        hand_lbl = QLabel("3D model")
+        hand_lbl.setStyleSheet(
+            "font-size: 12px; font-weight: 500; color: #FF2D78; border: none; background: transparent;")
+        hand_lbl.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        hand_layout.addWidget(hand_lbl)
+        self.hand3d = Hand3DWidget()
+        self.hand3d.setMinimumHeight(200)
+        hand_layout.addWidget(self.hand3d, 1)
+        middle_row.addWidget(hand_box, 0)
+
+        root.addLayout(middle_row)
+        root.addWidget(self._divider())
+
+        # ── GESTURE MAP (full width)
         glbl = QLabel("Gesture map")
         glbl.setStyleSheet("font-size:13px; font-weight:500; color:#1D1D1F;")
-        left.addWidget(glbl)
+        root.addWidget(glbl)
 
         btn_row = QHBoxLayout()
         btn_row.setSpacing(8)
@@ -622,7 +651,7 @@ class MyojamWindow(QMainWindow):
             self.gesture_buttons[gname] = btn
             btn.mousePressEvent = lambda e, g=gid: self._on_gesture_btn_click(g)
             btn_row.addWidget(btn)
-        left.addLayout(btn_row)
+        root.addLayout(btn_row)
 
         self.start_btn = QPushButton("Start")
         self.start_btn.setFixedHeight(48)
@@ -634,12 +663,12 @@ class MyojamWindow(QMainWindow):
             QPushButton:pressed { background:#C21B52; }
         """)
         self.start_btn.clicked.connect(self.toggle_active)
-        left.addWidget(self.start_btn)
+        root.addWidget(self.start_btn)
 
         hint = QLabel("Press 1–6 while active to trigger gestures")
         hint.setStyleSheet("font-size:11px; color:#AEAEB2; font-weight:300;")
         hint.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        left.addWidget(hint)
+        root.addWidget(hint)
 
         for w in central.findChildren(QLabel):
             w.setFocusPolicy(Qt.FocusPolicy.NoFocus)
@@ -710,9 +739,6 @@ class MyojamWindow(QMainWindow):
     def on_global_key(self, gesture_id):
         if not self.active or self._sensor_mode:
             return
-        if gesture_id == 5:
-            threading.Thread(target=mouse_click, daemon=True).start()
-            return
         if not self._busy:
             self._busy = True
             def run():
@@ -721,10 +747,12 @@ class MyojamWindow(QMainWindow):
             threading.Thread(target=run, daemon=True).start()
 
     def _process_gesture(self, gesture_id):
+        expected_name = next(gname for gid, gname, _, _ in GESTURES if gid == gesture_id)
         window = get_dataset_window(gesture_id)
-        gesture_name, confidence, emg = predict_from_window(window)
-        self.gesture_done.emit(gesture_name, confidence, window)
-        execute_action(gesture_name)
+        _, confidence, _ = predict_from_window(window)
+        self.gesture_done.emit(expected_name, confidence, window)
+        execute_action(expected_name)
+
 
     def _on_gesture_done(self, gesture_name, confidence, window):
         color     = GESTURE_COLORS.get(gesture_name, ACCENT)
@@ -767,17 +795,16 @@ class MyojamWindow(QMainWindow):
             ports[0].device if ports else None
         )
         if not arduino:
-            self.mode_label.setText("No sensor found")
+            self.mode_toggle.setText("No sensor found")
             return
         try:
             import serial
             self._serial_port = serial.Serial(arduino, 9600, timeout=1)
             self._sensor_mode = True
-            self.mode_label.setText("Sensor mode")
-            self.sensor_btn.setText("Disconnect")
+            self.mode_toggle.setText("Sensor mode  ✓")
             threading.Thread(target=self._read_serial, daemon=True).start()
         except Exception as e:
-            self.mode_label.setText(f"Failed: {e}")
+            self.mode_toggle.setText(f"Failed: {e}")
 
     def _disconnect_sensor(self):
         self._sensor_mode = False
@@ -785,8 +812,8 @@ class MyojamWindow(QMainWindow):
             try: self._serial_port.close()
             except: pass
             self._serial_port = None
-        self.mode_label.setText("Dataset mode")
-        self.sensor_btn.setText("Connect sensor")
+        self.mode_toggle.setText("Dataset mode")
+        self.mode_toggle.setChecked(False)
 
     def _read_serial(self):
         buf = []
@@ -825,9 +852,8 @@ class MyojamWindow(QMainWindow):
 
 
     def _on_gesture_btn_click(self, gesture_id):
-        """Trigger a dataset sample when a gesture button is clicked."""
         if self._sensor_mode:
-            return  # sensor mode — don't override
+            return
         if not self._busy:
             self._busy = True
             def run():

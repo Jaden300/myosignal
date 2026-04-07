@@ -8,25 +8,41 @@ _HTML = """<!DOCTYPE html>
 <meta charset="utf-8">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: transparent; overflow: hidden; }
+  body { background: #EBEBED; overflow: hidden; }
   canvas { display: block; }
+  #toggle {
+    position: fixed; bottom: 10px; right: 10px;
+    background: #e8f5e9; border: 1px solid #2e7d32; color: #1b5e20;
+    border-radius: 100px; padding: 4px 12px;
+    font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 500;
+    cursor: pointer; display: flex; align-items: center; gap: 5px;
+    transition: background 0.25s, border-color 0.25s, color 0.25s;
+    white-space: nowrap;
+  }
+  #toggle.paused {
+    background: #fce4ec; border-color: #c62828; color: #b71c1c;
+  }
 </style>
 </head>
 <body>
+<button id="toggle">⟳ Rotating</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 const PRIMARY_FINGER = {
   "index flex": 0, "middle flex": 1, "ring flex": 2,
   "pinky flex": 3, "thumb flex": 4, "fist": -1,
 };
-const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setClearColor(0x000000, 0);
+renderer.setClearColor(0xEBEBED, 1);
 document.body.appendChild(renderer.domElement);
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
 camera.position.set(0, 0.15, 2.0);
 camera.lookAt(0, 0.05, 0);
+
 scene.add(new THREE.AmbientLight(0xffffff, 1.2));
 const key = new THREE.DirectionalLight(0xff8fb0, 0.8);
 key.position.set(2, 4, 3); scene.add(key);
@@ -34,11 +50,15 @@ const fill = new THREE.DirectionalLight(0xffeef4, 0.5);
 fill.position.set(-3, 1, 2); scene.add(fill);
 const rim = new THREE.DirectionalLight(0xffffff, 0.25);
 rim.position.set(0, -2, -3); scene.add(rim);
-const skinMat    = new THREE.MeshPhongMaterial({ color: 0xf5dce4, shininess: 35, specular: 0xffaabb });
-const knuckleMat = new THREE.MeshPhongMaterial({ color: 0xeeccd8, shininess: 70, specular: 0xff88aa });
-const nailMat    = new THREE.MeshPhongMaterial({ color: 0xffccd8, shininess: 180, specular: 0xffffff });
+
+// Pink hand colours
+const skinMat    = new THREE.MeshPhongMaterial({ color: 0xFF2D78, shininess: 35, specular: 0xff88aa });
+const knuckleMat = new THREE.MeshPhongMaterial({ color: 0xe0245e, shininess: 70, specular: 0xff88aa });
+const nailMat    = new THREE.MeshPhongMaterial({ color: 0xffb3c6, shininess: 180, specular: 0xffffff });
+
 const handGroup = new THREE.Group();
 scene.add(handGroup);
+
 function makePalm() {
   const g = new THREE.BufferGeometry();
   const wW = 0.24, fW = 0.40, palmH = 0.26, d = 0.095;
@@ -62,10 +82,12 @@ function makePalm() {
 const palm = new THREE.Mesh(makePalm(), skinMat);
 palm.position.y = -0.15;
 handGroup.add(palm);
+
 function seg(len, rTop, rBot) {
   const g = new THREE.CylinderGeometry(rTop, rBot, len, 12);
   g.translate(0, len/2, 0); return g;
 }
+
 function buildFinger(parent, bx, by, defs) {
   const pivots = []; let cur = parent;
   defs.forEach(([len, rTop, rBot], i) => {
@@ -85,6 +107,7 @@ function buildFinger(parent, bx, by, defs) {
   });
   return pivots;
 }
+
 const fingerDefs = [
   {x:0.170,y:0.108,d:[[0.185,0.036,0.043],[0.142,0.030,0.036],[0.108,0.023,0.030]]},
   {x:0.057,y:0.118,d:[[0.205,0.038,0.046],[0.158,0.032,0.038],[0.120,0.024,0.032]]},
@@ -92,11 +115,13 @@ const fingerDefs = [
   {x:-0.165,y:0.088,d:[[0.158,0.030,0.037],[0.118,0.025,0.030],[0.090,0.019,0.025]]},
 ];
 const fingerPivots = fingerDefs.map(f => buildFinger(handGroup, f.x, f.y, f.d));
+
 fingerDefs.forEach(f => {
   const kg = new THREE.SphereGeometry(0.025,10,8); kg.scale(1.1,0.65,0.9);
   const km = new THREE.Mesh(kg,knuckleMat);
   km.position.set(f.x*0.90, f.y-0.005, 0.025); handGroup.add(km);
 });
+
 const thumbGroup = new THREE.Group();
 thumbGroup.position.set(0.205,-0.090,0.010);
 thumbGroup.rotation.z = -Math.PI*0.22;
@@ -105,6 +130,7 @@ thumbGroup.rotation.x = -Math.PI*0.04;
 handGroup.add(thumbGroup);
 const moundGeo = new THREE.SphereGeometry(0.062,12,10); moundGeo.scale(1.1,0.85,0.90);
 thumbGroup.add(new THREE.Mesh(moundGeo,skinMat));
+
 const thumbPivots = [];
 [[0.170,0.044,0.055],[0.138,0.035,0.044]].forEach(([len,rTop,rBot],i) => {
   const pivot = new THREE.Group();
@@ -120,9 +146,21 @@ const thumbPivots = [];
     pivot.add(new THREE.Mesh(cap,skinMat));
   }
 });
+
 let current=[0,0,0,0,0], target=[0,0,0,0,0];
-let rotY=0;
+let rotY=0, rotSpeed=0.0018, targetRotSpeed=0.0018;
 const MAX=Math.PI*0.80;
+let autoRotate = true;
+
+// Toggle button
+const btn = document.getElementById('toggle');
+btn.addEventListener('click', () => {
+  autoRotate = !autoRotate;
+  targetRotSpeed = autoRotate ? 0.0018 : 0;
+  btn.textContent = autoRotate ? '⟳ Rotating' : '⏸ Paused';
+  btn.classList.toggle('paused', !autoRotate);
+});
+
 window.updateGesture = function(gestureName, fingerCurls) {
   const primary = PRIMARY_FINGER[gestureName] ?? -1;
   const curls = fingerCurls || [0.5,0.5,0.5,0.5,0.5];
@@ -135,12 +173,14 @@ window.updateGesture = function(gestureName, fingerCurls) {
   });
 };
 window.resetHand = function() { target=[0,0,0,0,0]; };
+
 function resize() {
   const w=window.innerWidth, h=window.innerHeight;
   renderer.setSize(w,h);
   camera.aspect=w/h; camera.updateProjectionMatrix();
 }
 window.addEventListener('resize', resize); resize();
+
 function animate() {
   requestAnimationFrame(animate);
   current=current.map((c,i)=>c+(target[i]-c)*0.09);
@@ -151,7 +191,9 @@ function animate() {
   const tc=current[4]*MAX*0.75;
   if(thumbPivots[0]){thumbPivots[0].rotation.x=tc*0.38; thumbPivots[0].rotation.z=-tc*0.28;}
   if(thumbPivots[1]) thumbPivots[1].rotation.x=tc*0.68;
-  rotY+=0.0018;
+  // Smooth rotation speed transition (same as website)
+  rotSpeed += (targetRotSpeed - rotSpeed) * 0.05;
+  rotY += rotSpeed;
   handGroup.rotation.y=rotY;
   renderer.render(scene,camera);
 }
@@ -168,7 +210,6 @@ class Hand3DWidget(QWebEngineView):
         self.setHtml(_HTML)
 
     def update_gesture(self, gesture_name, finger_curls):
-        import json
         curls_json = json.dumps(finger_curls or [0,0,0,0,0])
         gesture_json = json.dumps(gesture_name or "")
         self.page().runJavaScript(
