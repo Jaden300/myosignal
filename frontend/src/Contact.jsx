@@ -55,49 +55,20 @@ export default function Contact() {
           ))}
         </div>
 
-        {/* Message form */}
         <div style={{
           background: "var(--bg-secondary)", borderRadius: "var(--radius)",
-          padding: "32px", border: "1px solid var(--border)"
+          border: "1px solid var(--border)", overflow: "hidden"
         }}>
-          <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 24 }}>Send a message</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {[["Name", "text", "Your name"], ["Email", "email", "your@email.com"]].map(([label, type, placeholder]) => (
-              <div key={label}>
-                <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)", marginBottom: 6 }}>{label}</div>
-                <input type={type} placeholder={placeholder} style={{
-                  width: "100%", background: "var(--surface)",
-                  border: "1px solid var(--border-mid)", borderRadius: "var(--radius-sm)",
-                  padding: "10px 14px", color: "var(--text)",
-                  fontFamily: "var(--font)", fontSize: 14, outline: "none"
-                }}
-                  onFocus={e => e.target.style.borderColor = "var(--accent)"}
-                  onBlur={e => e.target.style.borderColor = "var(--border-mid)"}
-                />
-              </div>
-            ))}
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)", marginBottom: 6 }}>Message</div>
-              <textarea rows={4} placeholder="What's on your mind?" style={{
-                width: "100%", background: "var(--surface)",
-                border: "1px solid var(--border-mid)", borderRadius: "var(--radius-sm)",
-                padding: "10px 14px", color: "var(--text)",
-                fontFamily: "var(--font)", fontSize: 14, outline: "none", resize: "vertical"
-              }}
-                onFocus={e => e.target.style.borderColor = "var(--accent)"}
-                onBlur={e => e.target.style.borderColor = "var(--border-mid)"}
-              />
-            </div>
-            <button
-              onClick={() => window.location.href = "mailto:your@email.com"}
-              style={{
-                background: "var(--accent)", color: "#fff",
-                border: "none", borderRadius: 100,
-                padding: "11px 28px", fontSize: 14,
-                fontFamily: "var(--font)", fontWeight: 500,
-                cursor: "pointer", alignSelf: "flex-start"
-              }}>Send message</button>
-          </div>
+          <iframe
+            src="https://tally.so/embed/gDZlkJ?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+            width="100%"
+            height="500"
+            frameBorder="0"
+            marginHeight="0"
+            marginWidth="0"
+            title="Contact form"
+            style={{ display: "block" }}
+          />
         </div>
 
         <p style={{

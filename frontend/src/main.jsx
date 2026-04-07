@@ -16,13 +16,16 @@ import ChatWidget from "./ChatWidget"
 import Education from "./Education"
 import EMGExplainer from "./EMGExplainer"
 import OpenSourceEMG from "./OpenSourceEMG"
-
+import RandomForestEMG from "./RandomForestEMG"
+import NinaproDB5 from "./NinaproDB5"
+import NewsletterPopup from "./NewsletterPopup"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <ScrollToTop />
       <ChatWidget /> 
+      <NewsletterPopup />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/demo" element={<App />} />
@@ -35,6 +38,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/education" element={<Education />} />
         <Route path="/education/emg-explainer" element={<EMGExplainer />} />
         <Route path="/education/open-source-emg" element={<OpenSourceEMG />} />
+        <Route path="/education/random-forest-emg" element={<RandomForestEMG />} />
+        <Route path="/education/ninapro-db5" element={<NinaproDB5 />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

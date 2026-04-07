@@ -10,23 +10,47 @@ const ARTICLES = [
     title: "The science of muscle-computer interfaces",
     summary: "What is EMG, how does surface signal acquisition work, and how does myojam turn a forearm twitch into a computer action? A full explainer from the biology up.",
     readTime: "8 min read",
-    author: "Jaden W.",
+    author: "Jaden Wong",
     date: "2026-04-06",
     dateLabel: "April 6, 2026",
     likes: 47,
-    helpfulness: 1,  // lower = more helpful (rank 1 = most helpful)
+    helpfulness: 1,
+  },
+  {
+    slug: "/education/random-forest-emg",
+    tag: "Machine Learning",
+    title: "Why Random Forest? The classifier behind myojam",
+    summary: "Why not a neural network? How ensemble tree methods handle noisy biomedical signals, and what the 84.85% cross-subject accuracy figure actually means in practice.",
+    readTime: "7 min read",
+    author: "Jaden Wong",
+    date: "2026-03-15",
+    dateLabel: "March 15, 2026",
+    likes: 38,
+    helpfulness: 2,
   },
   {
     slug: "/education/open-source-emg",
     tag: "Accessibility",
     title: "From lab to laptop: democratising EMG",
-    summary: "EMG-based prosthetics have existed for 60 years. So why isn't muscle-computer control mainstream? How open datasets, affordable hardware, and open-source tools are changing that.",
+    summary: "EMG-based prosthetics have existed for 60 years. How open datasets, affordable hardware, and open-source tools are finally making muscle-computer control accessible.",
     readTime: "6 min read",
-    author: "Jaden W.",
+    author: "Jaden Wong",
     date: "2026-03-28",
     dateLabel: "March 28, 2026",
     likes: 31,
-    helpfulness: 2,
+    helpfulness: 3,
+  },
+  {
+    slug: "/education/ninapro-db5",
+    tag: "Dataset",
+    title: "Inside Ninapro DB5: the dataset that trains myojam",
+    summary: "Where does the training data come from? What is Ninapro, what does DB5 contain, and what decisions went into turning 52 hand movements into a 6-class classifier?",
+    readTime: "6 min read",
+    author: "Jaden Wong",
+    date: "2026-02-20",
+    dateLabel: "February 20, 2026",
+    likes: 24,
+    helpfulness: 4,
   },
 ]
 
@@ -156,6 +180,7 @@ export default function Education() {
           ))}
         </div>
 
+
         <p style={{
           marginTop: 48, fontSize: 13, color: "var(--text-tertiary)",
           fontWeight: 300, textAlign: "center", lineHeight: 1.7
@@ -164,6 +189,37 @@ export default function Education() {
           and the future of assistive input devices.
         </p>
       </div>
+
+      {/* Submit article embed */}
+        <div style={{ marginTop: 64 }}>
+          <div style={{ marginBottom: 24 }}>
+            <h2 style={{
+              fontSize: 24, fontWeight: 600, color: "var(--text)",
+              letterSpacing: "-0.5px", marginBottom: 10
+            }}>Submit your own article</h2>
+            <p style={{
+              fontSize: 15, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7
+            }}>
+              Written something about EMG, assistive technology, or myojam?
+              Submit it for review — accepted articles are published here with full author credit.
+            </p>
+          </div>
+          <div style={{
+            background: "var(--bg-secondary)", borderRadius: "var(--radius)",
+            border: "1px solid var(--border)", overflow: "hidden"
+          }}>
+            <iframe
+              src="https://tally.so/embed/jaWRk1?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+              width="100%"
+              height="600"
+              frameBorder="0"
+              marginHeight="0"
+              marginWidth="0"
+              title="Article submission"
+              style={{ display: "block" }}
+            />
+          </div>
+        </div>
 
       <Footer />
     </div>

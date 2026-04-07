@@ -733,6 +733,37 @@ export default function App() {
         {/* Accuracy rings — always visible */}
         <AccuracyRings />
       </div>
+
+        {/* Feedback button */}
+        <button
+          data-tally-open="FEEDBACK_ID"
+          data-tally-emoji-text="💬"
+          data-tally-emoji-animation="wave"
+          data-tally-width="400"
+          style={{
+            position: "fixed", bottom: 24, left: 24, zIndex: 100,
+            background: "var(--bg)", border: "1px solid var(--border)",
+            borderRadius: 100, padding: "10px 18px",
+            fontFamily: "var(--font)", fontSize: 13, fontWeight: 500,
+            color: "var(--text-secondary)", cursor: "pointer",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+            display: "flex", alignItems: "center", gap: 8,
+            transition: "border-color 0.15s, color 0.15s, transform 0.15s"
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = "rgba(255,45,120,0.3)"
+            e.currentTarget.style.color = "var(--accent)"
+            e.currentTarget.style.transform = "scale(1.04)"
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = "var(--border)"
+            e.currentTarget.style.color = "var(--text-secondary)"
+            e.currentTarget.style.transform = "scale(1)"
+          }}
+        >
+          <span>💬</span> Give feedback
+        </button>
+
     </div>
   )
 }
