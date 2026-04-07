@@ -13,6 +13,7 @@ import Privacy from "./Privacy"
 import Footer from "./Footer"
 import ScrollToTop from "./ScrollToTop"
 import ChatWidget from "./ChatWidget"
+import Education from "./Education"
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -29,6 +30,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/team" element={<Team />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/education" element={<Education />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

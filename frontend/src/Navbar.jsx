@@ -7,6 +7,7 @@ export default function Navbar() {
 
   const links = [
     ["How it works", "/how-it-works"],
+    ["Education", "/education"],   // add this
     ["About", "/about"],
     ["Team", "/team"],
     ["Contact", "/contact"],
