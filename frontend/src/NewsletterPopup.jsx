@@ -24,36 +24,33 @@ export default function NewsletterPopup() {
       <style>{`
         @keyframes overlayIn  { from { opacity: 0; } to { opacity: 1; } }
         @keyframes overlayOut { from { opacity: 1; } to { opacity: 0; } }
-        @keyframes panelIn    { from { opacity: 0; transform: scale(0.96) translateY(16px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        @keyframes panelOut   { from { opacity: 1; transform: scale(1) translateY(0); } to { opacity: 0; transform: scale(0.96) translateY(16px); } }
+        @keyframes panelIn  { from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+        @keyframes panelOut { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(-50%, -48%) scale(0.96); } }
       `}</style>
 
-      {/* Overlay — now handles centering */}
-      <div
-        onClick={close}
-        style={{
-          position: "fixed", inset: 0, zIndex: 500,
-          background: "rgba(0,0,0,0.5)", backdropFilter: "blur(6px)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          padding: "16px",
-          animation: `${closing ? "overlayOut" : "overlayIn"} 0.3s ease forwards`
-        }}
-      />
-        {/* Panel — click doesn't bubble to overlay */}
-        <div
-          onClick={e => e.stopPropagation()}
-          style={{
-            width: "min(680px, 100%)",
-            maxHeight: "90vh",
-            background: "var(--bg)",
-            borderRadius: "var(--radius-lg)",
-            border: "1px solid var(--border)",
-            boxShadow: "0 24px 80px rgba(0,0,0,0.2)",
-            overflow: "hidden",
-            display: "flex", flexDirection: "column",
-            animation: `${closing ? "panelOut" : "panelIn"} 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards`
-          }}
-        >
+      {/* Overlay — just the dark bg, no flex, no children */}
+      <div onClick={close} style={{
+        position: "fixed", inset: 0, zIndex: 500,
+        background: "rgba(0,0,0,0.5)", backdropFilter: "blur(6px)",
+        animation: `${closing ? "overlayOut" : "overlayIn"} 0.3s ease forwards`
+      }} />
+
+      {/* Panel — sibling, not child, centered with transform */}
+      <div onClick={e => e.stopPropagation()} style={{
+        position: "fixed",
+        top: "50%", left: "50%",
+        transform: "translate(-50%, -50%)",
+        zIndex: 501,
+        width: "min(680px, calc(100vw - 32px))",
+        maxHeight: "90vh",
+        background: "var(--bg)",
+        borderRadius: "var(--radius-lg)",
+        border: "1px solid var(--border)",
+        boxShadow: "0 24px 80px rgba(0,0,0,0.2)",
+        overflow: "hidden",
+        display: "flex", flexDirection: "column",
+        animation: `${closing ? "panelOut" : "panelIn"} 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards`
+      }}>
         {/* Header */}
         <div style={{
           background: "linear-gradient(135deg, #fff0f5 0%, #ffffff 70%)",
@@ -61,16 +58,14 @@ export default function NewsletterPopup() {
           padding: "32px 36px 28px",
           position: "relative"
         }}>
-          <button
-            onClick={close}
-            style={{
-              position: "absolute", top: 20, right: 20,
-              background: "rgba(0,0,0,0.06)", border: "none",
-              borderRadius: "50%", width: 32, height: 32,
-              fontSize: 16, cursor: "pointer", color: "var(--text-secondary)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              transition: "background 0.15s, transform 0.15s"
-            }}
+          <button onClick={close} style={{
+            position: "absolute", top: 20, right: 20,
+            background: "rgba(0,0,0,0.06)", border: "none",
+            borderRadius: "50%", width: 32, height: 32,
+            fontSize: 16, cursor: "pointer", color: "var(--text-secondary)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "background 0.15s, transform 0.15s"
+          }}
             onMouseEnter={e => { e.currentTarget.style.background = "rgba(0,0,0,0.12)"; e.currentTarget.style.transform = "scale(1.1)" }}
             onMouseLeave={e => { e.currentTarget.style.background = "rgba(0,0,0,0.06)"; e.currentTarget.style.transform = "scale(1)" }}
           >✕</button>
@@ -94,7 +89,7 @@ export default function NewsletterPopup() {
           </h2>
           <p style={{
             fontSize: 14, color: "var(--text-secondary)", fontWeight: 300,
-            lineHeight: 1.6, maxWidth: 420
+            lineHeight: 1.6, maxWidth: 420, margin: 0
           }}>
             New articles, project updates, and breakthroughs in assistive EMG technology —
             delivered to your inbox. No spam, unsubscribe anytime.
@@ -102,14 +97,12 @@ export default function NewsletterPopup() {
         </div>
 
         {/* Tally embed */}
-        <div style={{ flex: 1, overflowY: "auto" }}>
+        <div style={{ overflowY: "auto" }}>
           <iframe
-            src="https://tally.so/embed/rjL4pR?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+            src="https://tally.so/embed/NEWSLETTER_ID?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
             width="100%"
             height="280"
             frameBorder="0"
-            marginHeight="0"
-            marginWidth="0"
             title="Newsletter signup"
             style={{ display: "block" }}
           />
