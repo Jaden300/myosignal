@@ -1,16 +1,18 @@
 import { useNavigate, useLocation } from "react-router-dom"
 import Logo from "./Logo"
+import { useLang } from "./i18n"
 
 export default function Navbar() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const { lang, setLang, t } = useLang()
 
   const links = [
-    ["How it works", "/how-it-works"],
-    ["Education", "/education"],   // add this
-    ["About", "/about"],
-    ["Team", "/team"],
-    ["Contact", "/contact"],
+    [t("nav_howItWorks"), "/how-it-works"],
+    [t("nav_education"),  "/education"],
+    [t("nav_about"),      "/about"],
+    [t("nav_team"),       "/team"],
+    [t("nav_contact"),    "/contact"],
   ]
 
   return (
@@ -25,20 +27,38 @@ export default function Navbar() {
     }}>
       <div onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
         <Logo size={26} />
-        <span style={{
-          fontFamily: "var(--font)", fontWeight: 600,
-          fontSize: 17, letterSpacing: "-0.3px", color: "var(--text)"
-        }}>myojam</span>
+        <span style={{ fontFamily: "var(--font)", fontWeight: 600, fontSize: 17, letterSpacing: "-0.3px", color: "var(--text)" }}>
+          myojam
+        </span>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
         {links.map(([label, path]) => (
-          <span key={label} onClick={() => navigate(path)} style={{
+          <span key={path} onClick={() => navigate(path)} style={{
             fontSize: 14, fontWeight: 400, cursor: "pointer",
             color: pathname === path ? "var(--accent)" : "var(--text-secondary)",
             transition: "color 0.15s"
           }}>{label}</span>
         ))}
+
+        {/* Language toggle */}
+        <div style={{
+          display: "flex", background: "var(--bg-secondary)",
+          border: "1px solid var(--border)", borderRadius: 100, padding: 2
+        }}>
+          {["en", "fr"].map(l => (
+            <button key={l} onClick={() => setLang(l)} style={{
+              background: lang === l ? "#fff" : "transparent",
+              border: "none", borderRadius: 100,
+              padding: "3px 10px", fontSize: 12, fontWeight: lang === l ? 600 : 400,
+              color: lang === l ? "var(--text)" : "var(--text-tertiary)",
+              cursor: "pointer", fontFamily: "var(--font)",
+              boxShadow: lang === l ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+              transition: "all 0.15s"
+            }}>{l.toUpperCase()}</button>
+          ))}
+        </div>
+
         <a href="https://github.com/user-attachments/files/26291771/myojam-mac.zip"
           style={{
             background: "var(--accent)", color: "#fff",
@@ -46,7 +66,7 @@ export default function Navbar() {
             padding: "7px 20px", fontSize: 14,
             fontFamily: "var(--font)", fontWeight: 500,
             textDecoration: "none"
-          }}>Download for Mac</a>
+          }}>{t("nav_download")}</a>
       </div>
     </nav>
   )
