@@ -2,6 +2,7 @@ import Navbar from "./Navbar"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import Footer from "./Footer"
+import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 
 const ARTICLES = [
   {
@@ -129,56 +130,109 @@ export default function Education() {
           ))}
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          {displayed.map(a => (
-            <div
-              key={a.slug}
-              onClick={() => navigate(a.slug)}
-              style={{
-                background: "var(--bg-secondary)", border: "1px solid var(--border)",
-                borderRadius: "var(--radius)", padding: "32px",
-                cursor: "pointer",
-                transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = "translateY(-3px)"
-                e.currentTarget.style.boxShadow = "0 12px 40px rgba(255,45,120,0.09)"
-                e.currentTarget.style.borderColor = "rgba(255,45,120,0.2)"
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = "translateY(0)"
-                e.currentTarget.style.boxShadow = "none"
-                e.currentTarget.style.borderColor = "var(--border)"
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
+        <StaggerList
+          items={displayed}
+          columns={1}
+          gap={20}
+          renderItem={(a, i) => (
+            <Reveal delay={i * 0.08}>
+              <HoverCard
+                color="rgba(255,45,120,0.08)"
+                onClick={() => navigate(a.slug)}
+                style={{
+                  background: "var(--bg-secondary)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius)",
+                  padding: "32px",
+                  cursor: "pointer"
+                }}
+              >
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  gap: 16
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      marginBottom: 14,
+                      flexWrap: "wrap"
+                    }}>
+                      <span style={{
+                        fontSize: 11,
+                        fontWeight: 500,
+                        color: "var(--accent)",
+                        background: "var(--accent-soft)",
+                        border: "1px solid rgba(255,45,120,0.15)",
+                        borderRadius: 100,
+                        padding: "3px 10px"
+                      }}>
+                        {a.tag}
+                      </span>
+
+                      <span style={{
+                        fontSize: 12,
+                        color: "var(--text-tertiary)",
+                        fontWeight: 300
+                      }}>
+                        {a.readTime}
+                      </span>
+
+                      <span style={{
+                        fontSize: 12,
+                        color: "var(--text-tertiary)",
+                        fontWeight: 300
+                      }}>
+                        ♥ {a.likes}
+                      </span>
+                    </div>
+
+                    <h2 style={{
+                      fontSize: 20,
+                      fontWeight: 600,
+                      color: "var(--text)",
+                      letterSpacing: "-0.3px",
+                      marginBottom: 10,
+                      lineHeight: 1.3
+                    }}>
+                      {a.title}
+                    </h2>
+
+                    <p style={{
+                      fontSize: 14,
+                      color: "var(--text-secondary)",
+                      lineHeight: 1.7,
+                      fontWeight: 300,
+                      marginBottom: 16
+                    }}>
+                      {a.summary}
+                    </p>
+
                     <span style={{
-                      fontSize: 11, fontWeight: 500, color: "var(--accent)",
-                      background: "var(--accent-soft)", border: "1px solid rgba(255,45,120,0.15)",
-                      borderRadius: 100, padding: "3px 10px"
-                    }}>{a.tag}</span>
-                    <span style={{ fontSize: 12, color: "var(--text-tertiary)", fontWeight: 300 }}>{a.readTime}</span>
-                    <span style={{ fontSize: 12, color: "var(--text-tertiary)", fontWeight: 300 }}>♥ {a.likes}</span>
+                      fontSize: 13,
+                      color: "var(--text-tertiary)",
+                      fontWeight: 300
+                    }}>
+                      By {a.author} · {a.dateLabel}
+                    </span>
                   </div>
-                  <h2 style={{
-                    fontSize: 20, fontWeight: 600, color: "var(--text)",
-                    letterSpacing: "-0.3px", marginBottom: 10, lineHeight: 1.3
-                  }}>{a.title}</h2>
-                  <p style={{
-                    fontSize: 14, color: "var(--text-secondary)",
-                    lineHeight: 1.7, fontWeight: 300, marginBottom: 16
-                  }}>{a.summary}</p>
-                  <span style={{ fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300 }}>
-                    By {a.author} · {a.dateLabel}
+
+                  <span style={{
+                    fontSize: 20,
+                    color: "var(--text-tertiary)",
+                    flexShrink: 0,
+                    marginTop: 4
+                  }}>
+                    →
                   </span>
                 </div>
-                <span style={{ fontSize: 20, color: "var(--text-tertiary)", flexShrink: 0, marginTop: 4 }}>→</span>
-              </div>
-            </div>
-          ))}
-        </div>
+              </HoverCard>
+            </Reveal>
+          )}
+        />
 
 
         <p style={{

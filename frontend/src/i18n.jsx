@@ -18,6 +18,7 @@ const EN = {
   landing_how_title: "From muscle to action",
   landing_how_label: "How it works",
   landing_sub: "myojam reads EMG signals from your forearm...",
+  nav_careers: "Careers",
 }
 
 const FR = {
@@ -40,6 +41,7 @@ const FR = {
   landing_how_title: "Du muscle à l'action",
   landing_how_label: "Comment ça marche",
   landing_sub: "Myojam lit les signaux EMG de votre avant-bras...",
+  nav_careers: "Carrières",
 }
 
 const TRANSLATIONS = { en: EN, fr: FR }

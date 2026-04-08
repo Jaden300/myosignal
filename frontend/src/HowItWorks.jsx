@@ -1,6 +1,7 @@
 import Navbar from "./Navbar"
 import { useNavigate } from "react-router-dom"
 import Footer from "./Footer"
+import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 
 const STEPS = [
   {
@@ -87,53 +88,99 @@ export default function HowItWorks() {
         </div>
 
         {/* Steps */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {STEPS.map(step => (
-            <div key={step.num} style={{
-              background: "var(--bg-secondary)",
-              borderRadius: "var(--radius)", padding: "32px",
-              border: "1px solid var(--border)",
-              transition: "transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
-            }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = "translateY(-4px)"
-                e.currentTarget.style.boxShadow = "0 12px 40px rgba(255,45,120,0.1)"
-                e.currentTarget.style.borderColor = "rgba(255,45,120,0.2)"
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = "translateY(0)"
-                e.currentTarget.style.boxShadow = "none"
-                e.currentTarget.style.borderColor = "var(--border)"
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                <div style={{
-                  width: 32, height: 32, borderRadius: "50%",
-                  background: "var(--accent-soft)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 12, fontWeight: 600, color: "var(--accent)", flexShrink: 0
-                }}>{step.num}</div>
-                <div>
-                  <div style={{ fontSize: 16, fontWeight: 600, color: "var(--text)" }}>{step.title}</div>
-                  <div style={{ fontSize: 13, color: "var(--text-secondary)", fontWeight: 300 }}>{step.subtitle}</div>
+        <StaggerList
+          items={STEPS}
+          columns={1}
+          gap={16}
+          renderItem={(step, i) => (
+            <Reveal delay={i * 0.1}>
+              <HoverCard
+                style={{
+                  background: "var(--bg-secondary)",
+                  borderRadius: "var(--radius)",
+                  border: "1px solid var(--border)",
+                  padding: "32px",
+                  display: "flex",
+                  gap: 24
+                }}
+              >
+                {/* Left icon / number */}
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 14,
+                    flexShrink: 0,
+                    background: "var(--accent-soft)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 22,
+                    fontWeight: 600,
+                    color: "var(--accent)"
+                  }}
+                >
+                  {step.icon || String(i + 1).padStart(2, "0")}
                 </div>
-              </div>
-              <p style={{
-                fontSize: 14, color: "var(--text-secondary)",
-                lineHeight: 1.75, fontWeight: 300, marginBottom: 20
-              }}>{step.body}</p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {step.tags.map(tag => (
-                  <span key={tag} style={{
-                    background: "var(--surface)", border: "1px solid var(--border-mid)",
-                    borderRadius: 100, padding: "4px 14px",
-                    fontSize: 12, color: "var(--text-secondary)", fontWeight: 400
-                  }}>{tag}</span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+
+                {/* Content */}
+                <div>
+                  <div
+                    style={{
+                      fontSize: 17,
+                      fontWeight: 600,
+                      color: "var(--text)",
+                      marginBottom: 4
+                    }}
+                  >
+                    {step.title}
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 13,
+                      color: "var(--text-secondary)",
+                      fontWeight: 300,
+                      marginBottom: 10
+                    }}
+                  >
+                    {step.subtitle}
+                  </div>
+
+                  <p
+                    style={{
+                      fontSize: 14,
+                      color: "var(--text-secondary)",
+                      lineHeight: 1.7,
+                      fontWeight: 300,
+                      marginBottom: 16
+                    }}
+                  >
+                    {step.body}
+                  </p>
+
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {step.tags.map(tag => (
+                      <span
+                        key={tag}
+                        style={{
+                          background: "var(--surface)",
+                          border: "1px solid var(--border-mid)",
+                          borderRadius: 100,
+                          padding: "4px 14px",
+                          fontSize: 12,
+                          color: "var(--text-secondary)"
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </HoverCard>
+            </Reveal>
+          )}
+        />
 
         {/* Dataset note */}
         <div style={{

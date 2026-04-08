@@ -24,7 +24,7 @@ export default function Navbar() {
     [t("nav_education"),  "/education"],
     [t("nav_about"),      "/about"],
     [t("nav_team"),       "/team"],
-    [t("nav_careers") || "Careers", "/careers"],
+    [t("nav_careers"), "/careers"],
     [t("nav_contact"),    "/contact"],
   ]
 

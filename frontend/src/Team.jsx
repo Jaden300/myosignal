@@ -1,5 +1,6 @@
 import Navbar from "./Navbar"
 import Footer from "./Footer"
+import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 
 function FaceAvatar({ seed, size = 80 }) {
   const s = seed * 1000
@@ -131,62 +132,92 @@ export default function Team() {
         </div>
 
         {/* Team grid */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-          gap: 24
-        }}>
-          {TEAM.map((member, i) => (
-            <div key={member.name} style={{
-              background: "var(--bg-secondary)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius)",
-              padding: 32,
-              display: "flex", flexDirection: "column", alignItems: "center",
-              textAlign: "center", gap: 16,
-              transition: "transform 0.2s ease, box-shadow 0.2s ease",
-            }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = "translateY(-4px)"
-                e.currentTarget.style.boxShadow = "0 12px 40px rgba(255,45,120,0.1)"
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = "translateY(0)"
-                e.currentTarget.style.boxShadow = "none"
+        <StaggerList
+        items={TEAM}
+        columns={3}
+        gap={24}
+        renderItem={(member, i) => (
+          <Reveal delay={i * 0.1}>
+            <HoverCard
+              color="rgba(255,45,120,0.12)"
+              style={{
+                background: "var(--bg-secondary)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--radius)",
+                padding: 32,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center",
+                gap: 16
               }}
             >
               <FaceAvatar seed={member.seed} size={80} />
 
               <div>
-                <div style={{ fontSize: 18, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.3px" }}>
+                <div
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 600,
+                    color: "var(--text)",
+                    letterSpacing: "-0.3px"
+                  }}
+                >
                   {member.name}
                 </div>
-                <div style={{ fontSize: 13, color: "var(--accent)", fontWeight: 500, marginTop: 4 }}>
+
+                <div
+                  style={{
+                    fontSize: 13,
+                    color: "var(--accent)",
+                    fontWeight: 500,
+                    marginTop: 4
+                  }}
+                >
                   {member.role}
                 </div>
               </div>
 
-              <p style={{
-                fontSize: 14, color: "var(--text-secondary)",
-                lineHeight: 1.65, fontWeight: 300
-              }}>
+              <p
+                style={{
+                  fontSize: 14,
+                  color: "var(--text-secondary)",
+                  lineHeight: 1.65,
+                  fontWeight: 300
+                }}
+              >
                 {member.bio}
               </p>
 
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, justifyContent: "center" }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 6,
+                  justifyContent: "center"
+                }}
+              >
                 {member.tags.map(tag => (
-                  <span key={tag} style={{
-                    fontSize: 11, fontWeight: 500,
-                    color: "var(--accent)",
-                    background: "var(--accent-soft)",
-                    border: "1px solid rgba(255,45,120,0.15)",
-                    borderRadius: 100, padding: "3px 10px"
-                  }}>{tag}</span>
+                  <span
+                    key={tag}
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 500,
+                      color: "var(--accent)",
+                      background: "var(--accent-soft)",
+                      border: "1px solid rgba(255,45,120,0.15)",
+                      borderRadius: 100,
+                      padding: "3px 10px"
+                    }}
+                  >
+                    {tag}
+                  </span>
                 ))}
               </div>
-            </div>
-          ))}
-        </div>
+            </HoverCard>
+          </Reveal>
+        )}
+      />
 
         {/* Footer note */}
         <div style={{

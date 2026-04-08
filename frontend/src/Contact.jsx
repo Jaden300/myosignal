@@ -1,5 +1,6 @@
 import Navbar from "./Navbar"
 import Footer from "./Footer"
+import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 
 export default function Contact() {
   return (
@@ -8,10 +9,9 @@ export default function Contact() {
 
       <div style={{ maxWidth: 600, margin: "0 auto", padding: "120px 32px 80px" }}>
 
-        <p style={{
-          fontSize: 13, fontWeight: 500, color: "var(--accent)",
-          letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 16
-        }}>Contact</p>
+        <Reveal>
+          <SectionPill>Get in touch</SectionPill>
+        </Reveal>
 
         <h1 style={{
           fontSize: "clamp(36px, 6vw, 60px)", fontWeight: 600,
@@ -24,36 +24,82 @@ export default function Contact() {
         }}>Questions about the project, research collaboration, or building on top of myojam? Reach out.</p>
 
         {/* Links */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 56 }}>
-          {[
-            ["GitHub", "Open an issue or pull request", "https://github.com/Jaden300/myosignal"],
-            ["Ninapro dataset", "Source data for the model", "https://ninapro.hevs.ch"],
-          ].map(([label, desc, href]) => (
-            <a key={label} href={href} target="_blank" rel="noreferrer"
-              style={{
-                background: "var(--bg-secondary)", border: "1px solid var(--border)",
-                borderRadius: "var(--radius)", padding: "20px 24px",
-                display: "flex", justifyContent: "space-between",
-                alignItems: "center", textDecoration: "none",
-                transition: "border-color 0.15s, box-shadow 0.15s"
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = "rgba(255,45,120,0.3)"
-                e.currentTarget.style.boxShadow = "0 4px 24px rgba(255,45,120,0.08)"
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = "var(--border)"
-                e.currentTarget.style.boxShadow = "none"
-              }}
-            >
-              <div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 4 }}>{label}</div>
-                <div style={{ fontSize: 13, color: "var(--text-secondary)", fontWeight: 300 }}>{desc}</div>
-              </div>
-              <span style={{ fontSize: 18, color: "var(--text-tertiary)" }}>↗</span>
-            </a>
-          ))}
-        </div>
+        <StaggerList
+          items={[
+            ["GitHub", "Open an issue or pull request", "https://github.com/Jaden300/myosignal", "⌥"],
+            ["Ninapro dataset", "Source data for the model", "https://ninapro.hevs.ch", "📊"],
+          ]}
+          columns={1}
+          gap={12}
+          renderItem={([label, desc, href, icon], i) => (
+            <Reveal delay={i * 0.08}>
+              <HoverCard
+                color="rgba(255,45,120,0.08)"
+                style={{
+                  background: "var(--bg-secondary)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius)",
+                  overflow: "hidden",
+                  cursor: "pointer"
+                }}
+                onClick={() => window.open(href, "_blank")}
+              >
+                <div
+                  style={{
+                    padding: "20px 24px",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center"
+                  }}
+                >
+                  <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 12,
+                        background: "var(--accent-soft)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 18
+                      }}
+                    >
+                      {icon}
+                    </div>
+
+                    <div>
+                      <div
+                        style={{
+                          fontSize: 15,
+                          fontWeight: 600,
+                          color: "var(--text)",
+                          marginBottom: 4
+                        }}
+                      >
+                        {label}
+                      </div>
+
+                      <div
+                        style={{
+                          fontSize: 13,
+                          color: "var(--text-secondary)",
+                          fontWeight: 300
+                        }}
+                      >
+                        {desc}
+                      </div>
+                    </div>
+                  </div>
+
+                  <span style={{ fontSize: 18, color: "var(--text-tertiary)" }}>
+                    ↗
+                  </span>
+                </div>
+              </HoverCard>
+            </Reveal>
+          )}
+        />
 
         <div style={{
           background: "var(--bg-secondary)", borderRadius: "var(--radius)",
