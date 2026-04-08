@@ -41,7 +41,7 @@ export default function About() {
           fontSize: 13, color: "var(--accent)", fontWeight: 500, marginBottom: 32
         }}>
           <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)", display: "inline-block" }} />
-          Open source · Assistive technology
+          {t("landing_badge")}
         </div>
 
         <h1 style={{
@@ -184,7 +184,7 @@ export default function About() {
             borderRadius: 100, padding: "13px 32px", fontSize: 15,
             fontFamily: "var(--font)", fontWeight: 500, cursor: "pointer",
             boxShadow: "0 4px 24px rgba(255,45,120,0.3)"
-          }}>Try the demo</button>
+          }}>{t("landing_try")}</button>
           <button onClick={() => navigate("/how-it-works")} style={{
             background: "transparent", color: "var(--text)",
             border: "1px solid var(--border-mid)", borderRadius: 100,

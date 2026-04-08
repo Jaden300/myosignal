@@ -4,6 +4,9 @@ import Navbar from "./Navbar"
 import HeroSphere from "./HeroSphere"
 import Footer from "./Footer"
 import EMGPulseCanvas from "./EMGPulseCanvas"
+import { useLang } from "./i18n"
+
+const { t } = useLang()
 
 const STATS = [
   ["84.85%", "Cross-subject accuracy", "Tested across 10 clinical subjects"],
@@ -48,14 +51,14 @@ export default function Landing() {
             fontSize: 13, color: "var(--accent)", fontWeight: 500, marginBottom: 36
           }}>
             <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)", display: "inline-block" }}/>
-            Open source · Assistive technology
+            {t("landing_badge")}
           </div>
           <h1 style={{
             fontSize: "clamp(36px, 5.5vw, 68px)", fontWeight: 600,
             lineHeight: 1.06, letterSpacing: "-2px", color: "var(--text)", marginBottom: 24
           }}>
-            Control your<br />computer<br />
-            <span style={{ color: "var(--accent)" }}>with your muscles.</span>
+            {t("landing_hero1")}<br />{t("landing_hero2")}<br />
+            <span style={{ color: "var(--accent)" }}>{t("landing_hero3")}.</span>
           </h1>
           <p style={{
             fontSize: 17, color: "var(--text-secondary)",
@@ -70,7 +73,7 @@ export default function Landing() {
               borderRadius: 100, padding: "13px 32px", fontSize: 15,
               fontFamily: "var(--font)", fontWeight: 500, cursor: "pointer",
               boxShadow: "0 4px 24px rgba(255,45,120,0.3)"
-            }}>Try the demo</button>
+            }}>{t("landing_try")}</button>
           </div>
         </div>
 
@@ -118,7 +121,7 @@ export default function Landing() {
               letterSpacing: "0.04em", marginBottom: 12, textTransform: "uppercase"
             }}>How it works</p>
             <h2 style={{ fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 600, letterSpacing: "-1px", color: "var(--text)" }}>
-              From muscle to action
+              {t("landing_how_title")}
             </h2>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
@@ -173,7 +176,7 @@ export default function Landing() {
         }}>
  
           <h2 style={{ fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 600, letterSpacing: "-1px", marginBottom: 20 }}>
-            See it in action
+            {t("landing_cta_title")}
           </h2>
           <p style={{ fontSize: 16, color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 36, fontWeight: 300 }}>
             Load real EMG data from the Ninapro dataset and watch the classifier run live in your browser.
@@ -183,7 +186,7 @@ export default function Landing() {
             borderRadius: 100, padding: "14px 40px", fontSize: 16,
             fontFamily: "var(--font)", fontWeight: 500, cursor: "pointer",
             boxShadow: "0 4px 24px rgba(255,45,120,0.3)"
-          }}>Open demo</button>
+          }}>{t("landing_cta_btn")}</button>
         </div>
       </section>
 
@@ -202,7 +205,7 @@ export default function Landing() {
           <h2 style={{
             fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 600,
             letterSpacing: "-1.2px", color: "var(--text)", marginBottom: 16
-          }}>Download myojam</h2>
+          }}>{t("landing_dl_title")}</h2>
           <p style={{
             fontSize: 17, color: "var(--text-secondary)", fontWeight: 300,
             lineHeight: 1.7, maxWidth: 480, margin: "0 auto 40px"
@@ -217,7 +220,7 @@ export default function Landing() {
                 textDecoration: "none", boxShadow: "0 4px 24px rgba(255,45,120,0.3)",
                 display: "inline-flex", alignItems: "center", gap: 8
               }}>
-              ↓ Download for Mac
+              {t("landing_dl_btn")}
             </a>
             <a href="https://github.com/Jaden300/myojam"
               target="_blank" rel="noreferrer"
@@ -227,7 +230,7 @@ export default function Landing() {
                 padding: "13px 28px", fontSize: 15, fontWeight: 400,
                 textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 8
               }}>
-              View source
+              {t("landing_dl_source")}
             </a>
           </div>
           <p style={{ fontSize: 12, color: "var(--text-tertiary)", fontWeight: 300, marginTop: 20 }}>
