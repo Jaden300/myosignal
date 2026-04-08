@@ -15,6 +15,9 @@ const EN = {
   landing_dl_title: "Download myojam",
   landing_dl_btn: "↓ Download for Mac",
   landing_dl_source: "View source",
+  landing_how_title: "From muscle to action",
+  landing_how_label: "How it works",
+  landing_sub: "myojam reads EMG signals from your forearm...",
 }
 
 const FR = {
@@ -34,6 +37,9 @@ const FR = {
   landing_dl_title: "Télécharger myojam",
   landing_dl_btn: "↓ Télécharger pour Mac",
   landing_dl_source: "Voir le code source",
+  landing_how_title: "Du muscle à l'action",
+  landing_how_label: "Comment ça marche",
+  landing_sub: "Myojam lit les signaux EMG de votre avant-bras...",
 }
 
 const TRANSLATIONS = { en: EN, fr: FR }

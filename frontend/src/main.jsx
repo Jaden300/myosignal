@@ -19,6 +19,7 @@ import SignalPlayground from "./SignalPlayground"
 import ScrollToTop from "./ScrollToTop"
 import NewsletterPopup from "./NewsletterPopup"
 import ChatWidget from "./ChatWidget"
+import Careers from "./Careers"
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -42,6 +43,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/education/random-forest-emg" element={<RandomForestEMG />} />
         <Route path="/education/ninapro-db5" element={<NinaproDB5 />} />
         <Route path="/playground" element={<SignalPlayground />} />
+        <Route path="/careers" element={<Careers />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
