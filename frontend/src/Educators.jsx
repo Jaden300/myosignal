@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
+import Quiz from "./educators/Quiz"
 
 const LESSONS = [
   {

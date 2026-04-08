@@ -37,6 +37,8 @@ import Educators from "./Educators"
 import LessonEMGBasics from "./educators/LessonEMGBasics"
 import LessonGestureClassifier from "./educators/LessonGestureClassifier"
 import EducatorResources from "./educators/EducatorResources"
+import Changelog from "./Changelog"
+
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -78,6 +80,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/educators/lesson-emg-basics" element={<LessonEMGBasics />} />
         <Route path="/educators/lesson-gesture-classifier" element={<LessonGestureClassifier />} />
         <Route path="/educators/resources" element={<EducatorResources />} />
+        <Route path="/changelog" element={<Changelog />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

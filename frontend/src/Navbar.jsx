@@ -138,6 +138,7 @@ export default function Navbar() {
           ["About",   "/about",   IconBulb],
           ["Team",    "/team",    IconPeople],
           ["Careers", "/careers", IconRocket],
+          ["Changelog", "/changelog", IconCode],
         ]} />
 
         <NavLink label="For corporations" path="/corporations" pathname={pathname} />
