@@ -128,6 +128,17 @@ export default function Navbar() {
 
         <NavLink label="Demos" path="/demos" pathname={pathname} />
 
+        <span onClick={()=>navigate("/elevate")} style={{
+          fontSize:14, fontWeight:600, cursor:"pointer",
+          color: pathname==="/elevate" ? "var(--accent)" : "var(--accent)",
+          background: "linear-gradient(135deg, #FF2D78, #c026d3)",
+          WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent",
+          transition:"opacity 0.15s"
+        }}
+          onMouseEnter={e=>e.currentTarget.style.opacity="0.75"}
+          onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+        >ELEVATE ✦</span>
+
         <Dropdown label="Learn" pathname={pathname} items={[
           ["How it works",  "/how-it-works", IconGear],
           ["Education hub", "/education",    IconBook],

@@ -60,6 +60,27 @@ const SUBJECTS = [
   { icon:"🏥", label:"Health & Technology", desc:"Assistive technology, motor impairment, and the engineering of prosthetics and interfaces." },
 ]
 
+const TEASER_QUESTIONS = [
+  {
+    question: "Surface EMG electrodes measure electrical activity in:",
+    options: ["The brain","Muscle fibres beneath the skin","Blood vessels","The peripheral nerves directly"],
+    correct: 1,
+    explanation: "Surface electrodes pick up the summed electrical activity of muscle fibre action potentials through the skin. They don't directly record brain or nerve signals — those require more invasive approaches."
+  },
+  {
+    question: "myojam achieves what cross-subject classification accuracy?",
+    options: ["72.3%","84.85%","91.2%","78.5%"],
+    correct: 1,
+    explanation: "myojam's Random Forest classifier achieves 84.85% accuracy on subjects it has never seen before, trained on the Ninapro DB5 dataset across 10 subjects and 6 gesture classes."
+  },
+  {
+    question: "Which myojam tool is best suited for introducing event-driven programming to younger students?",
+    options: ["The live EMG demo","The signal playground","myocode","The confusion matrix explorer"],
+    correct: 2,
+    explanation: "myocode is myojam's Scratch-like block coding environment where EMG gestures trigger program events. It introduces event-driven programming concepts through physical interaction, making it ideal for younger or non-technical students."
+  },
+]
+
 export default function Educators() {
   const navigate = useNavigate()
 
