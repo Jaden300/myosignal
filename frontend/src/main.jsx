@@ -20,6 +20,8 @@ import ScrollToTop from "./ScrollToTop"
 import NewsletterPopup from "./NewsletterPopup"
 import ChatWidget from "./ChatWidget"
 import Careers from "./Careers"
+import Demos from "./Demos"
+import Corporations from "./Corporations"
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -44,6 +46,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/education/ninapro-db5" element={<NinaproDB5 />} />
         <Route path="/playground" element={<SignalPlayground />} />
         <Route path="/careers" element={<Careers />} />
+        <Route path="/demos" element={<Demos />} />
+        <Route path="/corporations" element={<Corporations />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
