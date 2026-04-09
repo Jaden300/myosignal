@@ -193,10 +193,7 @@ export default function Careers() {
                 onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,45,120,0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(255,45,120,0.07)" }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none" }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--accent-soft)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <role.Icon size={18} color="var(--accent)" />
-                  </div>
+                <div style={{ marginBottom: 10 }}>
                   <span style={{ fontSize: 17, fontWeight: 600, color: "var(--text)" }}>{role.title}</span>
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 500, color: "var(--accent)", background: "var(--accent-soft)", border: "1px solid rgba(255,45,120,0.15)", borderRadius: 100, padding: "3px 10px" }}>{role.type}</span>
