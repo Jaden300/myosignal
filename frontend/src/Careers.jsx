@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { IconBolt, IconBrain, IconCode, IconChart } from "./Icons"
+import { useNavigate } from "react-router-dom"
+import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 
 function FloatingOrb({ size, x, y, delay, color }) {
   return (
