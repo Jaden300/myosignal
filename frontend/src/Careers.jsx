@@ -214,7 +214,7 @@ export default function Careers() {
               <p style={{ fontSize: 14, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7 }}>Tell us about yourself, what role interests you, and what you'd like to build. We review every application personally.</p>
             </div>
             <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius)", border: "1px solid var(--border)", overflow: "hidden", padding: "0 24px" }}>
-              <iframe src="https://tally.so/embed/CAREERS_FORM_ID?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" width="100%" height="600" frameBorder="0" title="Careers application" style={{ display: "block" }} />
+              <iframe src="https://tally.so/embed/NpJAGB?hideTitle=1&transparentBackground=1&dynamicHeight=1" width="100%" height="600" frameBorder="0" title="Careers application" style={{ display: "block" }} />
             </div>
           </div>
         </div>

@@ -517,7 +517,7 @@ export default function Elevate() {
 
           <div style={{ background:"rgba(255,255,255,0.03)", backdropFilter:"blur(20px)", borderRadius:20, border:"1px solid rgba(245,158,11,0.15)", overflow:"hidden", padding:"0 24px" }}>
             <iframe
-              src="https://tally.so/embed/ELEVATE_FORM_ID?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+              src="https://tally.so/embed/QKJAgp?transparentBackground=1&dynamicHeight=1"
               width="100%" height="520" frameBorder="0"
               title="ELEVATE registration"
               style={{ display:"block" }}

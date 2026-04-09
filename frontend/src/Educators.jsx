@@ -204,7 +204,7 @@ export default function Educators() {
               <p style={{ fontSize:15, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, maxWidth:440, margin:"0 auto 28px" }}>
                 We're actively developing new lesson plans. If you've used myojam in a classroom and want to share what worked, we'd love to hear from you.
               </p>
-              <a href="https://tally.so/r/YOUR_EDUCATOR_FORM" target="_blank" rel="noreferrer" style={{ background:"#10B981", color:"#fff", borderRadius:100, padding:"12px 28px", fontSize:14, fontWeight:500, textDecoration:"none", display:"inline-block" }}>
+              <a href="https://tally.so/embed/EkJXRN?transparentBackground=1&dynamicHeight=1" target="_blank" rel="noreferrer" style={{ background:"#10B981", color:"#fff", borderRadius:100, padding:"12px 28px", fontSize:14, fontWeight:500, textDecoration:"none", display:"inline-block" }}>
                 Share your experience →
               </a>
             </div>

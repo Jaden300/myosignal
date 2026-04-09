@@ -248,7 +248,7 @@ export default function Corporations() {
             border: "1px solid var(--border)", overflow: "hidden", padding: "0 24px"
           }}>
             <iframe
-              src="https://tally.so/embed/CORPORATIONS_FORM_ID?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+              src="https://tally.so/embed/A7qdM0?hideTitle=1&transparentBackground=1&dynamicHeight=1"
               width="100%"
               height="600"
               frameBorder="0"
