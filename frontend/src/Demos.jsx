@@ -199,23 +199,18 @@ export default function Demos() {
 
         {/* Desktop app CTA */}
         <Reveal delay={0.3}>
-          <div style={{
-            marginTop: 48, textAlign: "center",
-            padding: "32px", background: "var(--bg-secondary)",
-            border: "1px solid var(--border)", borderRadius: "var(--radius)"
-          }}>
-            <div style={{ fontSize: 15, fontWeight: 500, color: "var(--text)", marginBottom: 8 }}>
-              Want to try with real hardware?
+          <div style={{ marginTop:48, background:"var(--bg-secondary)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"36px 40px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:24, flexWrap:"wrap" }}>
+            <div>
+              <div style={{ fontSize:16, fontWeight:600, color:"var(--text)", marginBottom:8 }}>Want to try with real hardware?</div>
+              <p style={{ fontSize:14, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, margin:0, maxWidth:440 }}>
+                The native macOS application connects directly to a MyoWare 2.0 sensor over USB serial. Six gestures, real-time classification, full cursor and keyboard control.
+              </p>
+              <div style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300, marginTop:8 }}>macOS 12+ · Requires Accessibility permission · MyoWare 2.0 sensor optional</div>
             </div>
-            <p style={{ fontSize: 14, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, marginBottom: 16, maxWidth: 400, margin: "0 auto 16px" }}>
-              The macOS desktop app connects directly to a MyoWare 2.0 sensor for live EMG classification.
-            </p>
-            <a href="https://github.com/user-attachments/files/26291771/myojam-mac.zip"
-              style={{
-                background: "var(--accent)", color: "#fff", borderRadius: 100,
-                padding: "10px 24px", fontSize: 14, fontWeight: 500,
-                textDecoration: "none", display: "inline-block"
-              }}>Download for Mac</a>
+            <a href="https://github.com/user-attachments/files/26291771/myojam-mac.zip" style={{ background:"var(--accent)", color:"#fff", borderRadius:100, padding:"13px 28px", fontSize:15, fontWeight:500, textDecoration:"none", flexShrink:0, boxShadow:"0 4px 16px rgba(255,45,120,0.3)", transition:"transform 0.15s, box-shadow 0.15s", display:"flex", alignItems:"center", gap:8 }}
+              onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.04)";e.currentTarget.style.boxShadow="0 8px 24px rgba(255,45,120,0.4)"}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 4px 16px rgba(255,45,120,0.3)"}}
+            >↓ Download for Mac</a>
           </div>
         </Reveal>
       </div>

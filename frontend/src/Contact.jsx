@@ -100,7 +100,8 @@ export default function Contact() {
             </Reveal>
           )}
         />
-
+      
+        <div style={{ marginTop: 32 }}></div>
         <div style={{
           background: "var(--bg-secondary)", borderRadius: "var(--radius)",
           border: "1px solid var(--border)", overflow: "hidden"
