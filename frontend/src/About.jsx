@@ -7,7 +7,7 @@ const VALUES = [
   {
     icon:"🔄",
     title:"Technology should adapt to people",
-    body:"Most assistive tech forces users to conform to hardware constraints. We believe the opposite — the system should learn to understand you, not the other way around.",
+    body:"Most assistive tech forces users to conform to hardware constraints. We believe the opposite  -  the system should learn to understand you, not the other way around.",
   },
   {
     icon:"🌐",
@@ -17,12 +17,12 @@ const VALUES = [
   {
     icon:"🔬",
     title:"Research-grade, human-scale",
-    body:"The underlying science — EMG signal processing, gesture classification, real-time inference — is rigorous. But the experience should feel as simple as flexing a finger.",
+    body:"The underlying science  -  EMG signal processing, gesture classification, real-time inference  -  is rigorous. But the experience should feel as simple as flexing a finger.",
   },
   {
     icon:"📚",
     title:"Education as infrastructure",
-    body:"Technology without understanding is fragile. The education hub, lesson plans, and articles aren't extras — they're core to making myojam's work durable and reproducible.",
+    body:"Technology without understanding is fragile. The education hub, lesson plans, and articles aren't extras  -  they're core to making myojam's work durable and reproducible.",
   },
 ]
 
@@ -41,7 +41,7 @@ const STATS = [
   { val:"84.85%", label:"Cross-subject accuracy", sub:"On held-out subjects never seen during training" },
   { val:"16,269", label:"Training windows",        sub:"From 10 subjects across Ninapro DB5" },
   { val:"11",     label:"Published articles",      sub:"Ranging from neuroscience to hardware guides" },
-  { val:"MIT",    label:"License",                 sub:"Fully open — modify, fork, build on it" },
+  { val:"MIT",    label:"License",                 sub:"Fully open  -  modify, fork, build on it" },
 ]
 
 export default function About() {
@@ -72,7 +72,7 @@ export default function About() {
             We believe muscle signals<br/>shouldn't be<br/><span style={{ color:"var(--accent)" }}>a barrier.</span>
           </h1>
           <p style={{ fontSize:18, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:580, marginBottom:0, animation:"fadeUp 0.6s 0.2s ease both" }}>
-            myojam is an open-source project that lets people control a computer using surface EMG signals from their forearm — and an education platform teaching the science behind it. No keyboard, no mouse, no hands required.
+            myojam is an open-source project that lets people control a computer using surface EMG signals from their forearm  -  and an education platform teaching the science behind it. No keyboard, no mouse, no hands required.
           </p>
         </div>
       </section>
@@ -101,7 +101,7 @@ export default function About() {
                   Make gesture-based control accessible, open, and free.
                 </h2>
                 <p style={{ fontSize:16, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.8, marginBottom:16 }}>
-                  Starting with people who need it most — and building the educational resources to ensure the next generation of engineers understands both the technology and the humans it serves.
+                  Starting with people who need it most  -  and building the educational resources to ensure the next generation of engineers understands both the technology and the humans it serves.
                 </p>
                 <p style={{ fontSize:16, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.8 }}>
                   myojam began as a personal research challenge and grew into something larger: a working platform, an education hub, an international competition, and a growing body of open documentation that anyone can build on.
@@ -111,9 +111,9 @@ export default function About() {
                 <div style={{ fontSize:11, fontWeight:600, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:20 }}>What myojam is</div>
                 {[
                   ["A gesture classifier","84.85% cross-subject accuracy on Ninapro DB5"],
-                  ["A desktop app","Native macOS — connect a sensor, control your computer"],
+                  ["A desktop app","Native macOS  -  connect a sensor, control your computer"],
                   ["An education hub","11 articles, 3 lesson plans, 5 interactive demos"],
-                  ["A block coding env","myocode — EMG gestures as first-class events"],
+                  ["A block coding env","myocode  -  EMG gestures as first-class events"],
                   ["An open platform","MIT licensed, fully documented, publicly built"],
                 ].map(([title, sub])=>(
                   <div key={title} style={{ display:"flex", gap:12, marginBottom:14, alignItems:"flex-start" }}>
@@ -187,7 +187,7 @@ export default function About() {
               <div>
                 <div style={{ fontSize:20, fontWeight:600, color:"var(--text)", letterSpacing:"-0.4px", marginBottom:8 }}>myojam is fully open source</div>
                 <p style={{ fontSize:15, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, margin:0, maxWidth:480 }}>
-                  Signal processing pipeline, ML model, React frontend, FastAPI backend, macOS desktop app — all public on GitHub under the MIT license.
+                  Signal processing pipeline, ML model, React frontend, FastAPI backend, macOS desktop app  -  all public on GitHub under the MIT license.
                 </p>
               </div>
               <a href="https://github.com/Jaden300/myojam" target="_blank" rel="noreferrer" style={{ background:"var(--accent)", color:"#fff", borderRadius:100, padding:"13px 28px", fontSize:15, fontWeight:500, textDecoration:"none", flexShrink:0, boxShadow:"0 4px 16px rgba(255,45,120,0.3)", transition:"transform 0.15s, box-shadow 0.15s" }}

@@ -105,7 +105,7 @@ const ARTICLES = [
     slug: "/education/future-of-bci",
     tag: "Future",
     title: "After EMG: what comes next",
-    summary: "Surface EMG is one point on a spectrum from skin-surface sensing to direct neural recording. Here's where the field is heading — high-density arrays, peripheral nerve interfaces, and motor cortex decoding.",
+    summary: "Surface EMG is one point on a spectrum from skin-surface sensing to direct neural recording. Here's where the field is heading  -  high-density arrays, peripheral nerve interfaces, and motor cortex decoding.",
     readTime: "6 min read",
     author: "Jaden Wong",
     date: "2025-09-22",
@@ -129,7 +129,7 @@ const ARTICLES = [
     slug: "/education/windowing-explained",
     tag: "Signal processing",
     title: "The art of cutting a signal into pieces",
-    summary: "Window size, overlap, and step size are the least glamorous choices in EMG classification — and silently the most consequential. Here's what they actually control and why myojam made the choices it did.",
+    summary: "Window size, overlap, and step size are the least glamorous choices in EMG classification  -  and silently the most consequential. Here's what they actually control and why myojam made the choices it did.",
     readTime: "7 min read",
     author: "Jaden Wong",
     date: "2025-07-05",
@@ -190,7 +190,7 @@ export default function Education() {
             fontSize: 17, color: "var(--text-secondary)", fontWeight: 300,
             lineHeight: 1.7, maxWidth: 560
           }}>
-            In-depth articles on the science behind myojam — from how muscles generate electrical signals
+            In-depth articles on the science behind myojam  -  from how muscles generate electrical signals
             to how machine learning classifies them into computer actions.
           </p>
         </div>
@@ -323,7 +323,7 @@ export default function Education() {
           marginTop: 48, fontSize: 13, color: "var(--text-tertiary)",
           fontWeight: 300, textAlign: "center", lineHeight: 1.7
         }}>
-          More articles coming soon — covering signal processing, machine learning for biosignals,
+          More articles coming soon  -  covering signal processing, machine learning for biosignals,
           and the future of assistive input devices.
         </p>
       </div>
@@ -339,7 +339,7 @@ export default function Education() {
               fontSize: 15, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7
             }}>
               Written something about EMG, assistive technology, or myojam?
-              Submit it for review — accepted articles are published here with full author credit.
+              Submit it for review  -  accepted articles are published here with full author credit.
             </p>
           </div>
           <div style={{

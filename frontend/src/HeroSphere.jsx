@@ -37,7 +37,7 @@ export default function HeroSphere({ scrollY }) {
     const positions = []
 
     for (let i = 0; i < NODE_COUNT; i++) {
-      // Fibonacci sphere distribution — even spacing
+      // Fibonacci sphere distribution  -  even spacing
       const phi = Math.acos(1 - 2 * (i + 0.5) / NODE_COUNT)
       const theta = Math.PI * (1 + Math.sqrt(5)) * i
       const x = RADIUS * Math.sin(phi) * Math.cos(theta)
@@ -111,7 +111,7 @@ export default function HeroSphere({ scrollY }) {
       s.group.rotation.y = t * 0.4
       s.group.rotation.x = Math.sin(t * 0.2) * 0.15
 
-      // Scroll tilt — deeper scroll = more tilt + scale down
+      // Scroll tilt  -  deeper scroll = more tilt + scale down
       const scrollFactor = s.scrollY / 600
       s.group.rotation.z = scrollFactor * 0.6
       s.group.rotation.x += scrollFactor * 0.4

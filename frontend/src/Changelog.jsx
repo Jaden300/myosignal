@@ -14,7 +14,7 @@ const LOGS = [
     summary: "myojam starts as a personal challenge: can you build a working EMG classifier from scratch using only public data and consumer hardware?",
     entries: [
       { type:"milestone", text:"Project conceived as a personal research challenge" },
-      { type:"milestone", text:"Discovered the Ninapro DB5 dataset — 10 subjects, 16 channels, 200Hz, publicly available" },
+      { type:"milestone", text:"Discovered the Ninapro DB5 dataset  -  10 subjects, 16 channels, 200Hz, publicly available" },
       { type:"milestone", text:"Ordered first MyoWare 2.0 sensor and Arduino Uno R3" },
       { type:"note",      text:"At this point the project had no name, no website, and no clear end goal. Just curiosity about whether affordable hardware could do something clinically meaningful." },
     ],
@@ -25,12 +25,12 @@ const LOGS = [
     tag: "First signal",
     tagColor: "#3B82F6",
     title: "First working EMG acquisition",
-    summary: "Hardware arrives. First muscle signal displayed on screen. The signal is noisy, inconsistent, and completely unclassified — but it's real EMG data.",
+    summary: "Hardware arrives. First muscle signal displayed on screen. The signal is noisy, inconsistent, and completely unclassified  -  but it's real EMG data.",
     entries: [
       { type:"milestone", text:"MyoWare 2.0 sensor wired to Arduino Uno R3" },
       { type:"milestone", text:"First raw EMG signal streamed to Serial Plotter at 200Hz" },
       { type:"milestone", text:"Bandpass filtering implemented (20–90Hz Butterworth) to clean the signal" },
-      { type:"bug",       text:"Initial electrode placement was wrong — signal was cross-talk from a neighbouring muscle, not the target. Moved electrodes to muscle belly centre." },
+      { type:"bug",       text:"Initial electrode placement was wrong  -  signal was cross-talk from a neighbouring muscle, not the target. Moved electrodes to muscle belly centre." },
       { type:"note",      text:"Seeing your own muscle signal on a screen for the first time is genuinely strange. It's abstract data with a very physical origin." },
     ],
   },
@@ -42,11 +42,11 @@ const LOGS = [
     title: "First gesture classifier",
     summary: "Feature extraction pipeline implemented. First Random Forest trained on Ninapro DB5 data. Accuracy on held-out data: 71.2%. Clearly improvable.",
     entries: [
-      { type:"milestone", text:"MAV, RMS, ZC, WL features extracted across all 16 channels — 64-feature vector" },
-      { type:"milestone", text:"Random Forest trained on Subject 1 Exercise 1 data — 6 gesture classes" },
+      { type:"milestone", text:"MAV, RMS, ZC, WL features extracted across all 16 channels  -  64-feature vector" },
+      { type:"milestone", text:"Random Forest trained on Subject 1 Exercise 1 data  -  6 gesture classes" },
       { type:"milestone", text:"71.2% cross-validated accuracy on initial model" },
       { type:"bug",       text:"Early model used rest windows as a 7th class, which dominated predictions. Removed rest class and added amplitude threshold instead." },
-      { type:"improvement", text:"Hyperparameter search via RandomizedSearchCV — accuracy improved to 79.4%" },
+      { type:"improvement", text:"Hyperparameter search via RandomizedSearchCV  -  accuracy improved to 79.4%" },
     ],
   },
   {
@@ -59,9 +59,9 @@ const LOGS = [
     entries: [
       { type:"milestone", text:"Data pipeline expanded to load all 10 subjects from DB5" },
       { type:"milestone", text:"16,269 labelled EMG windows in training set" },
-      { type:"milestone", text:"Cross-subject accuracy: 84.85% — model evaluated on held-out subjects never seen during training" },
+      { type:"milestone", text:"Cross-subject accuracy: 84.85%  -  model evaluated on held-out subjects never seen during training" },
       { type:"improvement", text:"Added per-subject normalisation to reduce inter-subject amplitude variance" },
-      { type:"note",      text:"84.85% cross-subject is the number that ends up on the website. It's honest — no cherry-picking, no within-subject inflation. It means roughly 1 in 7 predictions is wrong, which is the real baseline." },
+      { type:"note",      text:"84.85% cross-subject is the number that ends up on the website. It's honest  -  no cherry-picking, no within-subject inflation. It means roughly 1 in 7 predictions is wrong, which is the real baseline." },
     ],
   },
   {
@@ -76,8 +76,8 @@ const LOGS = [
       { type:"milestone", text:"6 gestures mapped to computer actions: cursor movement (4 directions), left click, spacebar" },
       { type:"milestone", text:"cliclick integration for mouse control without macOS accessibility bypass" },
       { type:"bug",       text:"PyQt6 + rumps combination caused trace trap crash on Python 3.13. Removed rumps entirely." },
-      { type:"bug",       text:"pyobjc in venv broken on Apple Silicon Python 3.13 — objc.arch attribute missing. Fixed by using system Python directly, no venv." },
-      { type:"improvement", text:"Global keyboard listener via Quartz CGEventTap — works even when app is not in focus" },
+      { type:"bug",       text:"pyobjc in venv broken on Apple Silicon Python 3.13  -  objc.arch attribute missing. Fixed by using system Python directly, no venv." },
+      { type:"improvement", text:"Global keyboard listener via Quartz CGEventTap  -  works even when app is not in focus" },
     ],
   },
   {
@@ -86,13 +86,13 @@ const LOGS = [
     tag: "Web demo",
     tagColor: "#10B981",
     title: "Web demo launched",
-    summary: "FastAPI backend deployed on Render. React frontend at myojam.com. Anyone can try the gesture classifier in a browser — no hardware required.",
+    summary: "FastAPI backend deployed on Render. React frontend at myojam.com. Anyone can try the gesture classifier in a browser  -  no hardware required.",
     entries: [
-      { type:"milestone", text:"FastAPI inference API deployed on Render — /predict, /sample, /gestures endpoints" },
+      { type:"milestone", text:"FastAPI inference API deployed on Render  -  /predict, /sample, /gestures endpoints" },
       { type:"milestone", text:"React/Vite frontend with real-time EMG visualisation and gesture prediction" },
       { type:"milestone", text:"Dataset mode: loads real Ninapro windows so users can demo without hardware" },
       { type:"milestone", text:"Vercel deployment via GitHub CI, custom domain myojam.com via Namecheap" },
-      { type:"improvement", text:"Three.js 3D hand model in the web demo — finger curl animation driven by channel MAV" },
+      { type:"improvement", text:"Three.js 3D hand model in the web demo  -  finger curl animation driven by channel MAV" },
       { type:"note",      text:"The web demo is deliberately hardware-optional. The goal is to make the system accessible to anyone curious about EMG, not just people who own a MyoWare sensor." },
     ],
   },
@@ -104,12 +104,12 @@ const LOGS = [
     title: "Design overhaul & education hub",
     summary: "Full site redesign. Education hub with 4 in-depth articles. Signal playground. AI chatbot powered by GPT-4o-mini. The project starts to look like a real product.",
     entries: [
-      { type:"milestone", text:"Full site redesign — Apple-style typography, pink accent system, consistent var(--*) tokens" },
+      { type:"milestone", text:"Full site redesign  -  Apple-style typography, pink accent system, consistent var(--*) tokens" },
       { type:"milestone", text:"Education hub launched with 4 articles: EMG science, open-source history, Random Forest deep dive, Ninapro DB5 explainer" },
-      { type:"milestone", text:"Signal playground — draw waveforms, watch feature extraction compute live" },
+      { type:"milestone", text:"Signal playground  -  draw waveforms, watch feature extraction compute live" },
       { type:"milestone", text:"AI chatbot endpoint via GPT-4o-mini, jailbreak-hardened system prompt, streaming text UI" },
       { type:"milestone", text:"Newsletter popup, demo feedback form, careers page, corporations page" },
-      { type:"improvement", text:"Shared animation system (Animate.jsx) — Reveal, StaggerList, HoverCard across all pages" },
+      { type:"improvement", text:"Shared animation system (Animate.jsx)  -  Reveal, StaggerList, HoverCard across all pages" },
       { type:"improvement", text:"SVG icon system replacing all emoji in navigation" },
     ],
   },
@@ -122,7 +122,7 @@ const LOGS = [
     summary: "Five interactive demos including the myocode block coding environment. Full educators hub with lesson plans, quizzes, and a resource library.",
     entries: [
       { type:"milestone", text:"Demos page with 5 interactive tools: live classifier, signal playground, gesture game, frequency analyzer, confusion matrix explorer" },
-      { type:"milestone", text:"myocode — Scratch-like block coding with EMG gesture events, canvas drawing, sprite movement" },
+      { type:"milestone", text:"myocode  -  Scratch-like block coding with EMG gesture events, canvas drawing, sprite movement" },
       { type:"milestone", text:"Educators hub with 3 full lesson plans, curriculum alignment, differentiation strategies, and assessment rubrics" },
       { type:"milestone", text:"Multiple-choice quiz engine with per-question explanations, progress bar, and results review" },
       { type:"milestone", text:"7 new education articles spanning neuroscience, hardware, ethics, and signal processing" },
@@ -177,7 +177,7 @@ export default function Changelog() {
               How myojam<br /><span style={{ color:"var(--accent)" }}>got here.</span>
             </h1>
             <p style={{ fontSize:17, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:520, marginBottom:48 }}>
-              A complete development log — every version, every milestone, every bug that took too long to fix.
+              A complete development log  -  every version, every milestone, every bug that took too long to fix.
               Built in public, documented in public.
             </p>
           </Reveal>
@@ -285,11 +285,11 @@ export default function Changelog() {
             <h3 style={{ fontSize:20, fontWeight:600, color:"var(--text)", letterSpacing:"-0.4px", marginBottom:16 }}>The roadmap</h3>
             <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
               {[
-                ["Personal model retraining UI — guided calibration wizard in the desktop app"],
-                ["Windows and Linux support — cross-platform input layer replacing cliclick and osascript"],
-                ["Higher-density electrode support — 32+ channel configurations for improved finger-level resolution"],
-                ["Online learning — model updates incrementally as users correct misclassifications"],
-                ["Community dataset — open call for personal EMG recordings to build a diverse training set"],
+                ["Personal model retraining UI  -  guided calibration wizard in the desktop app"],
+                ["Windows and Linux support  -  cross-platform input layer replacing cliclick and osascript"],
+                ["Higher-density electrode support  -  32+ channel configurations for improved finger-level resolution"],
+                ["Online learning  -  model updates incrementally as users correct misclassifications"],
+                ["Community dataset  -  open call for personal EMG recordings to build a diverse training set"],
               ].map(([text], i) => (
                 <div key={i} style={{ display:"flex", gap:12, alignItems:"flex-start" }}>
                   <div style={{ width:6, height:6, borderRadius:"50%", background:"var(--accent)", flexShrink:0, marginTop:6, opacity:0.5+(i*0.1) }}/>

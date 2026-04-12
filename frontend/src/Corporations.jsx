@@ -18,7 +18,7 @@ const USE_CASES = [
   {
     Icon: IconBrain,
     title: "Human-computer interaction research",
-    body: "Academic labs and R&D teams can use myojam as a baseline for EMG gesture classification experiments — saving months of pipeline development."
+    body: "Academic labs and R&D teams can use myojam as a baseline for EMG gesture classification experiments  -  saving months of pipeline development."
   },
   {
     Icon: IconRobot,
@@ -91,7 +91,7 @@ export default function Corporations() {
             lineHeight: 1.75, maxWidth: 560, marginBottom: 44,
             animation: "fadeUp 0.6s 0.2s ease both"
           }}>
-            myojam is a production-ready EMG gesture classification pipeline — MIT licensed,
+            myojam is a production-ready EMG gesture classification pipeline  -  MIT licensed,
             fully documented, and trained on a clinical-grade public dataset.
             Whether you're building assistive technology, conducting HCI research, or
             exploring gesture interfaces, we're open to collaboration.
@@ -196,7 +196,7 @@ export default function Corporations() {
               fontSize: 16, color: "var(--text-secondary)", fontWeight: 300,
               lineHeight: 1.7, maxWidth: 560, marginBottom: 48
             }}>
-              myojam is MIT licensed — you can use it freely. What we offer beyond the code
+              myojam is MIT licensed  -  you can use it freely. What we offer beyond the code
               is direct collaboration: integration support, custom model training, and joint research.
             </p>
           </Reveal>

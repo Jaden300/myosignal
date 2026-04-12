@@ -38,7 +38,7 @@ const SECTIONS = [
   },
   {
     num:"02", tag:"Health disclosure", title:"What EMG reveals about you",
-    body:"EMG signals contain more than gesture intent. Frequency content shifts with age, tremor signatures appear in neurological conditions, and fatigue patterns alter recruitment dynamics. Signal asymmetries can indicate injury or neurological damage. A sufficiently advanced model could infer health conditions from routine interaction data — without user awareness or consent.",
+    body:"EMG signals contain more than gesture intent. Frequency content shifts with age, tremor signatures appear in neurological conditions, and fatigue patterns alter recruitment dynamics. Signal asymmetries can indicate injury or neurological damage. A sufficiently advanced model could infer health conditions from routine interaction data  -  without user awareness or consent.",
     callout:null
   },
   {

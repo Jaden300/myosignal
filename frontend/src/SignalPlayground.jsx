@@ -39,10 +39,10 @@ function classifyGesture(features) {
 }
 
 const FEATURE_INFO = {
-  mav: { label: "MAV", full: "Mean Absolute Value", desc: "Average signal energy — how active the muscle is overall.", color: "#FF2D78" },
-  rms: { label: "RMS", full: "Root Mean Square", desc: "Signal power — similar to MAV but emphasises peaks.", color: "#3B82F6" },
-  zc:  { label: "ZC",  full: "Zero Crossing Rate", desc: "How often the signal crosses zero — a proxy for frequency content.", color: "#8B5CF6" },
-  wl:  { label: "WL",  full: "Waveform Length", desc: "Total variation of the signal — captures complexity and speed.", color: "#10B981" },
+  mav: { label: "MAV", full: "Mean Absolute Value", desc: "Average signal energy  -  how active the muscle is overall.", color: "#FF2D78" },
+  rms: { label: "RMS", full: "Root Mean Square", desc: "Signal power  -  similar to MAV but emphasises peaks.", color: "#3B82F6" },
+  zc:  { label: "ZC",  full: "Zero Crossing Rate", desc: "How often the signal crosses zero  -  a proxy for frequency content.", color: "#8B5CF6" },
+  wl:  { label: "WL",  full: "Waveform Length", desc: "Total variation of the signal  -  captures complexity and speed.", color: "#10B981" },
 }
 
 export default function SignalPlayground() {

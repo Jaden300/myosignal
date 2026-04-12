@@ -50,7 +50,7 @@ function StreamingText({ text }) {
         clearInterval(interval)
         setDone(true)
       }
-    }, 8) // ~125 chars/sec — fast but visible
+    }, 8) // ~125 chars/sec  -  fast but visible
     return () => clearInterval(interval)
   }, [text])
 
@@ -219,7 +219,7 @@ export default function ChatWidget() {
               </div>
             )}
 
-            {/* Starter prompts — only shown before first user message */}
+            {/* Starter prompts  -  only shown before first user message */}
             {showStarters && !loading && (
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 }}>
                 {STARTERS.map(s => (

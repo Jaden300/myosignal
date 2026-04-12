@@ -31,7 +31,7 @@ export function Reveal({ children, delay = 0, style = {} }) {
   )
 }
 
-// Staggered children — wraps an array of items
+// Staggered children  -  wraps an array of items
 export function StaggerList({ items, renderItem, gap = 16, columns = 1 }) {
   const [ref, visible] = useReveal()
   return (
@@ -53,7 +53,7 @@ export function StaggerList({ items, renderItem, gap = 16, columns = 1 }) {
   )
 }
 
-// Hover card — adds lift + shadow + optional border glow on hover
+// Hover card  -  adds lift + shadow + optional border glow on hover
 export function HoverCard({ children, color = "rgba(255,45,120,0.2)", style = {}, onClick }) {
   const [hovered, setHovered] = useState(false)
   return (

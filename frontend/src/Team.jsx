@@ -82,7 +82,7 @@ const TEAM = [
     seed: 1,
     name: "Jaden W.",
     role: "Founder & Lead Engineer",
-    bio: "Designed and built the full myojam system end-to-end — from training the EMG gesture classification model on the Ninapro DB5 dataset to architecting the FastAPI backend, React frontend, and native macOS desktop application. Passionate about building technology that expands human capability.",
+    bio: "Designed and built the full myojam system end-to-end  -  from training the EMG gesture classification model on the Ninapro DB5 dataset to architecting the FastAPI backend, React frontend, and native macOS desktop application. Passionate about building technology that expands human capability.",
     tags: ["Machine Learning", "Full-Stack", "Biomedical Signal Processing"]
   },
   {

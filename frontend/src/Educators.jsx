@@ -33,7 +33,7 @@ const LESSONS = [
     subject: "Computer Science / STEM",
     duration: "60 min",
     title: "Code with your muscles using myocode",
-    summary: "Students use myocode — myojam's block coding environment — to write programs that respond to simulated EMG gestures. Introduces event-driven programming concepts through physical interaction.",
+    summary: "Students use myocode  -  myojam's block coding environment  -  to write programs that respond to simulated EMG gestures. Introduces event-driven programming concepts through physical interaction.",
     objectives: ["Understand event-driven programming", "Build block-coded programs", "Connect physical gesture to computational output"],
     color: "#8B5CF6",
     icon: "🧩",
@@ -52,11 +52,11 @@ const LESSONS = [
 ]
 
 const SUBJECTS = [
-  { icon:"🔬", label:"Biology", desc:"Motor neurons, muscle contraction, the neuromuscular junction — EMG makes the invisible visible." },
-  { icon:"⚙️", label:"Physics", desc:"Signal amplitude, frequency, noise filtering — real physics in a biological context." },
+  { icon:"🔬", label:"Biology", desc:"Motor neurons, muscle contraction, the neuromuscular junction  -  EMG makes the invisible visible." },
+  { icon:"⚙️", label:"Physics", desc:"Signal amplitude, frequency, noise filtering  -  real physics in a biological context." },
   { icon:"💻", label:"Computer Science", desc:"Classification, feature extraction, event-driven programming, machine learning fundamentals." },
   { icon:"📊", label:"Data Science", desc:"Real 16-channel, 200Hz datasets. Students clean, visualise, and model genuine research data." },
-  { icon:"🤝", label:"Ethics", desc:"Biometric data, accessibility, who benefits from technology — rich ethical discussion material." },
+  { icon:"🤝", label:"Ethics", desc:"Biometric data, accessibility, who benefits from technology  -  rich ethical discussion material." },
   { icon:"🏥", label:"Health & Technology", desc:"Assistive technology, motor impairment, and the engineering of prosthetics and interfaces." },
 ]
 
@@ -65,7 +65,7 @@ const TEASER_QUESTIONS = [
     question: "Surface EMG electrodes measure electrical activity in:",
     options: ["The brain","Muscle fibres beneath the skin","Blood vessels","The peripheral nerves directly"],
     correct: 1,
-    explanation: "Surface electrodes pick up the summed electrical activity of muscle fibre action potentials through the skin. They don't directly record brain or nerve signals — those require more invasive approaches."
+    explanation: "Surface electrodes pick up the summed electrical activity of muscle fibre action potentials through the skin. They don't directly record brain or nerve signals  -  those require more invasive approaches."
   },
   {
     question: "myojam achieves what cross-subject classification accuracy?",
@@ -111,7 +111,7 @@ export default function Educators() {
           </h1>
           <p style={{ fontSize:18, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:560, marginBottom:44, animation:"fadeUp 0.6s 0.2s ease both" }}>
             Ready-to-run lesson plans, real datasets, and interactive tools for teaching
-            neuroscience, machine learning, and assistive technology — from middle school to university.
+            neuroscience, machine learning, and assistive technology  -  from middle school to university.
           </p>
           <div style={{ display:"flex", gap:12, flexWrap:"wrap", animation:"fadeUp 0.6s 0.3s ease both" }}>
             <a href="#lessons" style={{ background:"#10B981", color:"#fff", borderRadius:100, padding:"14px 36px", fontSize:15, fontWeight:500, textDecoration:"none", boxShadow:"0 4px 24px rgba(16,185,129,0.35)", transition:"transform 0.2s, box-shadow 0.2s" }}
@@ -191,7 +191,7 @@ export default function Educators() {
               A 3-question preview. Full quizzes are inside each lesson.
             </p>
           </Reveal>
-          <Quiz title="EMG & myojam — quick preview" questions={TEASER_QUESTIONS} accentColor="#10B981" />
+          <Quiz title="EMG & myojam  -  quick preview" questions={TEASER_QUESTIONS} accentColor="#10B981" />
         </div>
       </section>
 

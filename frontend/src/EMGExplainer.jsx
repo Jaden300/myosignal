@@ -34,37 +34,37 @@ function FaceAvatar({ seed, size = 48 }) {
 const SECTIONS = [
   {
     num: "01", tag: "The basics", title: "What is EMG?",
-    body: "Electromyography (EMG) is the measurement of electrical activity produced by skeletal muscles. When your brain tells a muscle to contract, it sends an electrical signal down a motor neuron. That signal causes muscle fibres to depolarise — producing a tiny voltage change detectable right through your skin. Surface EMG (sEMG) captures this using adhesive electrodes placed on the skin surface. No needles, no punctures — just electrodes picking up the electrical chatter of your muscles as you move.",
+    body: "Electromyography (EMG) is the measurement of electrical activity produced by skeletal muscles. When your brain tells a muscle to contract, it sends an electrical signal down a motor neuron. That signal causes muscle fibres to depolarise  -  producing a tiny voltage change detectable right through your skin. Surface EMG (sEMG) captures this using adhesive electrodes placed on the skin surface. No needles, no punctures  -  just electrodes picking up the electrical chatter of your muscles as you move.",
     callout: null,
   },
   {
     num: "02", tag: "The signal", title: "What does an EMG signal look like?",
-    body: "At rest, an EMG signal is mostly noise — a faint, random flutter around zero. When you flex a finger, a burst of activity erupts: rapid oscillations between roughly −1mV and +1mV, lasting as long as the contraction. The more forcefully you contract, the more motor units fire simultaneously, and the larger and more complex the burst becomes. The signal is also contaminated by powerline interference (50/60Hz hum), motion artefacts from electrode movement, and cross-talk from neighbouring muscles — which is why filtering is essential before any analysis.",
+    body: "At rest, an EMG signal is mostly noise  -  a faint, random flutter around zero. When you flex a finger, a burst of activity erupts: rapid oscillations between roughly −1mV and +1mV, lasting as long as the contraction. The more forcefully you contract, the more motor units fire simultaneously, and the larger and more complex the burst becomes. The signal is also contaminated by powerline interference (50/60Hz hum), motion artefacts from electrode movement, and cross-talk from neighbouring muscles  -  which is why filtering is essential before any analysis.",
     callout: "The human EMG frequency band of interest sits between 20Hz and 500Hz. myojam uses a 20–90Hz bandpass filter to isolate the most gesture-discriminative content while rejecting noise.",
   },
   {
     num: "03", tag: "Our hardware", title: "How MyoWare 2.0 fits in",
-    body: "Medical-grade EMG systems cost thousands of dollars and require trained clinicians to operate. The MyoWare 2.0 is a consumer-grade muscle sensor that makes surface EMG accessible for hobbyists, students, and researchers on a budget. It amplifies and rectifies the raw differential EMG signal from bipolar electrodes into a single analogue output voltage — simple enough for an Arduino to read over a standard analogue pin. myojam uses it to showcase what EMG-based assistive technology looks like in practice, and to demonstrate that the barrier to entry for this kind of research has never been lower.",
-    callout: "Important caveat: MyoWare 2.0 is not a medical device and is not intended for clinical use. myojam uses it to demonstrate and explore EMG-based assistive technology concepts — not for diagnosis or treatment.",
+    body: "Medical-grade EMG systems cost thousands of dollars and require trained clinicians to operate. The MyoWare 2.0 is a consumer-grade muscle sensor that makes surface EMG accessible for hobbyists, students, and researchers on a budget. It amplifies and rectifies the raw differential EMG signal from bipolar electrodes into a single analogue output voltage  -  simple enough for an Arduino to read over a standard analogue pin. myojam uses it to showcase what EMG-based assistive technology looks like in practice, and to demonstrate that the barrier to entry for this kind of research has never been lower.",
+    callout: "Important caveat: MyoWare 2.0 is not a medical device and is not intended for clinical use. myojam uses it to demonstrate and explore EMG-based assistive technology concepts  -  not for diagnosis or treatment.",
   },
   {
     num: "04", tag: "Signal processing", title: "From raw signal to clean data",
-    body: "The raw signal from the Arduino arrives at 200 samples per second (200Hz). Before classification, it goes through two processing steps. First, a 4th-order Butterworth bandpass filter removes frequencies below 20Hz (DC drift, motion artefacts) and above 90Hz (high-frequency noise). Second, the cleaned signal is cut into overlapping 200-sample windows — each representing one second of muscle activity — with 50-sample steps between windows. This sliding window approach gives the classifier a fresh snapshot of the forearm roughly every 250ms.",
+    body: "The raw signal from the Arduino arrives at 200 samples per second (200Hz). Before classification, it goes through two processing steps. First, a 4th-order Butterworth bandpass filter removes frequencies below 20Hz (DC drift, motion artefacts) and above 90Hz (high-frequency noise). Second, the cleaned signal is cut into overlapping 200-sample windows  -  each representing one second of muscle activity  -  with 50-sample steps between windows. This sliding window approach gives the classifier a fresh snapshot of the forearm roughly every 250ms.",
     callout: null,
   },
   {
     num: "05", tag: "Machine learning", title: "Teaching a computer to read gestures",
-    body: "Raw waveforms are hard to classify directly — they vary too much between people, sessions, and electrode placements. Instead, myojam extracts four time-domain features from each of the 16 electrode channels per window: Mean Absolute Value (average signal energy), Root Mean Square (signal power), Zero Crossing rate (frequency content proxy), and Waveform Length (signal complexity). This compresses each window into a 64-number vector that captures the essential character of the muscle activation pattern. A Random Forest classifier — an ensemble of 500 decision trees — maps that vector to one of 6 gesture classes. Trained on 16,269 labelled windows from 10 subjects in the public Ninapro DB5 dataset, it achieves 84.85% cross-subject accuracy.",
-    callout: "Cross-subject accuracy matters because it tests whether the model works on people it has never seen before — a much harder and more realistic challenge than testing on the same people it trained on.",
+    body: "Raw waveforms are hard to classify directly  -  they vary too much between people, sessions, and electrode placements. Instead, myojam extracts four time-domain features from each of the 16 electrode channels per window: Mean Absolute Value (average signal energy), Root Mean Square (signal power), Zero Crossing rate (frequency content proxy), and Waveform Length (signal complexity). This compresses each window into a 64-number vector that captures the essential character of the muscle activation pattern. A Random Forest classifier  -  an ensemble of 500 decision trees  -  maps that vector to one of 6 gesture classes. Trained on 16,269 labelled windows from 10 subjects in the public Ninapro DB5 dataset, it achieves 84.85% cross-subject accuracy.",
+    callout: "Cross-subject accuracy matters because it tests whether the model works on people it has never seen before  -  a much harder and more realistic challenge than testing on the same people it trained on.",
   },
   {
     num: "06", tag: "The bigger picture", title: "EMG as assistive technology",
-    body: "For people with limited hand or arm mobility — from spinal cord injuries to ALS to stroke — traditional input devices like keyboards and mice can be inaccessible or impossible to use. EMG-based interfaces offer an alternative: control a computer through subtle muscle contractions that don't require fine motor control or physical contact with a device. Commercial prosthetic hands have used EMG control for decades. What myojam explores is whether the same principle — read muscles, infer intent, execute action — can be made accessible, affordable, and open-source for broader assistive technology applications.",
+    body: "For people with limited hand or arm mobility  -  from spinal cord injuries to ALS to stroke  -  traditional input devices like keyboards and mice can be inaccessible or impossible to use. EMG-based interfaces offer an alternative: control a computer through subtle muscle contractions that don't require fine motor control or physical contact with a device. Commercial prosthetic hands have used EMG control for decades. What myojam explores is whether the same principle  -  read muscles, infer intent, execute action  -  can be made accessible, affordable, and open-source for broader assistive technology applications.",
     callout: null,
   },
   {
     num: "07", tag: "The future", title: "Where this technology is going",
-    body: "Consumer EMG is still early. Current limitations include electrode placement variability (signals differ every time you put them on), cross-talk between muscles, and the need for per-user calibration. Research directions include deep learning models that adapt to individual users in real time, higher-density electrode arrays that resolve finer finger movements, and dry electrodes that don't require conductive gel. As hardware improves and machine learning matures, EMG interfaces have the potential to become a mainstream assistive modality — and possibly a general-purpose input method for everyone.",
+    body: "Consumer EMG is still early. Current limitations include electrode placement variability (signals differ every time you put them on), cross-talk between muscles, and the need for per-user calibration. Research directions include deep learning models that adapt to individual users in real time, higher-density electrode arrays that resolve finer finger movements, and dry electrodes that don't require conductive gel. As hardware improves and machine learning matures, EMG interfaces have the potential to become a mainstream assistive modality  -  and possibly a general-purpose input method for everyone.",
     callout: null,
   },
 ]
@@ -192,7 +192,7 @@ export default function EMGExplainer() {
           }}>
             Surface EMG is a window into the body's intent. With the right hardware, signal processing,
             and machine learning, it becomes a practical interface between human movement and digital action.
-            myojam demonstrates that this technology doesn't have to be expensive, proprietary, or inaccessible —
+            myojam demonstrates that this technology doesn't have to be expensive, proprietary, or inaccessible  - 
             it can be open-source, reproducible, and built with $50 of consumer hardware and public research data.
             The gap between lab and living room is closing.
           </p>
@@ -200,7 +200,7 @@ export default function EMGExplainer() {
 
         <ArticleBar
           url="https://myojam.com/education/emg-explainer"
-          title="The science of muscle-computer interfaces — myojam"
+          title="The science of muscle-computer interfaces  -  myojam"
           citation={{
             apa: `W., J. (2026, April 6). The science of muscle-computer interfaces. myojam. https://myojam.com/education/emg-explainer`
           }}

@@ -39,7 +39,7 @@ export default function Privacy() {
             },
             {
               title: "3. Demo API Requests",
-              body: "When using the web demo in Dataset mode, your browser sends HTTP requests to our classification API (hosted on Render). These requests contain only anonymous EMG signal windows from the Ninapro DB5 dataset — not your personal EMG data. We do not log or store these requests beyond standard server access logs."
+              body: "When using the web demo in Dataset mode, your browser sends HTTP requests to our classification API (hosted on Render). These requests contain only anonymous EMG signal windows from the Ninapro DB5 dataset  -  not your personal EMG data. We do not log or store these requests beyond standard server access logs."
             },
             {
               title: "4. Sensor Mode",

@@ -234,8 +234,8 @@ export default function FrequencyAnalyzer() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
             <div style={{ fontSize: 13, fontWeight: 500, color: "var(--text)" }}>Time domain</div>
             <div style={{ display: "flex", gap: 16, fontSize: 12, color: "var(--text-tertiary)" }}>
-              <span>— Raw signal</span>
-              <span style={{ color: g?.color }}>— Filtered (20–90Hz)</span>
+              <span> -  Raw signal</span>
+              <span style={{ color: g?.color }}> -  Filtered (20–90Hz)</span>
             </div>
           </div>
           <div style={{ borderRadius: "var(--radius-sm)", overflow: "hidden", border: "1px solid var(--border)" }}>
@@ -278,7 +278,7 @@ export default function FrequencyAnalyzer() {
             Useful EMG signal lives between 20Hz and 90Hz for surface recordings at this depth and sensor quality.
             Below 20Hz you get DC drift and movement artefacts from the electrode shifting.
             Above 90Hz you get amplifier noise and aliasing. The 4th-order Butterworth filter removes both
-            without introducing phase distortion that would shift the waveform in time — which matters when
+            without introducing phase distortion that would shift the waveform in time  -  which matters when
             you're correlating signal shape to gesture timing.
           </p>
         </div>

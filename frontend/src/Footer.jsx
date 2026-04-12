@@ -1,47 +1,70 @@
 import { useNavigate } from "react-router-dom"
 
+const SOCIALS = [
+  { icon: "fab fa-instagram",  href: "https://instagram.com/YOUR_HANDLE",   label: "Instagram" },
+  { icon: "fab fa-linkedin-in",href: "https://linkedin.com/in/jaden-wong09", label: "LinkedIn" },
+  { icon: "fab fa-x-twitter",  href: "https://x.com/YOUR_HANDLE",           label: "X" },
+  { icon: "fab fa-youtube",    href: "https://youtube.com/YOUR_CHANNEL",     label: "YouTube" },
+  { icon: "fab fa-github",     href: "https://github.com/Jaden300",         label: "GitHub" },
+  { icon: "fab fa-tiktok",     href: "https://tiktok.com/@YOUR_HANDLE",     label: "TikTok" },
+]
+
 export default function Footer() {
   const navigate = useNavigate()
   return (
-    <footer style={{
-      borderTop: "1px solid var(--border)",
-      padding: "32px",
-      marginTop: 80,
-    }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{
-          display: "flex", justifyContent: "space-between",
-          alignItems: "center", flexWrap: "wrap", gap: 16
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ fontSize: 14, fontWeight: 600, color: "var(--text)" }}>myojam</span>
-            <span style={{ fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300 }}>
-              Open source · MIT License · Built on Ninapro DB5
-            </span>
+    <footer style={{ borderTop: "1px solid var(--border)", padding: "48px", background: "var(--bg)" }}>
+      <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
+
+          {/* Wordmark */}
+          <div style={{ fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300 }}>
+            © 2026 Jaden Wong · Toronto, Ontario
           </div>
-          <div style={{ display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>
-            {[
-              ["Terms of Service", "/terms"],
-              ["Privacy Policy", "/privacy"],
-              ["GitHub", "https://github.com/Jaden300/myosignal"],
-            ].map(([label, href]) => (
-              href.startsWith("http")
-                ? <a key={label} href={href} target="_blank" rel="noreferrer" style={{
-                    fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300,
-                    textDecoration: "none"
-                  }}>{label}</a>
-                : <span key={label} onClick={() => navigate(href)} style={{
-                    fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300,
-                    cursor: "pointer"
-                  }}>{label}</span>
+
+          {/* Social icons */}
+          <div style={{ display: "flex", gap: 8 }}>
+            {SOCIALS.map(s => (
+              <a key={s.label} href={s.href} target="_blank" rel="noreferrer"
+                title={s.label}
+                style={{
+                  width: 36, height: 36, borderRadius: "50%",
+                  border: "1px solid var(--border)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "var(--text-tertiary)", fontSize: 14,
+                  transition: "border-color 0.2s, color 0.2s, transform 0.2s, background 0.2s"
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = "var(--gold)"
+                  e.currentTarget.style.color = "var(--gold)"
+                  e.currentTarget.style.transform = "translateY(-3px)"
+                  e.currentTarget.style.background = "var(--gold-soft)"
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = "var(--border)"
+                  e.currentTarget.style.color = "var(--text-tertiary)"
+                  e.currentTarget.style.transform = "translateY(0)"
+                  e.currentTarget.style.background = "transparent"
+                }}
+              >
+                <i className={s.icon}/>
+              </a>
             ))}
           </div>
-        </div>
-        <div style={{
-          marginTop: 16, fontSize: 12,
-          color: "var(--text-tertiary)", fontWeight: 300
-        }}>
-          © 2025 myojam™. All rights reserved. · Built with ♥ for assistive technology.
+
+          {/* Nav links */}
+          <div style={{ display: "flex", gap: 24 }}>
+            {[["myojam","https://myojam.com"],["Research","/research"]].map(([label, href]) => (
+              href.startsWith("http")
+                ? <a key={label} href={href} target="_blank" rel="noreferrer" className="ink-line" style={{ fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300 }}
+                    onMouseEnter={e => e.currentTarget.style.color = "var(--gold)"}
+                    onMouseLeave={e => e.currentTarget.style.color = "var(--text-tertiary)"}
+                  >{label}</a>
+                : <span key={label} onClick={() => navigate(href)} className="ink-line" style={{ fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300, cursor: "pointer" }}
+                    onMouseEnter={e => e.currentTarget.style.color = "var(--gold)"}
+                    onMouseLeave={e => e.currentTarget.style.color = "var(--text-tertiary)"}
+                  >{label}</span>
+            ))}
+          </div>
         </div>
       </div>
     </footer>

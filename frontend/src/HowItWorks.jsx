@@ -10,7 +10,7 @@ const STEPS = [
     icon: <IconGear />,
     title: "Signal capture",
     subtitle: "Hardware layer",
-    body: "Surface EMG electrodes — adhesive stickers, no needles — pick up the electrical activity of your forearm muscles as you move. The MyoWare 2.0 sensor amplifies and conditions this signal across 16 channels at 200 Hz, fed into an Arduino Uno over USB.",
+    body: "Surface EMG electrodes  -  adhesive stickers, no needles  -  pick up the electrical activity of your forearm muscles as you move. The MyoWare 2.0 sensor amplifies and conditions this signal across 16 channels at 200 Hz, fed into an Arduino Uno over USB.",
     tags: ["MyoWare 2.0 sensor", "16 EMG channels", "200 Hz sampling", "Arduino Uno R3"],
   },
   {
@@ -18,7 +18,7 @@ const STEPS = [
     icon: <IconChart />,
     title: "Filtering & windowing",
     subtitle: "Signal processing",
-    body: "Raw EMG is noisy — powerline hum, motion artifacts, baseline drift. A 4th-order Butterworth bandpass filter (20–90 Hz) strips it down to the biologically meaningful band. The cleaned signal is then sliced into 200-sample windows with 50-sample steps, ready for feature extraction.",
+    body: "Raw EMG is noisy  -  powerline hum, motion artifacts, baseline drift. A 4th-order Butterworth bandpass filter (20–90 Hz) strips it down to the biologically meaningful band. The cleaned signal is then sliced into 200-sample windows with 50-sample steps, ready for feature extraction.",
     tags: ["Butterworth 20–90 Hz", "200-sample windows", "50-sample step", "75% overlap"],
   },
   {
@@ -26,7 +26,7 @@ const STEPS = [
     icon: <IconChart />,
     title: "Feature extraction",
     subtitle: "From waveform to numbers",
-    body: "Each window is compressed into a 64-number vector — four time-domain features computed across all 16 channels. These capture activation level (MAV), signal power (RMS), frequency content (ZC), and complexity (WL). Together they form a compact fingerprint of the gesture.",
+    body: "Each window is compressed into a 64-number vector  -  four time-domain features computed across all 16 channels. These capture activation level (MAV), signal power (RMS), frequency content (ZC), and complexity (WL). Together they form a compact fingerprint of the gesture.",
     tags: ["MAV · RMS · ZC · WL", "64-dimensional vector", "16 channels × 4 features"],
   },
   {
@@ -34,7 +34,7 @@ const STEPS = [
     icon: <IconBrain />,
     title: "Gesture classification",
     subtitle: "Machine learning",
-    body: "A Random Forest classifier (500 trees, hyperparameter-tuned via 100-configuration RandomizedSearchCV) maps the 64-feature vector to one of 6 gesture classes. Trained on 16,269 labeled windows from 10 subjects in the public Ninapro DB5 dataset — achieving 84.85% cross-subject accuracy.",
+    body: "A Random Forest classifier (500 trees, hyperparameter-tuned via 100-configuration RandomizedSearchCV) maps the 64-feature vector to one of 6 gesture classes. Trained on 16,269 labeled windows from 10 subjects in the public Ninapro DB5 dataset  -  achieving 84.85% cross-subject accuracy.",
     tags: ["Random Forest · 500 trees", "16,269 training windows", "10 subjects · Ninapro DB5", "84.85% accuracy"],
   },
   {
@@ -42,7 +42,7 @@ const STEPS = [
     icon: <IconBolt />,
     title: "Assistive action",
     subtitle: "Gesture to computer control",
-    body: "The predicted gesture maps to a real computer action in under 50ms end-to-end. Cursor movement uses the macOS CoreGraphics API for hardware-level repositioning. Clicks fire via cliclick. Keypresses are injected through osascript. No accessibility overlays — direct system-level control.",
+    body: "The predicted gesture maps to a real computer action in under 50ms end-to-end. Cursor movement uses the macOS CoreGraphics API for hardware-level repositioning. Clicks fire via cliclick. Keypresses are injected through osascript. No accessibility overlays  -  direct system-level control.",
     tags: ["< 50ms latency", "CoreGraphics cursor", "osascript keypresses", "6 mapped actions"],
   },
 ]
@@ -91,7 +91,7 @@ export default function HowItWorks() {
             fontWeight: 300,
             marginBottom: 56
           }}>
-            How myojam turns a forearm twitch into a cursor move, click, or keypress —
+            How myojam turns a forearm twitch into a cursor move, click, or keypress  - 
             from raw electrode data to system-level control.
           </p>
         </Reveal>
@@ -220,7 +220,7 @@ export default function HowItWorks() {
               letterSpacing: "0.04em",
               marginBottom: 10
             }}>
-              Dataset — Ninapro DB5
+              Dataset  -  Ninapro DB5
             </div>
 
             <p style={{

@@ -129,7 +129,7 @@ export default function BuildYourOwn() {
         <div style={{ marginTop:56, background:"var(--bg-secondary)", borderRadius:"var(--radius)", padding:"40px", border:"1px solid var(--border)" }}>
           <div style={{ fontSize:11, fontWeight:500, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:14 }}>Conclusion</div>
           <p style={{ fontSize:15, color:"var(--text-secondary)", lineHeight:1.8, fontWeight:300, margin:0 }}>
-            The barrier to entry for EMG hardware is now minimal. With inexpensive components and open-source tooling, functional biosignal systems are accessible to anyone. The constraint is no longer cost or complexity — it is awareness and execution.
+            The barrier to entry for EMG hardware is now minimal. With inexpensive components and open-source tooling, functional biosignal systems are accessible to anyone. The constraint is no longer cost or complexity  -  it is awareness and execution.
           </p>
         </div>
 

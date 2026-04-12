@@ -554,7 +554,7 @@ export default function MyoCode() {
           {running && (
             <div style={{ display:"flex", alignItems:"center", gap:8, fontSize:13, color:"var(--accent)", fontWeight:400, padding:"0 8px" }}>
               <div style={{ width:8, height:8, borderRadius:"50%", background:"var(--accent)", animation:"pulse 1s infinite" }}/>
-              Running — press 1–6 or tap gestures below
+              Running  -  press 1–6 or tap gestures below
             </div>
           )}
 
@@ -784,7 +784,7 @@ export default function MyoCode() {
         <div style={{ marginTop:40, display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
           {[
             { title:"1. Build",    body:"Click or drag blocks from the palette into the script area. Reorder by dragging. Delete with ✕." },
-            { title:"2. Edit",     body:"Change values inline — type a number, pick from a dropdown, or click the color swatch." },
+            { title:"2. Edit",     body:"Change values inline  -  type a number, pick from a dropdown, or click the color swatch." },
             { title:"3. Run",      body:"Press ▶ Run. Blocks highlight as they execute. The stage shows your program in action." },
             { title:"4. Gesture",  body:"When the program hits a 'When gesture detected' block, press the matching key 1–6 or the buttons above." },
           ].map(c=>(

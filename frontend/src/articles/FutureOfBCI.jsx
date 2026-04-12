@@ -33,13 +33,13 @@ const ABSTRACT = "Surface EMG represents one point on a spectrum of human-machin
 const SECTIONS = [
   {
     num:"01", tag:"The spectrum", title:"From skin to neuron",
-    body:"Human-computer interfaces can be ordered by where in the nervous system they tap the signal. At one end, surface EMG sits at the muscle — the furthest downstream from the brain, the least invasive, the most accessible. Moving upstream: needle EMG records from within individual muscle fibres. Peripheral nerve interfaces record from nerve fascicles. Electrocorticography records from the cortical surface. Intracortical arrays record from individual neurons. Each step upstream means more information, less noise, but dramatically more invasive procedures.",
+    body:"Human-computer interfaces can be ordered by where in the nervous system they tap the signal. At one end, surface EMG sits at the muscle  -  the furthest downstream from the brain, the least invasive, the most accessible. Moving upstream: needle EMG records from within individual muscle fibres. Peripheral nerve interfaces record from nerve fascicles. Electrocorticography records from the cortical surface. Intracortical arrays record from individual neurons. Each step upstream means more information, less noise, but dramatically more invasive procedures.",
     callout:null
   },
   {
     num:"02", tag:"High-density EMG", title:"The near-term upgrade",
-    body:"The most actionable near-term improvement to consumer EMG doesn't require any surgery. High-density surface EMG uses arrays of 64–256 electrodes over the muscle surface. The dense spatial sampling allows decomposition of the signal into individual motor unit action potentials — identifying which motor neurons are firing rather than averaging them. This increases information content and improves fine-grained gesture resolution.",
-    callout:"Several research groups have demonstrated individual finger classification accuracy above 95% using HD-sEMG with minimal calibration. The primary constraint is hardware cost — not algorithmic capability."
+    body:"The most actionable near-term improvement to consumer EMG doesn't require any surgery. High-density surface EMG uses arrays of 64–256 electrodes over the muscle surface. The dense spatial sampling allows decomposition of the signal into individual motor unit action potentials  -  identifying which motor neurons are firing rather than averaging them. This increases information content and improves fine-grained gesture resolution.",
+    callout:"Several research groups have demonstrated individual finger classification accuracy above 95% using HD-sEMG with minimal calibration. The primary constraint is hardware cost  -  not algorithmic capability."
   },
   {
     num:"03", tag:"Peripheral nerve", title:"Recording closer to the source",
@@ -53,7 +53,7 @@ const SECTIONS = [
   },
   {
     num:"05", tag:"For myojam", title:"The platform angle",
-    body:"myojam operates at the accessible end of this spectrum — consumer hardware and non-invasive sensing. However, the signal processing pipeline is architecture-agnostic. The same feature extraction and classification approach can scale from 16-channel EMG to high-density arrays or even neural recordings by modifying the input layer. Building robust infrastructure at the low end creates a foundation that scales upward with hardware improvements.",
+    body:"myojam operates at the accessible end of this spectrum  -  consumer hardware and non-invasive sensing. However, the signal processing pipeline is architecture-agnostic. The same feature extraction and classification approach can scale from 16-channel EMG to high-density arrays or even neural recordings by modifying the input layer. Building robust infrastructure at the low end creates a foundation that scales upward with hardware improvements.",
     callout:null
   },
 ]

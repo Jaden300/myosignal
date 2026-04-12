@@ -24,7 +24,7 @@ function FloatingOrb({ size, x, y, delay, color }) {
 const REASONS = [
   { Icon: IconBolt, title: "Real impact, real users", body: "myojam isn't a toy project. It's assistive technology people actually use. Your work directly affects how people with motor impairments interact with computers." },
   { Icon: IconBrain, title: "Cutting-edge research stack", body: "Work at the intersection of biosignal processing, machine learning, and human-computer interaction. Ninapro datasets, Random Forest classifiers, real-time EMG pipelines." },
-  { Icon: IconCode, title: "Fully open source", body: "Everything we build is public. Your contributions are visible to the world — a portfolio piece that speaks for itself on any application." },
+  { Icon: IconCode, title: "Fully open source", body: "Everything we build is public. Your contributions are visible to the world  -  a portfolio piece that speaks for itself on any application." },
   { Icon: IconChart, title: "Move fast", body: "Small team, no bureaucracy. If you have an idea on Monday, it can be in production by Friday. We value execution over process." },
 ]
 
@@ -33,7 +33,7 @@ const ROLES = [
     title:"ML Research Contributor",
     type:"Volunteer · Remote",
     tags:["Python","scikit-learn","EMG","Signal Processing"],
-    desc:"Help improve the gesture classifier — better features, new architectures, cross-subject adaptation. You'll work directly with Ninapro DB5 and real sensor data.",
+    desc:"Help improve the gesture classifier  -  better features, new architectures, cross-subject adaptation. You'll work directly with Ninapro DB5 and real sensor data.",
   },
   {
     title:"Frontend Developer",
@@ -57,7 +57,7 @@ const ROLES = [
     title:"Technical Writer",
     type:"Volunteer · Remote",
     tags:["Documentation","Markdown","API docs","Education"],
-    desc:"Write and maintain technical documentation — API references, setup guides, hardware walkthroughs, and tutorials. Make the project accessible to people at every skill level.",
+    desc:"Write and maintain technical documentation  -  API references, setup guides, hardware walkthroughs, and tutorials. Make the project accessible to people at every skill level.",
   },
   {
     title:"Education Content Creator",
@@ -69,7 +69,7 @@ const ROLES = [
     title:"iOS / Android Developer",
     type:"Volunteer · Remote",
     tags:["React Native","iOS","Android","Bluetooth"],
-    desc:"Build a companion mobile app for monitoring gesture classification in real time — current gesture, confidence score, and session statistics over Bluetooth.",
+    desc:"Build a companion mobile app for monitoring gesture classification in real time  -  current gesture, confidence score, and session statistics over Bluetooth.",
   },
   {
     title:"UX / Accessibility Researcher",
@@ -81,7 +81,7 @@ const ROLES = [
     title:"Community Manager",
     type:"Volunteer · Remote",
     tags:["Community","Social Media","Outreach","Writing"],
-    desc:"Help grow the myojam community — manage communications, coordinate ELEVATE competition participants, support the Discord, and amplify the project's reach.",
+    desc:"Help grow the myojam community  -  manage communications, coordinate ELEVATE competition participants, support the Discord, and amplify the project's reach.",
   },
   {
     title:"Windows / Linux Port Contributor",
@@ -184,7 +184,7 @@ export default function Careers() {
           <div style={{ marginBottom: 48 }}>
             <p style={{ fontSize: 13, fontWeight: 500, color: "var(--accent)", letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 12 }}>Open roles</p>
             <h2 style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 600, letterSpacing: "-1px", color: "var(--text)", marginBottom: 16 }}>Where you fit in.</h2>
-            <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, maxWidth: 520 }}>All roles are volunteer and remote. This is a portfolio-building, mission-driven project — not a job. But the work is real and the impact is real.</p>
+            <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, maxWidth: 520 }}>All roles are volunteer and remote. This is a portfolio-building, mission-driven project  -  not a job. But the work is real and the impact is real.</p>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 64 }}>

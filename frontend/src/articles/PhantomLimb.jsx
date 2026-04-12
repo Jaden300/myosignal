@@ -28,32 +28,32 @@ function FaceAvatar({ seed, size = 48 }) {
   )
 }
 
-const ABSTRACT = "Phantom limb sensation — the vivid perception of a missing limb — is experienced by the majority of amputees. What's less well known is that it's often accompanied by real, measurable EMG signals in the residual limb that correspond to intended movements of the phantom. This article explores what phantom EMG reveals about cortical remapping, and why it matters for the future of prosthetic control."
+const ABSTRACT = "Phantom limb sensation  -  the vivid perception of a missing limb  -  is experienced by the majority of amputees. What's less well known is that it's often accompanied by real, measurable EMG signals in the residual limb that correspond to intended movements of the phantom. This article explores what phantom EMG reveals about cortical remapping, and why it matters for the future of prosthetic control."
 
 const SECTIONS = [
   {
     num:"01", tag:"The phenomenon", title:"What phantom limb actually is",
-    body:"Phantom limb sensation is the perception that a missing limb is still present — and often still moving. It's experienced by approximately 80% of amputees, and it's not a psychological aberration. It's a predictable consequence of how the brain represents the body. The sensory and motor cortex maintain a detailed map of every body part — the homunculus. After amputation, the cortical territory that represented the lost limb doesn't go dark. It remains active, and it gradually gets colonised by neighbouring regions (typically the face and trunk), producing the characteristic sensation that the missing hand is being touched when the cheek is stroked.",
+    body:"Phantom limb sensation is the perception that a missing limb is still present  -  and often still moving. It's experienced by approximately 80% of amputees, and it's not a psychological aberration. It's a predictable consequence of how the brain represents the body. The sensory and motor cortex maintain a detailed map of every body part  -  the homunculus. After amputation, the cortical territory that represented the lost limb doesn't go dark. It remains active, and it gradually gets colonised by neighbouring regions (typically the face and trunk), producing the characteristic sensation that the missing hand is being touched when the cheek is stroked.",
     callout:null
   },
   {
     num:"02", tag:"The signal", title:"Phantom EMG is measurable",
-    body:"Here's the remarkable part: when amputees attempt to move their phantom hand, the motor cortex still sends motor commands down the spinal cord. Those commands reach the residual limb, activating whatever muscle stumps remain. This produces real, recordable EMG signals — sometimes strong enough to control a myoelectric prosthetic directly. The pattern of those signals corresponds to the intended gesture, not to any actual muscle contraction in the stump. The brain is, in effect, trying to move a hand that isn't there, and the signal leaks out into the tissue that remains.",
-    callout:"This is the basis of modern myoelectric prosthetics. By recording from the residual limb and classifying the phantom motor intent, it's possible to give an amputee intuitive control over a prosthetic hand — with no additional training required, because the brain already knows how to signal the intended movements."
+    body:"Here's the remarkable part: when amputees attempt to move their phantom hand, the motor cortex still sends motor commands down the spinal cord. Those commands reach the residual limb, activating whatever muscle stumps remain. This produces real, recordable EMG signals  -  sometimes strong enough to control a myoelectric prosthetic directly. The pattern of those signals corresponds to the intended gesture, not to any actual muscle contraction in the stump. The brain is, in effect, trying to move a hand that isn't there, and the signal leaks out into the tissue that remains.",
+    callout:"This is the basis of modern myoelectric prosthetics. By recording from the residual limb and classifying the phantom motor intent, it's possible to give an amputee intuitive control over a prosthetic hand  -  with no additional training required, because the brain already knows how to signal the intended movements."
   },
   {
     num:"03", tag:"Cortical remapping", title:"How the brain adapts",
-    body:"The plasticity that causes phantom sensation also creates challenges for EMG-based prosthetics. As the cortex remaps after amputation, the spatial pattern of motor commands shifts. A gesture that originally produced a clean, localised EMG burst may, years after amputation, produce a different pattern as surrounding cortical regions expand into the vacated territory. This means that a prosthetic controller calibrated shortly after amputation may perform differently five years later — not because the hardware changed, but because the brain did.",
+    body:"The plasticity that causes phantom sensation also creates challenges for EMG-based prosthetics. As the cortex remaps after amputation, the spatial pattern of motor commands shifts. A gesture that originally produced a clean, localised EMG burst may, years after amputation, produce a different pattern as surrounding cortical regions expand into the vacated territory. This means that a prosthetic controller calibrated shortly after amputation may perform differently five years later  -  not because the hardware changed, but because the brain did.",
     callout:null
   },
   {
     num:"04", tag:"For intact users", title:"What this means for myojam",
-    body:"Most myojam users have all their limbs, so phantom EMG is a curiosity rather than a practical concern. But it illuminates something important: the relationship between motor intent and EMG signal is mediated by the brain, not fixed by anatomy. Fatigue, attention, emotional state, and learning all modulate the motor command. This is why cross-subject generalisation is hard — every brain maps motor intent to muscle activation slightly differently.",
+    body:"Most myojam users have all their limbs, so phantom EMG is a curiosity rather than a practical concern. But it illuminates something important: the relationship between motor intent and EMG signal is mediated by the brain, not fixed by anatomy. Fatigue, attention, emotional state, and learning all modulate the motor command. This is why cross-subject generalisation is hard  -  every brain maps motor intent to muscle activation slightly differently.",
     callout:null
   },
   {
     num:"05", tag:"The future", title:"Phantom signals and neural interfaces",
-    body:"The existence of phantom EMG is one of the reasons researchers are optimistic about neural prosthetics. If the motor cortex continues to generate gesture-specific signals even after the hand is gone, then capturing those signals — either from the residual EMG or directly from the cortex via implanted electrodes — could give amputees near-natural prosthetic control. Several groups have demonstrated that amputees can control individual prosthetic fingers through phantom intent with sub-second latency after brief calibration sessions.",
+    body:"The existence of phantom EMG is one of the reasons researchers are optimistic about neural prosthetics. If the motor cortex continues to generate gesture-specific signals even after the hand is gone, then capturing those signals  -  either from the residual EMG or directly from the cortex via implanted electrodes  -  could give amputees near-natural prosthetic control. Several groups have demonstrated that amputees can control individual prosthetic fingers through phantom intent with sub-second latency after brief calibration sessions.",
     callout:null
   },
 ]
@@ -77,7 +77,7 @@ export default function PhantomLimb() {
             The ghost in the electrode.<br/><span style={{ color:"var(--accent)" }}>Phantom limb EMG and what it tells us about the brain.</span>
           </h1>
           <p style={{ fontSize:17, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, marginBottom:36, maxWidth:580 }}>
-            Amputees can generate measurable EMG signals from limbs they no longer have. This isn't mysticism — it's evidence for how radically the brain remaps itself after injury.
+            Amputees can generate measurable EMG signals from limbs they no longer have. This isn't mysticism  -  it's evidence for how radically the brain remaps itself after injury.
           </p>
           <div style={{ display:"flex", alignItems:"center", gap:12 }}>
             <FaceAvatar seed={2} size={40} />
@@ -109,7 +109,7 @@ export default function PhantomLimb() {
         <div style={{ marginTop:56, background:"var(--bg-secondary)", borderRadius:"var(--radius)", padding:"40px", border:"1px solid var(--border)" }}>
           <div style={{ fontSize:11, fontWeight:500, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:14 }}>Conclusion</div>
           <p style={{ fontSize:15, color:"var(--text-secondary)", lineHeight:1.8, fontWeight:300, margin:0 }}>
-            Phantom limb EMG is one of neuroscience's stranger gifts to assistive technology. A signal produced by a brain trying to move a hand that isn't there turns out to be one of the cleanest, most intentional EMG signals we can record. The lesson is that motor intent — not muscle anatomy — is the primary information source. Building systems that capture intent rather than anatomy is the direction the whole field is moving.
+            Phantom limb EMG is one of neuroscience's stranger gifts to assistive technology. A signal produced by a brain trying to move a hand that isn't there turns out to be one of the cleanest, most intentional EMG signals we can record. The lesson is that motor intent  -  not muscle anatomy  -  is the primary information source. Building systems that capture intent rather than anatomy is the direction the whole field is moving.
           </p>
         </div>
         <ArticleBar url="https://myojam.com/education/phantom-limb" title="The ghost in the electrode." citation={{ apa:`Wong, J. (2025, December 3). The ghost in the electrode. myojam. https://myojam.com/education/phantom-limb` }} presetLikes={61} storageKey="like_phantom_limb" />

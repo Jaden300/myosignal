@@ -45,10 +45,10 @@ const PRIZES = [
     dark:"#92400e",
     icon:"🏆",
     awards:[
-      "Permanent recognition on myojam.com — featured indefinitely on the ELEVATE honours page",
+      "Permanent recognition on myojam.com  -  featured indefinitely on the ELEVATE honours page",
       "ELEVATE Grand Prix Digital Certificate, co-signed by the myojam founding team",
       "Dedicated case study published in the myojam education hub with full author attribution",
-      "Direct mentorship session with the myojam founding team — 60 minutes, agenda set by the winner",
+      "Direct mentorship session with the myojam founding team  -  60 minutes, agenda set by the winner",
       "Listed as a myojam Grand Prix Laureate in all future communications and publications",
     ],
   },
@@ -91,7 +91,7 @@ const PRIZES = [
 ]
 
 const CRITERIA = [
-  { label:"Impact",         weight:30, desc:"Does this work make a meaningful difference — to a user, a field, or a classroom? Evidence of real-world relevance is weighted heavily." },
+  { label:"Impact",         weight:30, desc:"Does this work make a meaningful difference  -  to a user, a field, or a classroom? Evidence of real-world relevance is weighted heavily." },
   { label:"Originality",    weight:25, desc:"Is this a genuinely new idea, approach, or application? The panel looks for work that advances the field rather than replicates the obvious." },
   { label:"Execution",      weight:25, desc:"Is the submission well-built, well-argued, or well-designed? Does it demonstrably work or make a coherent, defensible case?" },
   { label:"Communication",  weight:20, desc:"Is the submission clear, rigorous, and accessible to a non-specialist judge? Scientific writing, visual design, and presentation are all considered." },
@@ -99,9 +99,9 @@ const CRITERIA = [
 
 const TIMELINE = [
   { date:"April 2026",      label:"Registration & submission window opens",    done:true  },
-  { date:"April 30, 2026",  label:"Submission deadline — 11:59 PM Eastern Time", done:false },
+  { date:"April 30, 2026",  label:"Submission deadline  -  11:59 PM Eastern Time", done:false },
   { date:"May 1–7, 2026",   label:"Confidential judging period",               done:false },
-  { date:"May 15, 2026",    label:"Winners announced — ELEVATE Honours published", done:false },
+  { date:"May 15, 2026",    label:"Winners announced  -  ELEVATE Honours published", done:false },
   { date:"Ongoing",         label:"Laureate recognition & mentorship sessions", done:false },
 ]
 
@@ -112,8 +112,8 @@ const FAQS = [
   { q:"Must my submission use hardware?",   a:"No. Software-only submissions, simulations, research papers, design specifications, and educational materials are all valid. The Engineering track benefits from hardware demonstration but does not require it." },
   { q:"Can I submit to multiple tracks?",   a:"Yes. Each track submission is evaluated independently by a separate panel. You may submit different work to multiple tracks; the same submission entered in more than one track will be disqualified." },
   { q:"How are submissions evaluated?",     a:"A panel of judges scores all submissions against the four published criteria using a standardised rubric. All entrants receive written feedback regardless of outcome. Judges' decisions are final and not subject to appeal." },
-  { q:"When will I receive feedback?",      a:"All submitters receive written feedback no later than May 15, 2026 — the same date winners are announced. Feedback is provided whether or not you advance." },
-  { q:"What format are submissions?",       a:"All submissions are accepted via the registration form below. You will be asked to provide links to hosted materials — GitHub repositories, Google Drive folders, YouTube videos, or published documents. Large files should not be attached directly." },
+  { q:"When will I receive feedback?",      a:"All submitters receive written feedback no later than May 15, 2026  -  the same date winners are announced. Feedback is provided whether or not you advance." },
+  { q:"What format are submissions?",       a:"All submissions are accepted via the registration form below. You will be asked to provide links to hosted materials  -  GitHub repositories, Google Drive folders, YouTube videos, or published documents. Large files should not be attached directly." },
 ]
 
 function Countdown() {
@@ -270,7 +270,7 @@ export default function Elevate() {
             <a href="#register" style={{ background:"linear-gradient(135deg, #F59E0B 0%, #92400e 100%)", color:"#1a0a00", borderRadius:100, padding:"16px 44px", fontSize:15, fontWeight:700, textDecoration:"none", boxShadow:"0 8px 40px rgba(245,158,11,0.4), 0 0 0 1px rgba(245,158,11,0.3)", letterSpacing:"0.02em", transition:"transform 0.2s, box-shadow 0.2s", fontFamily:"Georgia, serif" }}
               onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.05)";e.currentTarget.style.boxShadow="0 12px 56px rgba(245,158,11,0.6), 0 0 0 1px rgba(245,158,11,0.5)"}}
               onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 8px 40px rgba(245,158,11,0.4), 0 0 0 1px rgba(245,158,11,0.3)"}}
-            >Register — free to enter</a>
+            >Register  -  free to enter</a>
             <a href="#tracks" style={{ background:"rgba(255,255,255,0.04)", backdropFilter:"blur(12px)", color:"rgba(255,255,255,0.7)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:100, padding:"16px 36px", fontSize:15, fontWeight:300, textDecoration:"none", letterSpacing:"0.02em", transition:"border-color 0.2s, color 0.2s" }}
               onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(245,158,11,0.3)";e.currentTarget.style.color="rgba(245,158,11,0.9)"}}
               onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,0.12)";e.currentTarget.style.color="rgba(255,255,255,0.7)"}}
@@ -297,7 +297,7 @@ export default function Elevate() {
                   A global stage for the next generation.
                 </h2>
                 <p style={{ fontSize:15, color:"rgba(255,255,255,0.5)", fontWeight:300, lineHeight:1.85, marginBottom:16 }}>
-                  ELEVATE exists on a simple premise: the most important advances in EMG-based assistive technology and education won't come only from well-funded institutions. They will come from curious, rigorous individuals — wherever they are — working on problems that matter.
+                  ELEVATE exists on a simple premise: the most important advances in EMG-based assistive technology and education won't come only from well-funded institutions. They will come from curious, rigorous individuals  -  wherever they are  -  working on problems that matter.
                 </p>
                 <p style={{ fontSize:15, color:"rgba(255,255,255,0.5)", fontWeight:300, lineHeight:1.85 }}>
                   This competition exists to find that work, honour it formally, and give it an international platform it might not otherwise have.
@@ -352,7 +352,7 @@ export default function Elevate() {
                   <div style={{ fontSize:9, fontWeight:600, color:"rgba(255,255,255,0.25)", textTransform:"uppercase", letterSpacing:"0.15em", marginBottom:12 }}>Required deliverables</div>
                   {track.deliverables.map(d=>(
                     <div key={d} style={{ display:"flex", gap:10, marginBottom:8, fontSize:12, color:"rgba(255,255,255,0.4)", fontWeight:300, lineHeight:1.6 }}>
-                      <span style={{ color:track.color, fontWeight:600, flexShrink:0 }}>—</span>{d}
+                      <span style={{ color:track.color, fontWeight:600, flexShrink:0 }}> - </span>{d}
                     </div>
                   ))}
                 </div>
@@ -374,7 +374,7 @@ export default function Elevate() {
             </div>
           </Reveal>
 
-          {/* Grand Prix — full width, elevated */}
+          {/* Grand Prix  -  full width, elevated */}
           <div style={{ background:"linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(245,158,11,0.03) 100%)", border:"1px solid rgba(245,158,11,0.25)", borderRadius:20, padding:"48px", marginBottom:24, position:"relative", overflow:"hidden" }}>
             <div style={{ position:"absolute", top:-40, right:-40, opacity:0.05 }}>
               <Seal size={240}/>

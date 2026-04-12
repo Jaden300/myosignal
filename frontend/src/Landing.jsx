@@ -18,7 +18,7 @@ const PILLARS = [
     color:"#FF2D78",
     title:"Live demos",
     sub:"Try it in your browser",
-    desc:"Five interactive tools — from a live gesture classifier to a block coding environment powered by simulated EMG.",
+    desc:"Five interactive tools  -  from a live gesture classifier to a block coding environment powered by simulated EMG.",
   },
   {
     slug:"/education",
@@ -26,7 +26,7 @@ const PILLARS = [
     color:"#3B82F6",
     title:"Education hub",
     sub:"11 in-depth articles",
-    desc:"From the biology of muscle contraction to the ethics of biometric data — rigorously written, openly published.",
+    desc:"From the biology of muscle contraction to the ethics of biometric data  -  rigorously written, openly published.",
   },
   {
     slug:"/educators",
@@ -149,7 +149,7 @@ export default function Landing() {
           <div key={i} style={{ position:"absolute",width:size,height:size,borderRadius:"50%",background:color,left:x,top:y,filter:"blur(80px)",pointerEvents:"none",animation:`orbFloat 10s ${delay}s ease-in-out infinite alternate` }}/>
         ))}
 
-        {/* Animated EMG canvas — bottom */}
+        {/* Animated EMG canvas  -  bottom */}
         <div style={{ position:"absolute", bottom:0, left:0, right:0, height:140, opacity: Math.max(0, 1 - scrollY/300) }}>
           <AnimatedEMGLine />
         </div>
@@ -229,7 +229,7 @@ export default function Landing() {
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, minWidth:280 }}>
                 {[
                   ["4 tracks","Engineering, Research, Design, Education"],
-                  ["∞ countries","International — open to everyone"],
+                  ["∞ countries","International  -  open to everyone"],
                   ["Apr 30","Submission deadline"],
                   ["Free","Zero entry fee"],
                 ].map(([val,label])=>(
@@ -253,7 +253,7 @@ export default function Landing() {
               Four things in one platform.
             </h2>
             <p style={{ fontSize:16, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, maxWidth:520, marginBottom:48 }}>
-              myojam started as a gesture classifier. It's grown into an education and research platform — with demos, articles, lesson plans, and an international competition.
+              myojam started as a gesture classifier. It's grown into an education and research platform  -  with demos, articles, lesson plans, and an international competition.
             </p>
           </Reveal>
           <StaggerList items={PILLARS} columns={2} gap={16} renderItem={p=>(
@@ -314,10 +314,10 @@ export default function Landing() {
             </h2>
           </Reveal>
           <StaggerList items={[
-            ["Signal capture","Surface EMG electrodes on the forearm read electrical activity at 200 Hz across 16 channels. No needles — adhesive stickers on skin."],
-            ["Feature extraction","Each 200-sample window is compressed into 64 features — MAV, RMS, ZC, WL per channel — capturing muscle activation patterns."],
+            ["Signal capture","Surface EMG electrodes on the forearm read electrical activity at 200 Hz across 16 channels. No needles  -  adhesive stickers on skin."],
+            ["Feature extraction","Each 200-sample window is compressed into 64 features  -  MAV, RMS, ZC, WL per channel  -  capturing muscle activation patterns."],
             ["Classification","A Random Forest trained on 16,269 windows from 10 Ninapro subjects classifies the gesture in under 5ms with 84.85% cross-subject accuracy."],
-            ["Assistive output","Detected gestures map to computer actions — cursor movement, clicks, keypresses — hands-free, in real time."],
+            ["Assistive output","Detected gestures map to computer actions  -  cursor movement, clicks, keypresses  -  hands-free, in real time."],
           ]} columns={2} gap={16} renderItem={([title,body],i)=>(
             <HoverCard style={{ background:"var(--bg-secondary)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"28px 32px" }}>
               <div style={{ width:36, height:36, borderRadius:"50%", background:"var(--accent-soft)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:700, color:"var(--accent)", marginBottom:16 }}>

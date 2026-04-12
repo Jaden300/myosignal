@@ -28,22 +28,22 @@ function FaceAvatar({ seed, size = 48 }) {
   )
 }
 
-const ABSTRACT = "Signal segmentation — the process of dividing a continuous EMG stream into discrete analysis windows — is the least glamorous step in the EMG classification pipeline, and arguably the most consequential. This article examines the engineering trade-offs involved in window size and overlap selection, their effects on classification latency, accuracy, and temporal resolution, and the specific choices made in myojam's pipeline."
+const ABSTRACT = "Signal segmentation  -  the process of dividing a continuous EMG stream into discrete analysis windows  -  is the least glamorous step in the EMG classification pipeline, and arguably the most consequential. This article examines the engineering trade-offs involved in window size and overlap selection, their effects on classification latency, accuracy, and temporal resolution, and the specific choices made in myojam's pipeline."
 
 const SECTIONS = [
   {
     num:"01", tag:"Why windows exist", title:"The fundamental problem",
-    body:"Machine learning classifiers expect fixed-size input vectors. A continuous EMG stream produces an unbounded sequence of samples. The solution is sliding window analysis: take a chunk of N consecutive samples, compute features on it, classify it, then slide the window forward by some step S and repeat. This converts a streaming signal into a sequence of discrete classification events. Every design decision downstream — feature computation, model training, real-time performance — depends on what N and S are.",
+    body:"Machine learning classifiers expect fixed-size input vectors. A continuous EMG stream produces an unbounded sequence of samples. The solution is sliding window analysis: take a chunk of N consecutive samples, compute features on it, classify it, then slide the window forward by some step S and repeat. This converts a streaming signal into a sequence of discrete classification events. Every design decision downstream  -  feature computation, model training, real-time performance  -  depends on what N and S are.",
     callout:null
   },
   {
     num:"02", tag:"Window length", title:"The accuracy-latency trade-off",
-    body:"Longer windows contain more signal, which means features can be computed with lower statistical noise. A 500ms window gives a much more reliable estimate of mean absolute value than a 50ms window — simply because you're averaging over ten times as many samples. But a 500ms window also means the system can't respond faster than 500ms after a gesture begins. For real-time gesture control, that latency is perceptible and frustrating. The industry consensus has settled around 150–300ms as the sweet spot — long enough for stable feature estimation, short enough for responsive control.",
-    callout:"myojam uses 200-sample windows at 200Hz — exactly 1 second of signal. This is longer than typical real-time systems because the web demo prioritises classification clarity over response speed. A production assistive device would use ~150ms windows."
+    body:"Longer windows contain more signal, which means features can be computed with lower statistical noise. A 500ms window gives a much more reliable estimate of mean absolute value than a 50ms window  -  simply because you're averaging over ten times as many samples. But a 500ms window also means the system can't respond faster than 500ms after a gesture begins. For real-time gesture control, that latency is perceptible and frustrating. The industry consensus has settled around 150–300ms as the sweet spot  -  long enough for stable feature estimation, short enough for responsive control.",
+    callout:"myojam uses 200-sample windows at 200Hz  -  exactly 1 second of signal. This is longer than typical real-time systems because the web demo prioritises classification clarity over response speed. A production assistive device would use ~150ms windows."
   },
   {
     num:"03", tag:"Overlap", title:"Trading compute for smoothness",
-    body:"The step size S determines how often the classifier runs. If S = N (no overlap), each window is independent and the classifier produces one prediction per window length. If S = N/4 (75% overlap), the classifier runs four times per window length, producing smoother output but requiring four times the compute. High overlap makes the output feel more responsive even though the underlying window length hasn't changed — because new predictions arrive more frequently.",
+    body:"The step size S determines how often the classifier runs. If S = N (no overlap), each window is independent and the classifier produces one prediction per window length. If S = N/4 (75% overlap), the classifier runs four times per window length, producing smoother output but requiring four times the compute. High overlap makes the output feel more responsive even though the underlying window length hasn't changed  -  because new predictions arrive more frequently.",
     callout:null
   },
   {
@@ -54,7 +54,7 @@ const SECTIONS = [
   {
     num:"05", tag:"Stationarity", title:"The hidden assumption",
     body:"Time-domain features like MAV, RMS, ZC, and WL assume the signal within a window is approximately stationary. A window that spans a gesture transition violates this assumption, producing features that are a meaningless blend of two states. Shorter windows reduce this problem, which is another argument for lower latency systems despite increased noise.",
-    callout:"Onset detection — identifying when a gesture actually begins — can align windows with stable segments of signal, dramatically improving feature quality."
+    callout:"Onset detection  -  identifying when a gesture actually begins  -  can align windows with stable segments of signal, dramatically improving feature quality."
   },
   {
     num:"06", tag:"myojam's choices", title:"N=200, S=50, fs=200Hz",
@@ -129,7 +129,7 @@ export default function WindowingExplained() {
         <div style={{ marginTop:56, background:"var(--bg-secondary)", borderRadius:"var(--radius)", padding:"40px", border:"1px solid var(--border)" }}>
           <div style={{ fontSize:11, fontWeight:500, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:14 }}>Conclusion</div>
           <p style={{ fontSize:15, color:"var(--text-secondary)", lineHeight:1.8, fontWeight:300, margin:0 }}>
-            Windowing is invisible to users but foundational to system behaviour. The parameters N and S define latency, responsiveness, feature quality, and compute cost. Different applications require different trade-offs — demos optimise clarity, assistive devices optimise speed, and research systems optimise reproducibility.
+            Windowing is invisible to users but foundational to system behaviour. The parameters N and S define latency, responsiveness, feature quality, and compute cost. Different applications require different trade-offs  -  demos optimise clarity, assistive devices optimise speed, and research systems optimise reproducibility.
           </p>
         </div>
 

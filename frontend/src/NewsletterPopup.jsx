@@ -28,14 +28,14 @@ export default function NewsletterPopup() {
         @keyframes panelOut { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(-50%, -48%) scale(0.96); } }
       `}</style>
 
-      {/* Overlay — just the dark bg, no flex, no children */}
+      {/* Overlay  -  just the dark bg, no flex, no children */}
       <div onClick={close} style={{
         position: "fixed", inset: 0, zIndex: 500,
         background: "rgba(0,0,0,0.5)", backdropFilter: "blur(6px)",
         animation: `${closing ? "overlayOut" : "overlayIn"} 0.3s ease forwards`
       }} />
 
-      {/* Panel — sibling, not child, centered with transform */}
+      {/* Panel  -  sibling, not child, centered with transform */}
       <div onClick={e => e.stopPropagation()} style={{
         position: "fixed",
         top: "50%", left: "50%",
@@ -91,7 +91,7 @@ export default function NewsletterPopup() {
             fontSize: 14, color: "var(--text-secondary)", fontWeight: 300,
             lineHeight: 1.6, maxWidth: 420, margin: 0
           }}>
-            New articles, project updates, and breakthroughs in assistive EMG technology —
+            New articles, project updates, and breakthroughs in assistive EMG technology  - 
             delivered to your inbox. No spam, unsubscribe anytime.
           </p>
         </div>

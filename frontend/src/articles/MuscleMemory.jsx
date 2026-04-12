@@ -28,32 +28,32 @@ function FaceAvatar({ seed, size = 48 }) {
   )
 }
 
-const ABSTRACT = "Muscle memory is real — but it has nothing to do with muscles. This article explores what neuroscientists actually mean by motor learning, how repetition changes the brain's motor cortex, and what this means for EMG signal consistency over time. Spoiler: it's mostly good news for gesture classification."
+const ABSTRACT = "Muscle memory is real  -  but it has nothing to do with muscles. This article explores what neuroscientists actually mean by motor learning, how repetition changes the brain's motor cortex, and what this means for EMG signal consistency over time. Spoiler: it's mostly good news for gesture classification."
 
 const SECTIONS = [
   {
     num:"01", tag:"The myth", title:"Muscle memory isn't in your muscles",
-    body:"When pianists say their fingers 'just know' where to go, they're describing a real phenomenon — but the memory isn't stored in the muscles. Muscles can't store information. What's actually happening is motor program consolidation in the cerebellum and basal ganglia. Repeated movements get encoded as efficient neural pathways that bypass the slow, effortful processing of the prefrontal cortex. The movement becomes automatic — but the automation lives in the brain, not the bicep.",
+    body:"When pianists say their fingers 'just know' where to go, they're describing a real phenomenon  -  but the memory isn't stored in the muscles. Muscles can't store information. What's actually happening is motor program consolidation in the cerebellum and basal ganglia. Repeated movements get encoded as efficient neural pathways that bypass the slow, effortful processing of the prefrontal cortex. The movement becomes automatic  -  but the automation lives in the brain, not the bicep.",
     callout:null
   },
   {
     num:"02", tag:"What changes", title:"How repetition reshapes the motor cortex",
-    body:"With practice, the motor cortex reorganises itself — a process called motor map plasticity. The cortical area dedicated to a movement expands. Neurons fire more synchronously, reducing the noise in the motor command. The result is that the same intended movement produces a more consistent, lower-amplitude motor neuron volley. This is measurable directly in EMG: skilled musicians show significantly lower EMG amplitude when playing than beginners performing the same notes, because their motor commands are more efficient.",
-    callout:"This is exactly why training a personal EMG classifier on your own data works better over time. As your gestures become more consistent through use, the classifier has less variance to deal with — accuracy improves even without retraining the model."
+    body:"With practice, the motor cortex reorganises itself  -  a process called motor map plasticity. The cortical area dedicated to a movement expands. Neurons fire more synchronously, reducing the noise in the motor command. The result is that the same intended movement produces a more consistent, lower-amplitude motor neuron volley. This is measurable directly in EMG: skilled musicians show significantly lower EMG amplitude when playing than beginners performing the same notes, because their motor commands are more efficient.",
+    callout:"This is exactly why training a personal EMG classifier on your own data works better over time. As your gestures become more consistent through use, the classifier has less variance to deal with  -  accuracy improves even without retraining the model."
   },
   {
     num:"03", tag:"For EMG", title:"Why consistency matters for classification",
-    body:"EMG classifiers are essentially pattern matchers. They learn what index flex looks like across a training set and try to recognise that pattern in new windows. If your index flex looks slightly different every time — different amplitude, slightly different timing, different motor unit recruitment — the classifier has to generalise across that variance. High variability means the decision boundary has to be drawn conservatively, which reduces accuracy. Consistent gestures (more motor-learned) produce tighter clusters in feature space, making the classifier's job dramatically easier.",
+    body:"EMG classifiers are essentially pattern matchers. They learn what index flex looks like across a training set and try to recognise that pattern in new windows. If your index flex looks slightly different every time  -  different amplitude, slightly different timing, different motor unit recruitment  -  the classifier has to generalise across that variance. High variability means the decision boundary has to be drawn conservatively, which reduces accuracy. Consistent gestures (more motor-learned) produce tighter clusters in feature space, making the classifier's job dramatically easier.",
     callout:null
   },
   {
     num:"04", tag:"Fatigue", title:"The enemy of consistency: muscle fatigue",
-    body:"Fatigue is the nemesis of motor consistency. As muscle fibres tire, the nervous system recruits additional motor units to maintain force output — a process called motor unit substitution. This changes the EMG signal in predictable ways: amplitude increases (more units firing), frequency content shifts downward (fatigued fibres have slower conduction velocity), and the signal becomes more variable. For a classifier trained on fresh muscle, fatigued data looks like a different person. This is one reason myojam includes a rest threshold — if the arm is at rest or fatigued below a minimum activation level, classification is skipped entirely.",
+    body:"Fatigue is the nemesis of motor consistency. As muscle fibres tire, the nervous system recruits additional motor units to maintain force output  -  a process called motor unit substitution. This changes the EMG signal in predictable ways: amplitude increases (more units firing), frequency content shifts downward (fatigued fibres have slower conduction velocity), and the signal becomes more variable. For a classifier trained on fresh muscle, fatigued data looks like a different person. This is one reason myojam includes a rest threshold  -  if the arm is at rest or fatigued below a minimum activation level, classification is skipped entirely.",
     callout:null
   },
   {
     num:"05", tag:"The practical upshot", title:"What this means for using myojam",
-    body:"A few practical implications follow from all of this. First, the best time to train a personal model is when you're fresh — early in a session, before fatigue sets in. Second, consistent electrode placement matters more than precise placement: if you put the sensor in the same relative position each time, the classifier generalises better. Third, there's a real benefit to 'warming up' before using gesture control for extended periods — a few deliberate repetitions of each gesture before relying on them reduces early-session variability.",
+    body:"A few practical implications follow from all of this. First, the best time to train a personal model is when you're fresh  -  early in a session, before fatigue sets in. Second, consistent electrode placement matters more than precise placement: if you put the sensor in the same relative position each time, the classifier generalises better. Third, there's a real benefit to 'warming up' before using gesture control for extended periods  -  a few deliberate repetitions of each gesture before relying on them reduces early-session variability.",
     callout:null
   },
 ]
@@ -109,7 +109,7 @@ export default function MuscleMemory() {
         <div style={{ marginTop:56, background:"var(--bg-secondary)", borderRadius:"var(--radius)", padding:"40px", border:"1px solid var(--border)" }}>
           <div style={{ fontSize:11, fontWeight:500, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:14 }}>Conclusion</div>
           <p style={{ fontSize:15, color:"var(--text-secondary)", lineHeight:1.8, fontWeight:300, margin:0 }}>
-            Motor learning is real, measurable, and directly relevant to how well EMG classifiers perform. Consistent gestures are more classifiable gestures. The implication for assistive technology is encouraging: as users practice with a system, the system gets better — not because the model changes, but because the user's motor output becomes more consistent. Human adaptation is part of the system.
+            Motor learning is real, measurable, and directly relevant to how well EMG classifiers perform. Consistent gestures are more classifiable gestures. The implication for assistive technology is encouraging: as users practice with a system, the system gets better  -  not because the model changes, but because the user's motor output becomes more consistent. Human adaptation is part of the system.
           </p>
         </div>
         <ArticleBar url="https://myojam.com/education/muscle-memory" title="Muscle memory is real. It's just not in your muscles." citation={{ apa:`Wong, J. (2026, January 14). Muscle memory is real: It's just not in your muscles. myojam. https://myojam.com/education/muscle-memory` }} presetLikes={52} storageKey="like_muscle_memory" />
