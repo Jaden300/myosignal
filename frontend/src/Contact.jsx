@@ -37,6 +37,7 @@ export default function Contact() {
                   { icon:"fab fa-tiktok",     href:"https://tiktok.com/@YOUR_HANDLE",    label:"TikTok",   sub:"@myojam"     },
                 ].map(s => (
                   <a key={s.label} href={s.href} target="_blank" rel="noreferrer" style={{
+                    textDecoration:"none",
                     background:"var(--bg-secondary)", border:"1px solid var(--border)",
                     borderRadius:12, padding:"14px 16px",
                     display:"flex", alignItems:"center", gap:10,
@@ -61,7 +62,6 @@ export default function Contact() {
         {/* Links */}
         <StaggerList
           items={[
-            ["GitHub", "Open an issue or pull request", "https://github.com/Jaden300/myosignal", "⌥"],
             ["Ninapro dataset", "Source data for the model", "https://ninapro.hevs.ch", "📊"],
           ]}
           columns={1}
