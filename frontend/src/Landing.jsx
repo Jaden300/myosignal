@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
+import Plasma from "./Plasma"
 
 const STATS = [
   { val:"84.85%", label:"Cross-subject accuracy",  sub:"Tested on unseen individuals" },
@@ -139,20 +140,21 @@ export default function Landing() {
 
       {/* ── HERO */}
       <section style={{ position:"relative", minHeight:"100vh", display:"flex", alignItems:"center", overflow:"hidden", background:"linear-gradient(160deg, #ffffff 0%, #fff0f5 50%, #f5f0ff 100%)" }}>
-        {/* Orbs */}
-        {[
-          ["500px","-100px","-100px",0,"rgba(255,45,120,0.12)"],
-          ["380px","60%","80px",2,"rgba(139,92,246,0.1)"],
-          ["300px","80%","300px",4,"rgba(59,130,246,0.08)"],
-          ["250px","10%","60%",6,"rgba(255,45,120,0.07)"],
-        ].map(([size,x,y,delay,color],i)=>(
-          <div key={i} style={{ position:"absolute",width:size,height:size,borderRadius:"50%",background:color,left:x,top:y,filter:"blur(80px)",pointerEvents:"none",animation:`orbFloat 10s ${delay}s ease-in-out infinite alternate` }}/>
-        ))}
 
-        {/* Animated EMG canvas  -  bottom */}
-        <div style={{ position:"absolute", bottom:0, left:0, right:0, height:140, opacity: Math.max(0, 1 - scrollY/300) }}>
-          <AnimatedEMGLine />
+        {/* Plasma background — sits behind everything, full bleed */}
+        <div style={{ position:"absolute", inset:0, zIndex:0, opacity:0.35 }}>
+          <Plasma
+            color="#FF2D78"
+            speed={0.4}
+            direction="forward"
+            scale={1.2}
+            opacity={0.6}
+            mouseInteractive={true}
+          />
         </div>
+
+        {/* Soft white fade at the bottom so content below doesn't clash */}
+        <div style={{ position:"absolute", bottom:0, left:0, right:0, height:180, background:"linear-gradient(to top, rgba(255,255,255,1) 0%, transparent 100%)", zIndex:1, pointerEvents:"none" }}/>
 
         <div style={{ maxWidth:920, margin:"0 auto", padding:"140px 32px 120px", position:"relative", zIndex:1, width:"100%" }}>
           {/* Badge */}

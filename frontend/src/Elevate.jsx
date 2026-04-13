@@ -203,7 +203,20 @@ export default function Elevate() {
       <Navbar />
 
       {/* ── HERO */}
+      
       <section style={{ position:"relative", minHeight:"100vh", display:"flex", alignItems:"center", overflow:"hidden" }}>
+
+        <div style={{ position:"absolute", inset:0, zIndex:0, opacity:0.55 }}>
+          <Plasma
+            color="#FF2D78"
+            speed={0.3}
+            direction="forward"
+            scale={1.5}
+            opacity={0.9}
+            mouseInteractive={true}
+          />
+        </div>
+
         {/* Atmospheric orbs */}
         {[
           ["600px","-150px","-100px",0,"rgba(245,158,11,0.12)"],
