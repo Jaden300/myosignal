@@ -196,7 +196,7 @@ export default function Landing() {
             <div style={{ padding:"32px 24px", textAlign:"center", borderRight: i<3?"1px solid var(--border)":"none" }}>
               <div style={{ fontSize:32, fontWeight:700, color:"var(--accent)", letterSpacing:"-1.5px", marginBottom:6 }}>{s.val}</div>
               <div style={{ fontSize:13, fontWeight:600, color:"var(--text)", marginBottom:4 }}>{s.label}</div>
-              <div style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300 }}>{s.sub}</div>
+              <div style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, letterSpacing:"0.04em", textTransform:"uppercase" }}>{s.sub}</div>
             </div>
           )}/>
         </div>

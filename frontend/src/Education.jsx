@@ -10,7 +10,7 @@ const ARTICLES = [
     tag: "Foundations",
     title: "The science of muscle-computer interfaces",
     summary: "What is EMG, how does surface signal acquisition work, and how does myojam turn a forearm twitch into a computer action? A full explainer from the biology up.",
-    readTime: "8 min read",
+    readTime: "8 min",
     author: "Jaden Wong",
     date: "2026-04-06",
     dateLabel: "April 6, 2026",
@@ -22,7 +22,7 @@ const ARTICLES = [
     tag: "Machine Learning",
     title: "Why Random Forest? The classifier behind myojam",
     summary: "Why not a neural network? How ensemble tree methods handle noisy biomedical signals, and what the 84.85% cross-subject accuracy figure actually means in practice.",
-    readTime: "7 min read",
+    readTime: "7 min",
     author: "Jaden Wong",
     date: "2026-03-15",
     dateLabel: "March 15, 2026",
@@ -34,7 +34,7 @@ const ARTICLES = [
     tag: "Accessibility",
     title: "From lab to laptop: democratising EMG",
     summary: "EMG-based prosthetics have existed for 60 years. How open datasets, affordable hardware, and open-source tools are finally making muscle-computer control accessible.",
-    readTime: "6 min read",
+    readTime: "6 min",
     author: "Jaden Wong",
     date: "2026-03-28",
     dateLabel: "March 28, 2026",
@@ -46,7 +46,7 @@ const ARTICLES = [
     tag: "Dataset",
     title: "Inside Ninapro DB5: the dataset that trains myojam",
     summary: "Where does the training data come from? What is Ninapro, what does DB5 contain, and what decisions went into turning 52 hand movements into a 6-class classifier?",
-    readTime: "6 min read",
+    readTime: "6 min",
     author: "Jaden Wong",
     date: "2026-02-20",
     dateLabel: "February 20, 2026",
@@ -58,7 +58,7 @@ const ARTICLES = [
     tag: "Neuroscience",
     title: "Muscle memory is real. It's just not in your muscles.",
     summary: "What neuroscientists actually mean by motor learning, how repetition reshapes the brain's motor cortex, and why gesture consistency matters more than raw model accuracy.",
-    readTime: "5 min read",
+    readTime: "5 min",
     author: "Jaden Wong",
     date: "2026-01-14",
     dateLabel: "January 14, 2026",
@@ -70,7 +70,7 @@ const ARTICLES = [
     tag: "Neuroscience",
     title: "The ghost in the electrode",
     summary: "Amputees generate measurable EMG from limbs they no longer have. This article explores what phantom limb signals reveal about cortical remapping and the future of prosthetic control.",
-    readTime: "6 min read",
+    readTime: "6 min",
     author: "Jaden Wong",
     date: "2025-12-03",
     dateLabel: "December 3, 2025",
@@ -82,7 +82,7 @@ const ARTICLES = [
     tag: "Signal processing",
     title: "Why EMG is harder than it looks",
     summary: "Lab accuracy numbers are impressive. Real-world performance is not. A systematic breakdown of the six reasons EMG gesture classification keeps failing outside the lab.",
-    readTime: "7 min read",
+    readTime: "7 min",
     author: "Jaden Wong",
     date: "2025-11-18",
     dateLabel: "November 18, 2025",
@@ -94,7 +94,7 @@ const ARTICLES = [
     tag: "Hardware",
     title: "Build your own EMG sensor for under $60",
     summary: "A complete weekend project guide: parts list, wiring, Arduino firmware, electrode placement, and signal quality checks. From zero to streaming muscle signals in an afternoon.",
-    readTime: "8 min read",
+    readTime: "8 min",
     author: "Jaden Wong",
     date: "2025-10-30",
     dateLabel: "October 30, 2025",
@@ -105,8 +105,8 @@ const ARTICLES = [
     slug: "/education/future-of-bci",
     tag: "Future",
     title: "After EMG: what comes next",
-    summary: "Surface EMG is one point on a spectrum from skin-surface sensing to direct neural recording. Here's where the field is heading  -  high-density arrays, peripheral nerve interfaces, and motor cortex decoding.",
-    readTime: "6 min read",
+    summary: "Surface EMG is one point on a spectrum from skin-surface sensing to direct neural recording. Where the field is heading - high-density arrays, peripheral nerve interfaces, and motor cortex decoding.",
+    readTime: "6 min",
     author: "Jaden Wong",
     date: "2025-09-22",
     dateLabel: "September 22, 2025",
@@ -118,7 +118,7 @@ const ARTICLES = [
     tag: "Ethics",
     title: "Who owns your muscle data?",
     summary: "EMG signals can identify you, reveal your health status, and expose conditions you don't know you have. As gesture interfaces go mainstream, these questions can't wait for regulation.",
-    readTime: "5 min read",
+    readTime: "5 min",
     author: "Jaden Wong",
     date: "2025-08-14",
     dateLabel: "August 14, 2025",
@@ -129,8 +129,8 @@ const ARTICLES = [
     slug: "/education/windowing-explained",
     tag: "Signal processing",
     title: "The art of cutting a signal into pieces",
-    summary: "Window size, overlap, and step size are the least glamorous choices in EMG classification  -  and silently the most consequential. Here's what they actually control and why myojam made the choices it did.",
-    readTime: "7 min read",
+    summary: "Window size, overlap, and step size are the least glamorous choices in EMG classification - and silently the most consequential. Here's what they actually control and why myojam made the choices it did.",
+    readTime: "7 min",
     author: "Jaden Wong",
     date: "2025-07-05",
     dateLabel: "July 5, 2025",
@@ -139,10 +139,24 @@ const ARTICLES = [
   },
 ]
 
+// Tag colours — distinct per category so scanning works without reading
+// Source: NN/G — use bright colors for important items, muted for less important
+const TAG_COLORS = {
+  "Foundations":       { bg:"rgba(255,45,120,0.08)",  border:"rgba(255,45,120,0.18)",  text:"#FF2D78"  },
+  "Machine Learning":  { bg:"rgba(59,130,246,0.08)",  border:"rgba(59,130,246,0.18)",  text:"#3B82F6"  },
+  "Accessibility":     { bg:"rgba(139,92,246,0.08)",  border:"rgba(139,92,246,0.18)",  text:"#8B5CF6"  },
+  "Dataset":           { bg:"rgba(16,185,129,0.08)",  border:"rgba(16,185,129,0.18)",  text:"#10B981"  },
+  "Neuroscience":      { bg:"rgba(245,158,11,0.08)",  border:"rgba(245,158,11,0.18)",  text:"#F59E0B"  },
+  "Signal processing": { bg:"rgba(6,182,212,0.08)",   border:"rgba(6,182,212,0.18)",   text:"#06B6D4"  },
+  "Hardware":          { bg:"rgba(132,204,22,0.08)",  border:"rgba(132,204,22,0.18)",  text:"#65A30D"  },
+  "Future":            { bg:"rgba(168,85,247,0.08)",  border:"rgba(168,85,247,0.18)",  text:"#A855F7"  },
+  "Ethics":            { bg:"rgba(236,72,153,0.08)",  border:"rgba(236,72,153,0.18)",  text:"#EC4899"  },
+}
+
 const SORT_OPTIONS = [
-  { key: "latest",     label: "Latest" },
-  { key: "popular",    label: "Most popular" },
-  { key: "helpful",    label: "Most helpful" },
+  { key: "latest",  label: "Latest"        },
+  { key: "popular", label: "Most popular"  },
+  { key: "helpful", label: "Most helpful"  },
 ]
 
 function sorted(articles, key) {
@@ -156,209 +170,290 @@ function sorted(articles, key) {
 export default function Education() {
   const navigate = useNavigate()
   const [sortKey, setSortKey] = useState("latest")
-
   const displayed = sorted(ARTICLES, sortKey)
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+    <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
       <Navbar />
 
-      {/* Banner */}
+      {/* ── BANNER
+          Spacing: 120px top, 72px bottom — generous breathing room per NN/G:
+          "An element with more space around it receives more attention."
+          Max-width 68ch on paragraphs — typography guideline, 70-80 chars per line.
+      */}
       <div style={{
         background: "linear-gradient(135deg, #fff0f5 0%, #ffffff 60%)",
         borderBottom: "1px solid var(--border)",
-        padding: "100px 32px 64px",
+        padding: "120px 32px 72px",
       }}>
-        <div style={{ maxWidth: 820, margin: "0 auto" }}>
+        <div style={{ maxWidth:820, margin:"0 auto" }}>
+
+          {/* Overline label — loose letter-spacing per Apple HIG for small caps */}
           <div style={{
-            display: "inline-flex", alignItems: "center", gap: 6,
-            background: "var(--accent-soft)", border: "1px solid rgba(255,45,120,0.15)",
-            borderRadius: 100, padding: "5px 16px",
-            fontSize: 13, color: "var(--accent)", fontWeight: 500, marginBottom: 28
+            display:"inline-flex", alignItems:"center", gap:6,
+            background:"var(--accent-soft)", border:"1px solid rgba(255,45,120,0.15)",
+            borderRadius:100, padding:"5px 16px",
+            fontSize:11, fontWeight:600, color:"var(--accent)",
+            letterSpacing:"0.06em", textTransform:"uppercase",
+            marginBottom:32,
           }}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent)", display: "inline-block" }}/>
-            Educational hub
+            <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--accent)", display:"inline-block" }}/>
+            Education hub
           </div>
+
+          {/* H1 — tight tracking for large type per Apple HIG typography spec */}
           <h1 style={{
-            fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 600,
-            letterSpacing: "-1.5px", color: "var(--text)", marginBottom: 20, lineHeight: 1.08
+            fontSize:"clamp(36px, 5.5vw, 60px)",
+            fontWeight:700,
+            letterSpacing:"-0.03em",    // Apple HIG: large type benefits from tighter tracking
+            lineHeight:1.05,
+            color:"var(--text)",
+            marginBottom:24,
           }}>
-            Learn about EMG<br />
-            <span style={{ color: "var(--accent)" }}>& assistive technology.</span>
+            Learn about EMG<br/>
+            <span style={{ color:"var(--accent)" }}>and assistive technology.</span>
           </h1>
+
+          {/* Body paragraph — line-height 1.75, max 68ch per typography guidelines */}
           <p style={{
-            fontSize: 17, color: "var(--text-secondary)", fontWeight: 300,
-            lineHeight: 1.7, maxWidth: 560
+            fontSize:17,
+            lineHeight:1.75,            // source: Prototypr — aim for 140-180%
+            color:"var(--text-secondary)",
+            fontWeight:300,
+            maxWidth:"58ch",            // source: Figma/NN/G — 70-80 chars max
+            marginBottom:0,
           }}>
-            In-depth articles on the science behind myojam  -  from how muscles generate electrical signals
-            to how machine learning classifies them into computer actions.
+            In-depth articles on the science behind myojam - from how muscles generate
+            electrical signals to how machine learning classifies them into computer actions.
           </p>
+
+          {/* Stats row — 3 numbers, intentionally smaller than the heading above
+              Refactoring UI: use weight and color to create hierarchy, not just size */}
+          <div style={{ display:"flex", gap:32, marginTop:40 }}>
+            {[
+              ["11", "articles"],
+              ["450+", "total reads"],
+              ["5 topics", "covered"],
+            ].map(([val, label]) => (
+              <div key={label}>
+                <div style={{ fontSize:22, fontWeight:700, color:"var(--text)", letterSpacing:"-0.5px" }}>{val}</div>
+                <div style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, textTransform:"uppercase", letterSpacing:"0.08em", marginTop:2 }}>{label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Articles */}
-      <div style={{ maxWidth: 820, margin: "0 auto", padding: "48px 32px 80px" }}>
+      {/* ── ARTICLE LIST */}
+      <div style={{ maxWidth:820, margin:"0 auto", padding:"48px 32px 80px" }}>
 
-        {/* Sort bar */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 32 }}>
-          <span style={{ fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300, marginRight: 4 }}>Sort by</span>
+        {/* Sort bar — secondary UI, kept visually quiet per Refactoring UI:
+            Secondary actions should be clear but low contrast */}
+        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:40 }}>
+          <span style={{
+            fontSize:11, color:"var(--text-tertiary)", fontWeight:400,
+            textTransform:"uppercase", letterSpacing:"0.08em", marginRight:4,
+          }}>Sort</span>
           {SORT_OPTIONS.map(opt => (
             <button key={opt.key} onClick={() => setSortKey(opt.key)} style={{
-              background: sortKey === opt.key ? "var(--accent-soft)" : "var(--bg-secondary)",
-              border: `1px solid ${sortKey === opt.key ? "rgba(255,45,120,0.2)" : "var(--border)"}`,
-              borderRadius: 100, padding: "6px 14px",
-              fontSize: 12, fontWeight: sortKey === opt.key ? 500 : 400,
-              color: sortKey === opt.key ? "var(--accent)" : "var(--text-secondary)",
-              cursor: "pointer", fontFamily: "var(--font)", transition: "all 0.15s"
+              background: sortKey===opt.key ? "var(--accent-soft)" : "transparent",
+              border: `1px solid ${sortKey===opt.key ? "rgba(255,45,120,0.25)" : "var(--border)"}`,
+              borderRadius:100,
+              padding:"5px 14px",
+              fontSize:12,
+              fontWeight: sortKey===opt.key ? 500 : 300,
+              color: sortKey===opt.key ? "var(--accent)" : "var(--text-tertiary)",
+              cursor:"pointer",
+              fontFamily:"var(--font)",
+              transition:"all 0.15s",
             }}>{opt.label}</button>
           ))}
         </div>
 
-        <StaggerList
-          items={displayed}
-          columns={1}
-          gap={20}
-          renderItem={(a, i) => (
-            <Reveal delay={i * 0.08}>
-              <HoverCard
-                color="rgba(255,45,120,0.08)"
-                onClick={() => navigate(a.slug)}
-                style={{
-                  background: "var(--bg-secondary)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "var(--radius)",
-                  padding: "32px",
-                  cursor: "pointer"
-                }}
-              >
-                <div style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  gap: 16
-                }}>
-                  <div style={{ flex: 1 }}>
+        {/* Article cards */}
+        <div style={{ display:"flex", flexDirection:"column", gap:2 }}>
+          {displayed.map((a, i) => {
+            const tc = TAG_COLORS[a.tag] || TAG_COLORS["Foundations"]
+            return (
+              <Reveal key={a.slug} delay={i * 0.04}>
+                {/* Card — border-bottom divider pattern, no card background on most
+                    Source: NN/G Medium example — "thoughtful typography system,
+                    spacing, and consistent left alignment makes it easy to read" */}
+                <div
+                  onClick={() => navigate(a.slug)}
+                  style={{
+                    padding:"28px 0",
+                    borderBottom:"1px solid var(--border)",
+                    cursor:"pointer",
+                    display:"flex",
+                    gap:24,
+                    alignItems:"flex-start",
+                    transition:"background 0.15s",
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(255,45,120,0.02)"}
+                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                >
+                  {/* Article number — visual anchor on left, quiet */}
+                  <div style={{
+                    fontSize:12,
+                    color:"var(--text-tertiary)",
+                    fontWeight:300,
+                    width:24,
+                    flexShrink:0,
+                    paddingTop:3,
+                    fontVariantNumeric:"tabular-nums",
+                  }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </div>
+
+                  {/* Main content */}
+                  <div style={{ flex:1 }}>
+
+                    {/* Metadata row — grouped close together per Gestalt proximity principle
+                        Source: NN/G — "minimal white space between related items makes
+                        their relationship clear" */}
                     <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                      marginBottom: 14,
-                      flexWrap: "wrap"
+                      display:"flex",
+                      alignItems:"center",
+                      gap:10,
+                      marginBottom:10,
+                      flexWrap:"wrap",
                     }}>
                       <span style={{
-                        fontSize: 11,
-                        fontWeight: 500,
-                        color: "var(--accent)",
-                        background: "var(--accent-soft)",
-                        border: "1px solid rgba(255,45,120,0.15)",
-                        borderRadius: 100,
-                        padding: "3px 10px"
+                        fontSize:10,
+                        fontWeight:600,
+                        color: tc.text,
+                        background: tc.bg,
+                        border: `1px solid ${tc.border}`,
+                        borderRadius:100,
+                        padding:"2px 10px",
+                        letterSpacing:"0.05em",
+                        textTransform:"uppercase",
                       }}>
                         {a.tag}
                       </span>
-
-                      <span style={{
-                        fontSize: 12,
-                        color: "var(--text-tertiary)",
-                        fontWeight: 300
-                      }}>
-                        {a.readTime}
-                      </span>
-
-                      <span style={{
-                        fontSize: 12,
-                        color: "var(--text-tertiary)",
-                        fontWeight: 300
-                      }}>
-                        ♥ {a.likes}
-                      </span>
+                      <span style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300 }}>{a.readTime} read</span>
+                      <span style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300 }}>{a.dateLabel}</span>
                     </div>
 
+                    {/* Title — clear size jump from metadata above
+                        Source: NN/G — "use 2-3 typeface sizes to indicate content importance"
+                        Tight tracking on the heading per Apple HIG */}
                     <h2 style={{
-                      fontSize: 20,
-                      fontWeight: 600,
-                      color: "var(--text)",
-                      letterSpacing: "-0.3px",
-                      marginBottom: 10,
-                      lineHeight: 1.3
+                      fontSize:18,
+                      fontWeight:600,
+                      color:"var(--text)",
+                      letterSpacing:"-0.02em",
+                      lineHeight:1.3,
+                      marginBottom:10,
                     }}>
                       {a.title}
                     </h2>
 
+                    {/* Summary — clearly subordinate: smaller, lighter, more line-height
+                        Source: Refactoring UI — use color to reinforce hierarchy,
+                        not just size alone */}
                     <p style={{
-                      fontSize: 14,
-                      color: "var(--text-secondary)",
-                      lineHeight: 1.7,
-                      fontWeight: 300,
-                      marginBottom: 16
+                      fontSize:14,
+                      lineHeight:1.7,
+                      color:"var(--text-secondary)",
+                      fontWeight:300,
+                      maxWidth:"62ch",
+                      margin:0,
                     }}>
                       {a.summary}
                     </p>
 
-                    <span style={{
-                      fontSize: 13,
-                      color: "var(--text-tertiary)",
-                      fontWeight: 300
-                    }}>
-                      By {a.author} · {a.dateLabel}
-                    </span>
+                    {/* Like count — farthest down the hierarchy, tertiary treatment */}
+                    <div style={{ marginTop:12, display:"flex", alignItems:"center", gap:6 }}>
+                      <span style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>
+                        ♥ {a.likes} likes
+                      </span>
+                    </div>
                   </div>
 
+                  {/* Arrow — rightmost, secondary, quiet */}
                   <span style={{
-                    fontSize: 20,
-                    color: "var(--text-tertiary)",
-                    flexShrink: 0,
-                    marginTop: 4
-                  }}>
-                    →
-                  </span>
+                    fontSize:18,
+                    color:"var(--text-tertiary)",
+                    flexShrink:0,
+                    marginTop:4,
+                    transition:"color 0.15s, transform 0.15s",
+                  }}>→</span>
                 </div>
-              </HoverCard>
-            </Reveal>
-          )}
-        />
+              </Reveal>
+            )
+          })}
+        </div>
 
-
+        {/* Footer note — tertiary, centered, max width constrained */}
         <p style={{
-          marginTop: 48, fontSize: 13, color: "var(--text-tertiary)",
-          fontWeight: 300, textAlign: "center", lineHeight: 1.7
+          marginTop:48,
+          fontSize:13,
+          color:"var(--text-tertiary)",
+          fontWeight:300,
+          textAlign:"center",
+          lineHeight:1.7,
+          maxWidth:"50ch",
+          marginLeft:"auto",
+          marginRight:"auto",
         }}>
-          More articles coming soon  -  covering signal processing, machine learning for biosignals,
-          and the future of assistive input devices.
+          More articles in progress - signal processing, ML for biosignals, and the future of assistive input.
         </p>
       </div>
 
-      {/* Submit article embed */}
-        <div style={{ marginTop: 64, maxWidth: 820, margin: "64px auto 0" }}>
-          <div style={{ marginBottom: 24 }}>
+      {/* ── SUBMIT SECTION
+          Separated from the list with generous top margin — NN/G:
+          "increased space between each chunk creates hierarchical spatial pattern" */}
+      <div style={{
+        borderTop:"1px solid var(--border)",
+        background:"var(--bg-secondary)",
+        padding:"64px 32px",
+      }}>
+        <div style={{ maxWidth:820, margin:"0 auto" }}>
+          <div style={{ marginBottom:32 }}>
+            <div style={{
+              fontSize:11, fontWeight:600, color:"var(--accent)",
+              textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:16,
+            }}>Contribute</div>
             <h2 style={{
-              fontSize: 24, fontWeight: 600, color: "var(--text)",
-              letterSpacing: "-0.5px", marginBottom: 10
-            }}>Submit your own article</h2>
+              fontSize:"clamp(22px,3vw,32px)",
+              fontWeight:600,
+              letterSpacing:"-0.025em",
+              color:"var(--text)",
+              marginBottom:12,
+              lineHeight:1.2,
+            }}>Submit your own article.</h2>
             <p style={{
-              fontSize: 15, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7
+              fontSize:15,
+              lineHeight:1.75,
+              color:"var(--text-secondary)",
+              fontWeight:300,
+              maxWidth:"58ch",
+              margin:0,
             }}>
               Written something about EMG, assistive technology, or myojam?
-              Submit it for review  -  accepted articles are published here with full author credit.
+              Submit it for review - accepted articles are published here with full author credit.
             </p>
           </div>
           <div style={{
-            background: "var(--bg-secondary)", borderRadius: "var(--radius)",
-            border: "1px solid var(--border)", overflow: "hidden",
-            padding: "0 24px"
+            background:"var(--bg)",
+            borderRadius:"var(--radius)",
+            border:"1px solid var(--border)",
+            overflow:"hidden",
+            padding:"0 24px",
           }}>
             <iframe
               src="https://tally.so/embed/jaWRk1?hideTitle=1&transparentBackground=1&dynamicHeight=1"
               width="100%"
               height="600"
               frameBorder="0"
-              marginHeight="0"
-              marginWidth="0"
               title="Article submission"
-              style={{ display: "block" }}
+              style={{ display:"block" }}
             />
           </div>
         </div>
+      </div>
 
       <Footer />
     </div>

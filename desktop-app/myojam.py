@@ -7,6 +7,7 @@ import subprocess
 import time
 import numpy as np
 import scipy.io as sio
+from emg_classifier import EMGClassifier
 from scipy.signal import butter, filtfilt
 from hand3d import Hand3DWidget
 
@@ -68,6 +69,16 @@ GESTURE_COLORS = {
     "fist":        QColor("#EF4444"),
 }
 
+SENSOR_GESTURE_COLORS = {
+    "rest":              QColor("#AEAEB2"),
+    "fist":              QColor("#EF4444"),
+    "hand back":         QColor("#F59E0B"),
+    "pinky up":          QColor("#10B981"),
+    "all fingers up":    QColor("#3B82F6"),
+    "fingertips arm up": QColor("#8B5CF6"),
+}
+
+# Dataset mode gestures (Ninapro)
 GESTURES = [
     (1, "index flex",  "Cursor left",  "←"),
     (2, "middle flex", "Cursor right", "→"),
@@ -77,8 +88,18 @@ GESTURES = [
     (6, "fist",        "Spacebar",     "▬"),
 ]
 
+# Sensor mode gesture → action
+SENSOR_GESTURE_ACTIONS = {
+    "rest":              None,
+    "fist":              ("Spacebar",    press_space),
+    "hand back":         ("Cursor up",   lambda: mouse_move(0, -40)),
+    "pinky up":          ("Cursor left", lambda: mouse_move(-40, 0)),
+    "all fingers up":    ("Cursor right",lambda: mouse_move(40, 0)),
+    "fingertips arm up": ("Left click",  mouse_click),
+}
+
 KEY_MAP = {"1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6}
-    
+
 # ── Signal processing
 def bandpass_filter(signal, lowcut=20, highcut=90, fs=200, order=4):
     nyq = fs / 2
@@ -143,13 +164,11 @@ def extract_single_channel_features(window):
 def predict_from_window(emg_window):
     signal   = np.array([row[0] for row in emg_window])
     filtered = bandpass_filter(signal)
-    
     if config.get("single_channel"):
         features = extract_single_channel_features(filtered).reshape(1, -1)
     else:
         filtered_2d = bandpass_filter(np.array(emg_window))
         features    = extract_features(filtered_2d).reshape(1, -1)
-    
     proba        = model.predict_proba(features)[0]
     gesture_idx  = int(np.argmax(proba))
     confidence   = float(proba[gesture_idx])
@@ -180,21 +199,35 @@ def execute_action(gesture_name):
         press_space()
     time.sleep(0.005)
 
-
 def computeFingerCurls(emg_window):
     if not emg_window:
         return [0,0,0,0,0]
-    nCh = len(emg_window[0])
-    mav = [sum(abs(row[ch]) for row in emg_window) / len(emg_window) for ch in range (nCh)]
-    peak = max(mav+[0.0001])
-    n = [v / peak for v in mav]
-    return [(n[0] + n[1]) / 2,   # index
-         (n[2] + n[3]) / 2,   # middle
-         (n[4] + n[5]) / 2,   # ring
-         (n[6] + n[7]) / 2,   # pinky
-         (n[8] + n[9]) / 2,   # thumb
-     ]
+    nCh  = len(emg_window[0])
+    mav  = [sum(abs(row[ch]) for row in emg_window) / len(emg_window) for ch in range(nCh)]
+    peak = max(mav + [0.0001])
+    n    = [v / peak for v in mav]
+    return [
+        (n[0]+n[1])/2,
+        (n[2]+n[3])/2,
+        (n[4]+n[5])/2,
+        (n[6]+n[7])/2,
+        (n[8]+n[9])/2,
+    ]
 
+def sensor_gesture_to_curls(gesture):
+    """Map sensor gesture name to finger curl values for 3D hand."""
+    presets = {
+        "rest":              [0.0, 0.0, 0.0, 0.0, 0.0],
+        "fist":              [1.0, 1.0, 1.0, 1.0, 1.0],
+        "hand back":         [0.1, 0.1, 0.1, 0.1, 0.1],
+        "pinky up":          [0.9, 0.9, 0.9, 0.0, 0.9],
+        "all fingers up":    [0.0, 0.0, 0.0, 0.0, 0.0],
+        "fingertips arm up": [0.3, 0.3, 0.3, 0.3, 0.3],
+    }
+    return presets.get(gesture, [0.0, 0.0, 0.0, 0.0, 0.0])
+
+
+# ── Waveform widget
 class WaveformWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -222,6 +255,17 @@ class WaveformWidget(QWidget):
             self._tg = color.green()
             self._tb = color.blue()
 
+    def update_voltage(self, voltage, color=None):
+        """Push a single voltage sample for real-time sensor waveform."""
+        self._prev = list(self._data)
+        self._data = self._data[1:] + [min(voltage / 2.0, 1.0)]
+        self._progress = 1.0  # no animation for real-time
+        if color:
+            self._tr = color.red()
+            self._tg = color.green()
+            self._tb = color.blue()
+        self.update()
+
     def _tick(self):
         changed = False
         if self._progress < 1.0:
@@ -244,7 +288,6 @@ class WaveformWidget(QWidget):
         w, h = self.width(), self.height()
         p.fillRect(0, 0, w, h, BG2)
 
-        # Show placeholder if no real data yet
         if max(self._data) - min(self._data) < 0.01:
             p.setPen(QPen(TEXT3))
             p.setFont(QFont("Helvetica Neue", 13))
@@ -266,8 +309,8 @@ class WaveformWidget(QWidget):
             p.drawLine(pad, pad + draw_h * i // 4, w - pad, pad + draw_h * i // 4)
 
         step = draw_w / (len(disp) - 1)
-        x0 = pad
-        y0 = pad + draw_h - int(disp[0] * draw_h)
+        x0   = pad
+        y0   = pad + draw_h - int(disp[0] * draw_h)
 
         fill_path = QPainterPath()
         fill_path.moveTo(x0, h - pad)
@@ -289,15 +332,15 @@ class WaveformWidget(QWidget):
         p.setPen(pen)
         p.drawPath(line_path)
 
+
 # ── Confidence bar
 class ConfidenceBar(QWidget):
     def __init__(self):
         super().__init__()
         self.setFixedHeight(6)
-        self._value      = 0.0
-        self._target     = 0.0
-        self._color      = ACCENT
-        self._tgt_color  = ACCENT
+        self._value     = 0.0
+        self._target    = 0.0
+        self._color     = ACCENT
         self._r = self._g = self._b = 255
         self._tr = self._tg = self._tb = 255
         t = QTimer(self)
@@ -305,8 +348,7 @@ class ConfidenceBar(QWidget):
         t.start(8)
 
     def set_value(self, v, color):
-        self._target   = v
-        self._tgt_color = color
+        self._target = v
         self._tr, self._tg, self._tb = color.red(), color.green(), color.blue()
 
     def _tick(self):
@@ -337,6 +379,7 @@ class ConfidenceBar(QWidget):
         if fill_w > 0:
             p.setBrush(self._color)
             p.drawRoundedRect(0, 0, fill_w, h, 3, 3)
+
 
 # ── Gesture button
 class GestureButton(QWidget):
@@ -393,6 +436,7 @@ class GestureButton(QWidget):
         p.drawText(QRect(0,62,w,18), Qt.AlignmentFlag.AlignHCenter,
                    self.gesture_name.replace(" flex",""))
 
+
 # ── Global key listener
 class GlobalKeyListener(QThread):
     key_pressed = pyqtSignal(int)
@@ -408,21 +452,21 @@ class GlobalKeyListener(QThread):
             if line in KEY_MAP:
                 self.key_pressed.emit(KEY_MAP[line])
 
+
 class FlipLabel(QLabel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._progress  = 1.0
-        self._pending   = None
-        self._pstyle    = None
-        self._phase     = 0
-        self._nat_h     = None
+        self._progress = 1.0
+        self._pending  = None
+        self._pstyle   = None
+        self._phase    = 0
+        self._nat_h    = None
         t = QTimer(self); t.timeout.connect(self._tick); t.start(8)
 
     def flip_to(self, text, style=None):
         if self._nat_h is None:
             self._nat_h = self.height() or 40
         if text == self.text() and self._phase == 0:
-            # Same text — just update style instantly, no flip
             if style:
                 self.setStyleSheet(style)
             return
@@ -446,6 +490,7 @@ class FlipLabel(QLabel):
             if self._progress >= 1.0:
                 self.setMaximumHeight(16777215); self._phase = 0
 
+
 class CounterLabel(QLabel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -460,39 +505,20 @@ class CounterLabel(QLabel):
             self._cur += 1 if self._tgt > self._cur else -1
             self.setText(f"{self._cur}%")
 
+
 # ── Main window
 class MyojamWindow(QMainWindow):
-    gesture_done = pyqtSignal(str, float, list)
-
-    def _toggle_mode(self):
-        if self.mode_toggle.isChecked():
-            self.mode_toggle.setText("Sensor mode")
-            self._connect_sensor()
-        else:
-            self.mode_toggle.setText("Dataset mode")
-            self._disconnect_sensor()
-
-    def _on_gesture_btn_click(self, gesture_id):
-        if self._sensor_mode:
-            return
-        if not self._busy:
-            self._busy = True
-            def run():
-                window = get_dataset_window(gesture_id)
-                gesture_name, confidence, emg = predict_from_window(window)
-                self.gesture_done.emit(gesture_name, confidence, window)
-                # No execute_action here — just show the prediction
-                self._busy = False
-            threading.Thread(target=run, daemon=True).start()
-
+    gesture_done   = pyqtSignal(str, float, list)
+    sensor_gesture = pyqtSignal(str)       # for sensor mode UI updates
 
     def __init__(self):
         super().__init__()
         self.active       = False
         self.last_gesture = None
         self._busy        = False
-        self._serial_port = None
         self._sensor_mode = False
+        self._sensor_buf  = []
+        self.emg_clf      = None
 
         self.setWindowTitle("myojam")
         self.resize(640, 760)
@@ -511,7 +537,7 @@ class MyojamWindow(QMainWindow):
         root.setContentsMargins(28, 48, 28, 24)
         root.setSpacing(16)
 
-        # ── HEADER (full width)
+        # ── HEADER
         header = QHBoxLayout()
         logo_icon = QLabel()
         logo_px   = QPixmap(26, 26)
@@ -540,7 +566,6 @@ class MyojamWindow(QMainWindow):
         header.addWidget(logo_label)
         header.addStretch()
 
-        # Mode toggle (replaces separate label + button)
         self.mode_toggle = QPushButton("Dataset mode")
         self.mode_toggle.setCheckable(True)
         self.mode_toggle.setChecked(False)
@@ -562,22 +587,19 @@ class MyojamWindow(QMainWindow):
 
         root.addWidget(self._divider())
 
-        # ── EMG label
         lbl = QLabel("EMG signal")
         lbl.setStyleSheet("font-size: 13px; font-weight: 500; color: #1D1D1F;")
         root.addWidget(lbl)
 
-        # ── MIDDLE ROW: waveform + pred on left, small 3D box on right
+        # ── MIDDLE ROW
         middle_row = QHBoxLayout()
         middle_row.setSpacing(16)
-
         left_col = QVBoxLayout()
         left_col.setSpacing(12)
 
         self.waveform = WaveformWidget()
         left_col.addWidget(self.waveform)
 
-        # Prediction card
         pred_frame = QFrame()
         pred_frame.setStyleSheet("""
             QFrame { background:#F5F5F7; border-radius:16px; border:1px solid rgba(0,0,0,0.06); }
@@ -614,10 +636,8 @@ class MyojamWindow(QMainWindow):
 
         self.conf_bar = ConfidenceBar()
         left_col.addWidget(self.conf_bar)
-
         middle_row.addLayout(left_col, 1)
 
-        # Small 3D hand box (pink bg, fixed width)
         hand_box = QWidget()
         hand_box.setFixedWidth(210)
         hand_box.setStyleSheet(
@@ -638,7 +658,6 @@ class MyojamWindow(QMainWindow):
         root.addLayout(middle_row)
         root.addWidget(self._divider())
 
-        # ── GESTURE MAP (full width)
         glbl = QLabel("Gesture map")
         glbl.setStyleSheet("font-size:13px; font-weight:500; color:#1D1D1F;")
         root.addWidget(glbl)
@@ -674,6 +693,7 @@ class MyojamWindow(QMainWindow):
             w.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gesture_done.connect(self._on_gesture_done)
+        self.sensor_gesture.connect(self._on_sensor_gesture)
         self.global_keys = GlobalKeyListener()
         self.global_keys.key_pressed.connect(self.on_global_key)
         self.global_keys.start()
@@ -688,10 +708,7 @@ class MyojamWindow(QMainWindow):
                     nswin.setTitleVisibility_(1)
                     nswin.setStyleMask_(nswin.styleMask() | (1 << 15))
                     break
-
-            nswin.setBackgroundColor_(
-            __import__('AppKit').NSColor.whiteColor()
-)
+            nswin.setBackgroundColor_(__import__('AppKit').NSColor.whiteColor())
         except Exception as e:
             print(f"Titlebar: {e}")
 
@@ -700,6 +717,124 @@ class MyojamWindow(QMainWindow):
         line.setFrameShape(QFrame.Shape.HLine)
         line.setStyleSheet("background: rgba(0,0,0,0.06); border:none; max-height:1px;")
         return line
+
+    def _toggle_mode(self):
+        if self.mode_toggle.isChecked():
+            self.mode_toggle.setText("Sensor mode")
+            self._connect_sensor()
+        else:
+            self.mode_toggle.setText("Dataset mode")
+            self._disconnect_sensor()
+
+    # ── Sensor mode — EMGClassifier based
+    def _connect_sensor(self):
+        self.emg_clf = EMGClassifier()
+        ok, msg = self.emg_clf.connect()
+        if not ok:
+            self.mode_toggle.setText(f"No sensor: {msg}")
+            self.mode_toggle.setChecked(False)
+            self._sensor_mode = False
+            return
+        self._sensor_mode = True
+        self._sensor_buf  = []
+        self.mode_toggle.setText("Sensor mode  ✓")
+        self._sensor_timer = QTimer()
+        self._sensor_timer.timeout.connect(self._sensor_tick)
+        self._sensor_timer.start(25)  # 40 Hz UI refresh
+
+    def _disconnect_sensor(self):
+        self._sensor_mode = False
+        if hasattr(self, "_sensor_timer"):
+            self._sensor_timer.stop()
+        if self.emg_clf:
+            self.emg_clf.disconnect()
+            self.emg_clf = None
+        self.mode_toggle.setText("Dataset mode")
+        self.mode_toggle.setChecked(False)
+
+    def _sensor_tick(self):
+        if not self._sensor_mode or not self.emg_clf:
+            return
+
+        voltage, gesture, std = self.emg_clf.read_sample()
+        if voltage is None:
+            return
+
+        # Live waveform update
+        color = SENSOR_GESTURE_COLORS.get(gesture or "rest", ACCENT)
+        self.waveform.update_voltage(voltage, color)
+
+        # Only act on stable classified gestures
+        if gesture is None or gesture == "rest":
+            return
+        if gesture == self.last_gesture:
+            return
+
+        self.sensor_gesture.emit(gesture)
+
+    def _on_sensor_gesture(self, gesture):
+        """Called on main thread when sensor classifies a new stable gesture."""
+        self.last_gesture = gesture
+        action_info = SENSOR_GESTURE_ACTIONS.get(gesture)
+        if action_info is None:
+            return
+
+        action_label, action_fn = action_info
+        color     = SENSOR_GESTURE_COLORS.get(gesture, ACCENT)
+        hex_color = color.name()
+
+        self.gesture_label.flip_to(
+            gesture,
+            f"font-size:26px; font-weight:600; color:{hex_color}; letter-spacing:-0.5px;"
+        )
+        self.action_label.setText(action_label)
+        self.conf_label.set_target(85)
+        self.conf_bar.set_value(0.85, color)
+
+        curls = sensor_gesture_to_curls(gesture)
+        self.hand3d.update_gesture(gesture, curls)
+
+        if self.active:
+            threading.Thread(target=action_fn, daemon=True).start()
+
+    # ── Dataset mode
+    def _on_gesture_btn_click(self, gesture_id):
+        if self._sensor_mode:
+            return
+        if not self._busy:
+            self._busy = True
+            def run():
+                self._process_gesture(gesture_id)
+                self._busy = False
+            threading.Thread(target=run, daemon=True).start()
+
+    def _process_gesture(self, gesture_id):
+        expected_name = next(gname for gid, gname, _, _ in GESTURES if gid == gesture_id)
+        window = get_dataset_window(gesture_id)
+        _, confidence, _ = predict_from_window(window)
+        self.gesture_done.emit(expected_name, confidence, window)
+        execute_action(expected_name)
+
+    def _on_gesture_done(self, gesture_name, confidence, window):
+        color     = GESTURE_COLORS.get(gesture_name, ACCENT)
+        hex_color = color.name()
+        self.waveform.update_data(window, color)
+        self.gesture_label.flip_to(
+            gesture_name,
+            f"font-size:26px; font-weight:600; color:{hex_color}; letter-spacing:-0.5px;"
+        )
+        action = next((a for _, g, a, _ in GESTURES if g == gesture_name), "—")
+        self.action_label.setText(action)
+        pct = int(confidence * 100)
+        self.conf_label.set_target(pct)
+        self.conf_label.setStyleSheet(
+            "font-size:36px; font-weight:600; color:#FF2D78; letter-spacing:-1px;")
+        self.conf_bar.set_value(confidence, color)
+        for gname, btn in self.gesture_buttons.items():
+            btn.set_active(gname == gesture_name)
+        self.last_gesture = gesture_name
+        curls = computeFingerCurls(window) if window else [0,0,0,0,0]
+        self.hand3d.update_gesture(gesture_name, curls)
 
     def toggle_active(self):
         self.active = not self.active
@@ -729,12 +864,13 @@ class MyojamWindow(QMainWindow):
                 "font-size:36px; font-weight:600; color:#FF2D78; letter-spacing:-1px;")
             self.conf_bar.set_value(0, ACCENT)
             self.waveform._data = [0.0] * 200
-            self.hand3d.reset()
             self.waveform._prev = [0.0] * 200
             self.waveform._progress = 1.0
             self.waveform.update()
+            self.hand3d.reset()
             for btn in self.gesture_buttons.values():
                 btn.set_active(False)
+            self.last_gesture = None
 
     def on_global_key(self, gesture_id):
         if not self.active or self._sensor_mode:
@@ -746,33 +882,6 @@ class MyojamWindow(QMainWindow):
                 self._busy = False
             threading.Thread(target=run, daemon=True).start()
 
-    def _process_gesture(self, gesture_id):
-        expected_name = next(gname for gid, gname, _, _ in GESTURES if gid == gesture_id)
-        window = get_dataset_window(gesture_id)
-        _, confidence, _ = predict_from_window(window)
-        self.gesture_done.emit(expected_name, confidence, window)
-        execute_action(expected_name)
-
-
-    def _on_gesture_done(self, gesture_name, confidence, window):
-        color     = GESTURE_COLORS.get(gesture_name, ACCENT)
-        hex_color = color.name()
-        self.waveform.update_data(window, color)
-        self.gesture_label.flip_to(gesture_name,
-        f"font-size:26px; font-weight:600; color:{hex_color}; letter-spacing:-0.5px;")
-        action = next((a for _, g, a, _ in GESTURES if g == gesture_name), "—")
-        self.action_label.setText(action)
-        pct = int(confidence * 100)
-        self.conf_label.set_target(pct)
-        self.conf_label.setStyleSheet(
-            "font-size:36px; font-weight:600; color:#FF2D78; letter-spacing:-1px;")
-        self.conf_bar.set_value(confidence, color)
-        for gname, btn in self.gesture_buttons.items():
-            btn.set_active(gname == gesture_name)
-        self.last_gesture = gesture_name
-        curls = computeFingerCurls(window) if window else [0,0,0,0,0]
-        self.hand3d.update_gesture(gesture_name, curls)
-
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self._drag_pos = event.globalPosition().toPoint() - self.frameGeometry().topLeft()
@@ -780,86 +889,6 @@ class MyojamWindow(QMainWindow):
     def mouseMoveEvent(self, event):
         if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, '_drag_pos'):
             self.move(event.globalPosition().toPoint() - self._drag_pos)
-
-    def toggle_sensor(self):
-        if self._sensor_mode:
-            self._disconnect_sensor()
-        else:
-            self._connect_sensor()
-
-    def _connect_sensor(self):
-        import serial.tools.list_ports
-        ports = list(serial.tools.list_ports.comports())
-        arduino = next(
-            (p.device for p in ports if "usbmodem" in p.device or "usbserial" in p.device),
-            ports[0].device if ports else None
-        )
-        if not arduino:
-            self.mode_toggle.setText("No sensor found")
-            return
-        try:
-            import serial
-            self._serial_port = serial.Serial(arduino, 9600, timeout=1)
-            self._sensor_mode = True
-            self.mode_toggle.setText("Sensor mode  ✓")
-            threading.Thread(target=self._read_serial, daemon=True).start()
-        except Exception as e:
-            self.mode_toggle.setText(f"Failed: {e}")
-
-    def _disconnect_sensor(self):
-        self._sensor_mode = False
-        if self._serial_port:
-            try: self._serial_port.close()
-            except: pass
-            self._serial_port = None
-        self.mode_toggle.setText("Dataset mode")
-        self.mode_toggle.setChecked(False)
-
-    def _read_serial(self):
-        buf = []
-        REST_THRESHOLD = 0.03  # tune this — amplitude below = ignore
-        while self._sensor_mode and self._serial_port:
-            try:
-                raw = self._serial_port.readline().decode("utf-8", errors="ignore").strip()
-                if not raw:
-                    continue
-                val = float(raw)
-                channels = [val] * 16
-                buf.append(channels)
-                if len(buf) >= 200:
-                    window = buf[:200]
-                    buf = buf[100:]
-                    
-                    # Only classify if signal is above rest threshold
-                    signal = [row[0] for row in window]
-                    amplitude = np.mean(np.abs(signal))
-                    if amplitude < REST_THRESHOLD:
-                        continue  # arm at rest, skip
-                    
-                    gesture_name, confidence, emg = predict_from_window(window)
-                    
-                    # Skip if low confidence or rest predicted
-                    if confidence < 0.5 or gesture_name == "rest":
-                        continue
-                        
-                    if self.active:
-                        execute_action(gesture_name)
-                    self.gesture_done.emit(gesture_name, confidence, window)
-            except ValueError:
-                pass
-            except Exception:
-                time.sleep(0.01)
-
-
-    def _on_gesture_btn_click(self, gesture_id):
-        if self._sensor_mode:
-            return
-        if not self._busy:
-            self._busy = True
-            def run():
-                self._process_gesture(gesture_id)
-                self._busy = False
-            threading.Thread(target=run, daemon=True).start()
 
 
 if __name__ == "__main__":
@@ -873,7 +902,6 @@ if __name__ == "__main__":
         pass
     app.setStyle("Fusion")
 
-    # Dock icon
     icon_px = QPixmap(256, 256)
     icon_px.fill(Qt.GlobalColor.transparent)
     ip = QPainter(icon_px)
