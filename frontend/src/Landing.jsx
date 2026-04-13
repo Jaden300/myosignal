@@ -4,6 +4,7 @@ import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 import Plasma from "./Plasma"
+import SplitText from "./components/SplitText"
 
 const STATS = [
   { val:"84.85%", label:"Cross-subject accuracy",  sub:"Tested on unseen individuals" },
@@ -118,6 +119,84 @@ function AnimatedEMGLine() {
   )
 }
 
+const ROTATING_TEXTS = [
+  "with your muscles.",
+  "without a keyboard.",
+  "using surface EMG.",
+  "through gesture.",
+  "hands-free.",
+  "with bioelectric signals.",
+  "using open-source AI.",
+  "without touching anything.",
+  "with a forearm sensor.",
+  "for everyone.",
+  "the way your body does.",
+  "differently.",
+]
+
+function HeroHeading() {
+  const [index, setIndex]     = useState(0)
+  const [key, setKey]         = useState(0)
+  const [visible, setVisible] = useState(true)
+
+  useEffect(() => {
+    // After each phrase finishes animating in, wait, then fade out and switch
+    const holdTime = 2800  // ms to hold the phrase after it finishes
+    const fadeOut  = 300   // ms for fade out
+
+    const cycle = () => {
+      // Fade out
+      setVisible(false)
+      setTimeout(() => {
+        setIndex(i => (i + 1) % ROTATING_TEXTS.length)
+        setKey(k => k + 1)
+        setVisible(true)
+      }, fadeOut)
+    }
+
+    // Each phrase takes (chars * delay) + hold time
+    const charCount  = ROTATING_TEXTS[index].length
+    const animTime   = charCount * 38 + 700  // roughly when last char finishes
+    const totalCycle = animTime + holdTime
+
+    const t = setTimeout(cycle, totalCycle)
+    return () => clearTimeout(t)
+  }, [index])
+
+  return (
+    <h1 style={{
+      fontSize: "clamp(48px,8vw,96px)",
+      fontWeight: 700,
+      letterSpacing: "-3.5px",
+      lineHeight: 1.1,
+      color: "var(--text)",
+      marginBottom: 28,
+    }}>
+      Control your computer<br/>
+      <span style={{
+        display: "inline-block",
+        opacity: visible ? 1 : 0,
+        transition: "opacity 0.3s ease",
+        background: "linear-gradient(135deg, #FF2D78 0%, #c026d3 100%)",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+        minHeight: "1.1em",
+      }}>
+        <SplitText
+          key={key}
+          text={ROTATING_TEXTS[index]}
+          delay={38}
+          duration={0.55}
+          from={{ opacity: 0, y: 32 }}
+          to={{ opacity: 1, y: 0 }}
+          tag="span"
+        />
+      </span>
+    </h1>
+  )
+}
+
 export default function Landing() {
   const navigate = useNavigate()
   const [scrollY, setScrollY] = useState(0)
@@ -142,19 +221,19 @@ export default function Landing() {
       <section style={{ position:"relative", minHeight:"100vh", display:"flex", alignItems:"center", overflow:"hidden", background:"linear-gradient(160deg, #ffffff 0%, #fff0f5 50%, #f5f0ff 100%)" }}>
 
         {/* Plasma background — sits behind everything, full bleed */}
-        <div style={{ position:"absolute", inset:0, zIndex:0, opacity:0.35 }}>
+        <div style={{ position:"absolute", inset:0, zIndex:0, opacity:0.8 }}>
           <Plasma
             color="#FF2D78"
             speed={0.4}
             direction="forward"
-            scale={1.2}
-            opacity={0.6}
-            mouseInteractive={true}
+            scale={0.6}
+            opacity={1}
+            mouseInteractive={false}
           />
         </div>
 
         {/* Soft white fade at the bottom so content below doesn't clash */}
-        <div style={{ position:"absolute", bottom:0, left:0, right:0, height:180, background:"linear-gradient(to top, rgba(255,255,255,1) 0%, transparent 100%)", zIndex:1, pointerEvents:"none" }}/>
+        <div style={{ position:"absolute", bottom:0, left:0, right:0, height:180, background:"linear-gradient(160deg, rgba(255,255,255,0.85) 0%, rgba(255,240,245,0.85) 50%, rgba(245,240,255,0.85) 100%)", zIndex:1, pointerEvents:"none" }}/>
 
         <div style={{ maxWidth:920, margin:"0 auto", padding:"140px 32px 120px", position:"relative", zIndex:1, width:"100%" }}>
           {/* Badge */}
@@ -163,12 +242,7 @@ export default function Landing() {
             Open source · Assistive technology · Education platform
           </div>
 
-          <h1 style={{ fontSize:"clamp(48px,8vw,96px)", fontWeight:700, letterSpacing:"-3.5px", lineHeight:1.0, color:"var(--text)", marginBottom:28, animation:"fadeUp 0.6s 0.1s ease both" }}>
-            Control your computer<br/>
-            <span style={{ background:"linear-gradient(135deg, #FF2D78 0%, #c026d3 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
-              with your muscles.
-            </span>
-          </h1>
+          <HeroHeading />
 
           <p style={{ fontSize:"clamp(17px,2.5vw,21px)", color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:600, marginBottom:48, animation:"fadeUp 0.6s 0.2s ease both" }}>
             myojam reads surface EMG signals from your forearm and classifies hand gestures in real time. An open-source platform for assistive technology, machine learning education, and human-computer interaction research.
