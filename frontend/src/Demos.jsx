@@ -3,6 +3,7 @@ import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 import { IconBolt, IconPencil, IconBrain, IconChart, IconDemo } from "./Icons"
+import LiquidChrome from "./components/LiquidChrome"
 
 // Map demo icon names to actual SVG components
 const ICON_MAP = {
@@ -92,22 +93,31 @@ export default function Demos() {
 
       {/* Hero */}
       <div style={{
-        background: "linear-gradient(135deg, #fff0f5 0%, #ffffff 60%)",
+        position: "relative",
+        overflow: "hidden",
         borderBottom: "1px solid var(--border)",
         padding: "100px 32px 64px"
       }}>
-        <div style={{ maxWidth: 860, margin: "0 auto" }}>
+        {/* LiquidChrome background */}
+        <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+          <LiquidChrome baseColor={[0.18, 0.04, 0.08]} speed={0.15} amplitude={0.25} interactive={false} />
+        </div>
+        {/* Dark overlay for text legibility */}
+        <div style={{ position: "absolute", inset: 0, zIndex: 0, background: "rgba(0,0,0,0.45)" }} />
+        {/* Content */}
+        <div style={{ maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 1 }}>
           <Reveal>
             <SectionPill>Interactive demos</SectionPill>
             <h1 style={{
               fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 600,
-              letterSpacing: "-1.5px", color: "var(--text)", marginBottom: 20, lineHeight: 1.08
+              letterSpacing: "-1.5px", color: "#fff", marginBottom: 20, lineHeight: 1.08,
+              textShadow: "0 2px 16px rgba(0,0,0,0.4)"
             }}>
               See myojam<br />
               <span style={{ color: "var(--accent)" }}>working in your browser.</span>
             </h1>
             <p style={{
-              fontSize: 17, color: "var(--text-secondary)", fontWeight: 300,
+              fontSize: 17, color: "rgba(255,255,255,0.88)", fontWeight: 400,
               lineHeight: 1.7, maxWidth: 520
             }}>
               No hardware required. Both demos run entirely in the browser using

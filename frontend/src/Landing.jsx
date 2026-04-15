@@ -3,8 +3,9 @@ import { useState, useEffect, useRef } from "react"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
-import Plasma from "./Plasma"
+import Threads from "./Threads"
 import SplitText from "./components/SplitText"
+import SignalModel3D from "./components/SignalModel3D"
 
 const STATS = [
   { val:"84.85%", label:"Cross-subject accuracy",  sub:"Tested on unseen individuals" },
@@ -141,7 +142,7 @@ function HeroHeading() {
 
   useEffect(() => {
     // After each phrase finishes animating in, wait, then fade out and switch
-    const holdTime = 2800  // ms to hold the phrase after it finishes
+    const holdTime = 1500  // ms to hold the phrase after it finishes
     const fadeOut  = 300   // ms for fade out
 
     const cycle = () => {
@@ -177,10 +178,6 @@ function HeroHeading() {
         display: "inline-block",
         opacity: visible ? 1 : 0,
         transition: "opacity 0.3s ease",
-        background: "linear-gradient(135deg, #FF2D78 0%, #c026d3 100%)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-        backgroundClip: "text",
         minHeight: "1.1em",
       }}>
         <SplitText
@@ -191,6 +188,9 @@ function HeroHeading() {
           from={{ opacity: 0, y: 32 }}
           to={{ opacity: 1, y: 0 }}
           tag="span"
+          style={{
+            color: "#FF2D78",
+          }}
         />
       </span>
     </h1>
@@ -218,17 +218,15 @@ export default function Landing() {
       <Navbar />
 
       {/* ── HERO */}
-      <section style={{ position:"relative", minHeight:"100vh", display:"flex", alignItems:"center", overflow:"hidden", background:"linear-gradient(160deg, #ffffff 0%, #fff0f5 50%, #f5f0ff 100%)" }}>
+      <section style={{ position:"relative", minHeight:"100vh", display:"flex", alignItems:"center", background:"linear-gradient(160deg, #ffffff 0%, #fff0f5 50%, #f5f0ff 100%)" }}>
 
-        {/* Plasma background — sits behind everything, full bleed */}
-        <div style={{ position:"absolute", inset:0, zIndex:0, opacity:0.8 }}>
-          <Plasma
-            color="#FF2D78"
-            speed={0.4}
-            direction="forward"
-            scale={0.6}
-            opacity={1}
-            mouseInteractive={false}
+        {/* Threads background */}
+        <div style={{ position:"absolute", inset:0, zIndex:0, opacity:0.6 }}>
+          <Threads
+            color={[1, 0.18, 0.47]}
+            amplitude={2.6}
+            distance={0}
+            enableMouseInteraction={false}
           />
         </div>
 
@@ -244,7 +242,7 @@ export default function Landing() {
 
           <HeroHeading />
 
-          <p style={{ fontSize:"clamp(17px,2.5vw,21px)", color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:600, marginBottom:48, animation:"fadeUp 0.6s 0.2s ease both" }}>
+          <p style={{ fontSize:"clamp(17px,2.5vw,21px)", color:"var(--text)", fontWeight:400, lineHeight:1.75, maxWidth:600, marginBottom:48, animation:"fadeUp 0.6s 0.2s ease both" }}>
             myojam reads surface EMG signals from your forearm and classifies hand gestures in real time. An open-source platform for assistive technology, machine learning education, and human-computer interaction research.
           </p>
 
@@ -277,6 +275,9 @@ export default function Landing() {
           )}/>
         </div>
       </section>
+
+      {/* ── 3D SIGNAL MODEL */}
+      <SignalModel3D />
 
       {/* ── ELEVATE FEATURE */}
       <section style={{ padding:"80px 32px", background:"linear-gradient(160deg, #0a0010 0%, #1a0030 100%)", position:"relative", overflow:"hidden" }}>

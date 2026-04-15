@@ -1,6 +1,7 @@
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
+import NeuralNoise from "./components/NeuralNoise"
 
 function FaceAvatar({ seed, size = 80 }) {
   const s = seed * 1000
@@ -105,14 +106,16 @@ export default function Team() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "100px 32px 80px" }}>
 
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 72 }}>
+      {/* Hero banner with NeuralNoise */}
+      <div style={{ position: "relative", overflow: "hidden", borderBottom: "1px solid var(--border)", padding: "100px 32px 80px", textAlign: "center" }}>
+        <NeuralNoise color={[0.9, 0.18, 0.47]} opacity={0.9} speed={0.0008} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.58)", zIndex: 1 }} />
+        <div style={{ position: "relative", zIndex: 2 }}>
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 6,
-            background: "var(--accent-soft)",
-            border: "1px solid rgba(255,45,120,0.15)",
+            background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255,45,120,0.3)",
             borderRadius: 100, padding: "5px 16px",
             fontSize: 13, color: "var(--accent)", fontWeight: 500, marginBottom: 24
           }}>
@@ -121,15 +124,19 @@ export default function Team() {
           </div>
           <h1 style={{
             fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 600,
-            letterSpacing: "-1.5px", color: "var(--text)", marginBottom: 16
+            letterSpacing: "-1.5px", color: "#fff", marginBottom: 16,
+            textShadow: "0 2px 20px rgba(0,0,0,0.4)"
           }}>Meet the team</h1>
           <p style={{
-            fontSize: 17, color: "var(--text-secondary)", fontWeight: 300,
+            fontSize: 17, color: "rgba(255,255,255,0.75)", fontWeight: 300,
             maxWidth: 520, margin: "0 auto", lineHeight: 1.7
           }}>
             A small group of engineers and researchers building the future of assistive human-computer interaction.
           </p>
         </div>
+      </div>
+
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "72px 32px 80px" }}>
 
         {/* Team grid */}
         <StaggerList

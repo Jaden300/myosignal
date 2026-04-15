@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, SectionPill } from "./Animate"
+import Plasma from "./Plasma"
 
 const DEADLINE = new Date("2026-04-30T23:59:59")
 
@@ -206,14 +207,14 @@ export default function Elevate() {
       
       <section style={{ position:"relative", minHeight:"100vh", display:"flex", alignItems:"center", overflow:"hidden" }}>
 
-        <div style={{ position:"absolute", inset:0, zIndex:0, opacity:0.55 }}>
+        <div style={{ position:"absolute", inset:0, zIndex:0, opacity:1 }}>
           <Plasma
-            color="#FF2D78"
-            speed={0.3}
+            color="#482615"
+            speed={1}
             direction="forward"
-            scale={1.5}
-            opacity={0.9}
-            mouseInteractive={true}
+            scale={0.4}
+            opacity={1}
+            mouseInteractive={false}
           />
         </div>
 

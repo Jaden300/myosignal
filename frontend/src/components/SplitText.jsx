@@ -29,9 +29,8 @@ export default function SplitText({
   }, [triggered, text])
 
   const Tag = tag
-
   return (
-    <Tag style={{ display: "inline-block", ...style }}>
+    <Tag ref={ref} style={{ display:"inline-block", ...style }}>
       {chars.map((char, i) => (
         <span
           key={`${text}-${i}`}

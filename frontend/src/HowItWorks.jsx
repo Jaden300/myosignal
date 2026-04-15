@@ -1,8 +1,10 @@
+import { useRef, useState, useEffect } from "react"
 import Navbar from "./Navbar"
 import { useNavigate } from "react-router-dom"
 import Footer from "./Footer"
-import { Reveal, StaggerList, HoverCard } from "./Animate"
+import { Reveal } from "./Animate"
 import { IconGear, IconChart, IconBrain, IconBolt } from "./Icons"
+import NeuralBackground from "./components/NeuralBackground"
 
 const STEPS = [
   {
@@ -10,6 +12,7 @@ const STEPS = [
     icon: <IconGear />,
     title: "Signal capture",
     subtitle: "Hardware layer",
+    color: "#FF2D78",
     body: "Surface EMG electrodes  -  adhesive stickers, no needles  -  pick up the electrical activity of your forearm muscles as you move. The MyoWare 2.0 sensor amplifies and conditions this signal across 16 channels at 200 Hz, fed into an Arduino Uno over USB.",
     tags: ["MyoWare 2.0 sensor", "16 EMG channels", "200 Hz sampling", "Arduino Uno R3"],
   },
@@ -18,6 +21,7 @@ const STEPS = [
     icon: <IconChart />,
     title: "Filtering & windowing",
     subtitle: "Signal processing",
+    color: "#f472b6",
     body: "Raw EMG is noisy  -  powerline hum, motion artifacts, baseline drift. A 4th-order Butterworth bandpass filter (20–90 Hz) strips it down to the biologically meaningful band. The cleaned signal is then sliced into 200-sample windows with 50-sample steps, ready for feature extraction.",
     tags: ["Butterworth 20–90 Hz", "200-sample windows", "50-sample step", "75% overlap"],
   },
@@ -26,6 +30,7 @@ const STEPS = [
     icon: <IconChart />,
     title: "Feature extraction",
     subtitle: "From waveform to numbers",
+    color: "#a855f7",
     body: "Each window is compressed into a 64-number vector  -  four time-domain features computed across all 16 channels. These capture activation level (MAV), signal power (RMS), frequency content (ZC), and complexity (WL). Together they form a compact fingerprint of the gesture.",
     tags: ["MAV · RMS · ZC · WL", "64-dimensional vector", "16 channels × 4 features"],
   },
@@ -34,6 +39,7 @@ const STEPS = [
     icon: <IconBrain />,
     title: "Gesture classification",
     subtitle: "Machine learning",
+    color: "#818cf8",
     body: "A Random Forest classifier (500 trees, hyperparameter-tuned via 100-configuration RandomizedSearchCV) maps the 64-feature vector to one of 6 gesture classes. Trained on 16,269 labeled windows from 10 subjects in the public Ninapro DB5 dataset  -  achieving 84.85% cross-subject accuracy.",
     tags: ["Random Forest · 500 trees", "16,269 training windows", "10 subjects · Ninapro DB5", "84.85% accuracy"],
   },
@@ -42,193 +48,460 @@ const STEPS = [
     icon: <IconBolt />,
     title: "Assistive action",
     subtitle: "Gesture to computer control",
+    color: "#38bdf8",
     body: "The predicted gesture maps to a real computer action in under 50ms end-to-end. Cursor movement uses the macOS CoreGraphics API for hardware-level repositioning. Clicks fire via cliclick. Keypresses are injected through osascript. No accessibility overlays  -  direct system-level control.",
     tags: ["< 50ms latency", "CoreGraphics cursor", "osascript keypresses", "6 mapped actions"],
   },
 ]
 
+// ─── 3D Ring Canvas ───────────────────────────────────────────────────────────
+function Pipeline3DCanvas({ activeStep }) {
+  const canvasRef = useRef(null)
+  const activeStepRef = useRef(activeStep)
+
+  useEffect(() => {
+    activeStepRef.current = activeStep
+  }, [activeStep])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d")
+
+    const N = STEPS.length
+    const RING_R = 1.3
+    const FOCAL = 360
+    const WORLD_SCALE = 145
+    const TILT_X = 0.28
+    const cosTilt = Math.cos(TILT_X)
+    const sinTilt = Math.sin(TILT_X)
+
+    let width = 400
+    let height = 500
+    let dpr = 1
+    let rotY = Math.PI / 2
+    let time = 0
+    let raf
+
+    // Particles flowing around the ring
+    const orbitPts = Array.from({ length: 55 }, () => ({
+      t: Math.random(),
+      speed: 0.004 + Math.random() * 0.005,
+      r: 1.3 + Math.random() * 1.8,
+    }))
+
+    function worldNode(i, rot) {
+      const theta = i * (2 * Math.PI / N) + rot
+      const wx = Math.cos(theta) * RING_R
+      const wzRaw = Math.sin(theta) * RING_R
+      return {
+        wx,
+        wy: -wzRaw * sinTilt,
+        wz: wzRaw * cosTilt,
+      }
+    }
+
+    function project(wx, wy, wz) {
+      const ps = FOCAL / (FOCAL + wz * WORLD_SCALE)
+      return {
+        sx: width / 2 + wx * WORLD_SCALE * ps,
+        sy: height / 2 + wy * WORLD_SCALE * ps,
+        ps,
+        depth: (wz + 1.6) / 3.2,
+      }
+    }
+
+    function resize() {
+      dpr = window.devicePixelRatio || 1
+      const p = canvas.parentElement
+      if (!p) return
+      width = p.offsetWidth || 400
+      height = p.offsetHeight || 500
+      canvas.width = width * dpr
+      canvas.height = height * dpr
+      canvas.style.width = width + "px"
+      canvas.style.height = height + "px"
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+
+    function draw() {
+      raf = requestAnimationFrame(draw)
+      time += 0.016
+
+      // Shortest-arc lerp to target angle
+      const target = Math.PI / 2 - activeStepRef.current * (2 * Math.PI / N)
+      let diff = ((target - rotY) % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI
+      rotY += diff * 0.055
+
+      ctx.clearRect(0, 0, width, height)
+
+      // Subtle expanding rings for depth atmosphere
+      for (let k = 0; k < 4; k++) {
+        const progress = ((k / 4 + time * 0.015) % 1)
+        const opacity = 0.035 * (1 - progress)
+        ctx.beginPath()
+        ctx.arc(width / 2, height / 2, 50 + progress * 150, 0, Math.PI * 2)
+        ctx.strokeStyle = `rgba(255,45,120,${opacity})`
+        ctx.lineWidth = 1
+        ctx.stroke()
+      }
+
+      // Project all nodes
+      const nodeProjs = STEPS.map((step, i) => {
+        const w = worldNode(i, rotY)
+        const p = project(w.wx, w.wy, w.wz)
+        return { ...p, i, step }
+      })
+
+      const sorted = [...nodeProjs].sort((a, b) => a.depth - b.depth)
+
+      // Connections between adjacent nodes
+      for (let i = 0; i < N; i++) {
+        const a = nodeProjs[i]
+        const b = nodeProjs[(i + 1) % N]
+        const active = activeStepRef.current
+        const lit = i === active || (i + 1) % N === active
+        const segs = 18
+
+        for (let j = 0; j < segs; j++) {
+          const t1 = j / segs
+          const t2 = (j + 1) / segs
+          const d = a.depth + (b.depth - a.depth) * ((t1 + t2) * 0.5)
+          const x1 = a.sx + (b.sx - a.sx) * t1
+          const y1 = a.sy + (b.sy - a.sy) * t1
+          const x2 = a.sx + (b.sx - a.sx) * t2
+          const y2 = a.sy + (b.sy - a.sy) * t2
+          const alpha = lit ? 0.2 + d * 0.55 : 0.04 + d * 0.1
+          ctx.beginPath()
+          ctx.moveTo(x1, y1)
+          ctx.lineTo(x2, y2)
+          ctx.strokeStyle = lit
+            ? `rgba(255,45,120,${alpha})`
+            : `rgba(160,100,220,${alpha})`
+          ctx.lineWidth = lit ? 1.5 * d + 0.5 : 0.4
+          ctx.stroke()
+        }
+      }
+
+      // Orbit particles
+      orbitPts.forEach(p => {
+        p.t = (p.t + p.speed) % 1
+        const si = Math.floor(p.t * N)
+        const frac = (p.t * N) % 1
+        const a = nodeProjs[si]
+        const b = nodeProjs[(si + 1) % N]
+        const px = a.sx + (b.sx - a.sx) * frac
+        const py = a.sy + (b.sy - a.sy) * frac
+        const d = a.depth + (b.depth - a.depth) * frac
+        ctx.save()
+        ctx.globalAlpha = (0.15 + d * 0.85) * 0.65
+        ctx.shadowColor = "#FF2D78"
+        ctx.shadowBlur = 5
+        ctx.fillStyle = "#ffcce0"
+        ctx.beginPath()
+        ctx.arc(px, py, p.r * (0.4 + d * 0.6), 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      })
+
+      // Nodes back-to-front
+      sorted.forEach(({ sx, sy, ps, depth, i, step }) => {
+        const isActive = i === activeStepRef.current
+        const pulse = isActive ? 1 + Math.sin(time * 2.4) * 0.09 : 1
+        const baseR = isActive ? 21 : 12
+        const nr = baseR * ps * pulse
+
+        // Soft aura for active node
+        if (isActive) {
+          const grd = ctx.createRadialGradient(sx, sy, 0, sx, sy, nr * 3.2)
+          grd.addColorStop(0, step.color + "45")
+          grd.addColorStop(1, step.color + "00")
+          ctx.save()
+          ctx.globalAlpha = 0.55
+          ctx.beginPath()
+          ctx.arc(sx, sy, nr * 3.2, 0, Math.PI * 2)
+          ctx.fillStyle = grd
+          ctx.fill()
+          ctx.restore()
+        }
+
+        // Sphere with radial gradient
+        ctx.save()
+        ctx.shadowColor = step.color
+        ctx.shadowBlur = isActive ? 22 * ps : 7 * ps
+        ctx.globalAlpha = 0.4 + depth * 0.6
+
+        const grad = ctx.createRadialGradient(
+          sx - nr * 0.3, sy - nr * 0.3, nr * 0.05,
+          sx, sy, nr
+        )
+        grad.addColorStop(0, "#fff")
+        grad.addColorStop(0.3, step.color)
+        grad.addColorStop(1, step.color + "77")
+
+        ctx.beginPath()
+        ctx.arc(sx, sy, nr, 0, Math.PI * 2)
+        ctx.fillStyle = grad
+        ctx.fill()
+        ctx.restore()
+
+        // Label
+        if (depth > 0.22 || isActive) {
+          const lAlpha = isActive ? 1 : Math.max(0, (depth - 0.22) / 0.78)
+          ctx.save()
+          ctx.globalAlpha = lAlpha
+          ctx.font = `${isActive ? 700 : 400} ${Math.round(9 + ps * 6)}px -apple-system, system-ui, sans-serif`
+          ctx.fillStyle = isActive ? "#fff" : "rgba(220,180,255,0.9)"
+          ctx.textAlign = "center"
+          ctx.textBaseline = "top"
+          ctx.fillText(step.title.split(" ")[0], sx, sy + nr + 7 * ps)
+          ctx.restore()
+        }
+      })
+    }
+
+    resize()
+    window.addEventListener("resize", resize)
+    draw()
+
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener("resize", resize)
+    }
+  }, [])
+
+  return <canvas ref={canvasRef} style={{ display: "block", width: "100%", height: "100%" }} />
+}
+
+// ─── Sticky Pipeline Section ──────────────────────────────────────────────────
+function StickyPipeline() {
+  const containerRef = useRef(null)
+  const [activeStep, setActiveStep] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
+  useEffect(() => {
+    function onScroll() {
+      const el = containerRef.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      const scrollable = el.offsetHeight - window.innerHeight
+      if (scrollable <= 0) return
+      const progress = Math.max(0, Math.min(1, -rect.top / scrollable))
+      setActiveStep(Math.min(STEPS.length - 1, Math.floor(progress * STEPS.length)))
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
+  const step = STEPS[activeStep]
+
+  return (
+    <div ref={containerRef} style={{ height: `${STEPS.length * 100}vh`, position: "relative" }}>
+      <div style={{
+        position: "sticky", top: 0, height: "100vh",
+        display: "flex", flexDirection: isMobile ? "column" : "row",
+        overflow: "hidden",
+        borderBottom: "1px solid var(--border)",
+      }}>
+
+        {/* ── Left: 3D canvas ── */}
+        <div style={{
+          flex: isMobile ? "0 0 42vh" : 1,
+          position: "relative",
+          borderRight: isMobile ? "none" : "1px solid var(--border)",
+          borderBottom: isMobile ? "1px solid var(--border)" : "none",
+          height: isMobile ? "42vh" : "100%",
+        }}>
+          <Pipeline3DCanvas activeStep={activeStep} />
+
+          {/* Progress dots */}
+          <div style={{
+            position: "absolute", bottom: 28, left: 0, right: 0,
+            display: "flex", justifyContent: "center", gap: 7, zIndex: 2,
+          }}>
+            {STEPS.map((s, i) => (
+              <div key={i} style={{
+                height: 6, borderRadius: 3,
+                width: i === activeStep ? 22 : 6,
+                background: i === activeStep ? s.color : "var(--border)",
+                transition: "width 0.35s ease, background 0.35s ease",
+              }} />
+            ))}
+          </div>
+        </div>
+
+        {/* ── Right: Step info ── */}
+        <div style={{
+          flex: 1,
+          display: "flex", alignItems: "center",
+          padding: isMobile ? "24px 28px" : "0 64px",
+          overflow: "hidden",
+        }}>
+          <div
+            key={activeStep}
+            style={{ animation: "stepIn 0.38s cubic-bezier(0.22,1,0.36,1) both" }}
+          >
+            {/* Step badge */}
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: step.color + "18",
+              border: `1px solid ${step.color}35`,
+              borderRadius: 100, padding: "5px 14px",
+              marginBottom: 20,
+            }}>
+              <span style={{
+                width: 6, height: 6, borderRadius: "50%",
+                background: step.color, display: "inline-block",
+              }} />
+              <span style={{
+                fontSize: 11, fontWeight: 600, color: step.color,
+                letterSpacing: "0.07em", textTransform: "uppercase",
+              }}>
+                Step {step.num} · {step.subtitle}
+              </span>
+            </div>
+
+            <h2 style={{
+              fontSize: "clamp(22px, 2.8vw, 40px)", fontWeight: 600,
+              letterSpacing: "-1px", lineHeight: 1.1,
+              color: "var(--text)", marginBottom: 18,
+            }}>
+              {step.title}
+            </h2>
+
+            <p style={{
+              fontSize: 15, color: "var(--text-secondary)",
+              lineHeight: 1.78, fontWeight: 300, marginBottom: 24,
+              maxWidth: 460,
+            }}>
+              {step.body}
+            </p>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {step.tags.map(tag => (
+                <span key={tag} style={{
+                  background: "var(--bg-secondary)",
+                  border: "1px solid var(--border)",
+                  borderRadius: 100, padding: "5px 14px",
+                  fontSize: 12, color: "var(--text-secondary)", fontWeight: 300,
+                }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  )
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 export default function HowItWorks() {
   const navigate = useNavigate()
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+      <style>{`
+        @keyframes stepIn {
+          from { opacity: 0; transform: translateY(22px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
       <Navbar />
 
-      <div style={{ maxWidth: 720, margin: "0 auto", padding: "120px 32px 80px" }}>
+      {/* ── Hero with NeuralBackground ── */}
+      <div style={{
+        position: "relative", overflow: "hidden",
+        borderBottom: "1px solid var(--border)",
+        padding: "120px 32px 80px",
+      }}>
+        <NeuralBackground color="#FF2D78" trailOpacity={0.1} particleCount={500} speed={0.8} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.62)", zIndex: 1 }} />
 
-        {/* Header */}
-        <Reveal>
-          <p style={{
-            fontSize: 13,
-            fontWeight: 500,
-            color: "var(--accent)",
-            letterSpacing: "0.04em",
-            textTransform: "uppercase",
-            marginBottom: 16
-          }}>
-            Technical overview
-          </p>
-        </Reveal>
+        <div style={{ maxWidth: 720, margin: "0 auto", position: "relative", zIndex: 2 }}>
+          <Reveal>
+            <p style={{
+              fontSize: 13, fontWeight: 500, color: "var(--accent)",
+              letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 16,
+            }}>
+              Technical overview
+            </p>
+          </Reveal>
 
-        <Reveal delay={0.05}>
-          <h1 style={{
-            fontSize: "clamp(36px, 6vw, 64px)",
-            fontWeight: 600,
-            letterSpacing: "-2px",
-            lineHeight: 1.05,
-            marginBottom: 28,
-            color: "var(--text)"
-          }}>
-            From muscle signal<br />to action in 50ms.
-          </h1>
-        </Reveal>
+          <Reveal delay={0.05}>
+            <h1 style={{
+              fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 600,
+              letterSpacing: "-2px", lineHeight: 1.05, marginBottom: 28,
+              color: "#fff", textShadow: "0 2px 28px rgba(0,0,0,0.55)",
+            }}>
+              From muscle signal<br />to action in 50ms.
+            </h1>
+          </Reveal>
 
-        <Reveal delay={0.1}>
-          <p style={{
-            fontSize: 17,
-            color: "var(--text-secondary)",
-            lineHeight: 1.75,
-            fontWeight: 300,
-            marginBottom: 56
-          }}>
-            How myojam turns a forearm twitch into a cursor move, click, or keypress  - 
-            from raw electrode data to system-level control.
-          </p>
-        </Reveal>
+          <Reveal delay={0.1}>
+            <p style={{
+              fontSize: 17, color: "rgba(255,255,255,0.72)",
+              lineHeight: 1.75, fontWeight: 300, marginBottom: 48,
+            }}>
+              How myojam turns a forearm twitch into a cursor move, click, or keypress  -
+              from raw electrode data to system-level control.
+            </p>
+          </Reveal>
 
-        {/* Pipeline breadcrumb */}
-        <Reveal delay={0.15}>
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 6,
-            background: "var(--bg-secondary)",
-            borderRadius: "var(--radius-sm)",
-            padding: "14px 20px",
-            marginBottom: 56,
-            border: "1px solid var(--border)"
-          }}>
-            {["Capture", "Filter", "Extract", "Classify", "Act"].map((s, i) => (
-              <div key={s} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: i === 4 ? "var(--accent)" : "var(--text-secondary)"
-                }}>
-                  {s}
-                </span>
-                {i < 4 && <span style={{ color: "var(--text-tertiary)", fontSize: 12 }}>→</span>}
-              </div>
-            ))}
-          </div>
-        </Reveal>
-
-        {/* Steps */}
-        <StaggerList
-          items={STEPS}
-          columns={1}
-          gap={16}
-          renderItem={(step, i) => (
-            <Reveal delay={i * 0.1}>
-              <HoverCard
-                style={{
-                  background: "var(--bg-secondary)",
-                  borderRadius: "var(--radius)",
-                  border: "1px solid var(--border)",
-                  padding: "32px",
-                  display: "flex",
-                  gap: 24
-                }}
-              >
-                <div style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 14,
-                  flexShrink: 0,
-                  background: "var(--accent-soft)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}>
-                  {step.icon}
+          {/* Pipeline breadcrumb */}
+          <Reveal delay={0.15}>
+            <div style={{
+              display: "flex", alignItems: "center", flexWrap: "wrap", gap: 6,
+              background: "rgba(255,255,255,0.07)", backdropFilter: "blur(10px)",
+              borderRadius: "var(--radius-sm)", padding: "14px 20px",
+              border: "1px solid rgba(255,255,255,0.1)",
+            }}>
+              {STEPS.map((s, i) => (
+                <div key={s.num} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{
+                    fontSize: 13, fontWeight: 500,
+                    color: i === STEPS.length - 1 ? "var(--accent)" : "rgba(255,255,255,0.65)",
+                  }}>
+                    {s.title.split(" ")[0]}
+                  </span>
+                  {i < STEPS.length - 1 && (
+                    <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 12 }}>→</span>
+                  )}
                 </div>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+      </div>
 
-                <div>
-                  <div style={{
-                    fontSize: 17,
-                    fontWeight: 600,
-                    color: "var(--text)",
-                    marginBottom: 4
-                  }}>
-                    {step.title}
-                  </div>
+      {/* ── Sticky 3D pipeline ── */}
+      <StickyPipeline />
 
-                  <div style={{
-                    fontSize: 13,
-                    color: "var(--text-secondary)",
-                    fontWeight: 300,
-                    marginBottom: 10
-                  }}>
-                    {step.subtitle}
-                  </div>
-
-                  <p style={{
-                    fontSize: 14,
-                    color: "var(--text-secondary)",
-                    lineHeight: 1.7,
-                    fontWeight: 300,
-                    marginBottom: 16
-                  }}>
-                    {step.body}
-                  </p>
-
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                    {step.tags.map(tag => (
-                      <span key={tag} style={{
-                        background: "var(--surface)",
-                        border: "1px solid var(--border-mid)",
-                        borderRadius: 100,
-                        padding: "4px 14px",
-                        fontSize: 12,
-                        color: "var(--text-secondary)"
-                      }}>
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </HoverCard>
-            </Reveal>
-          )}
-        />
-
-        {/* Dataset */}
+      {/* ── Dataset + CTA ── */}
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: "64px 32px 80px" }}>
         <Reveal>
           <div style={{
-            marginTop: 40,
-            background: "var(--accent-soft)",
-            borderRadius: "var(--radius)",
-            padding: "28px 32px",
-            border: "1px solid rgba(255,45,120,0.15)"
+            background: "var(--accent-soft)", borderRadius: "var(--radius)",
+            padding: "28px 32px", border: "1px solid rgba(255,45,120,0.15)",
           }}>
             <div style={{
-              fontSize: 12,
-              fontWeight: 500,
-              color: "var(--accent)",
-              textTransform: "uppercase",
-              letterSpacing: "0.04em",
-              marginBottom: 10
+              fontSize: 12, fontWeight: 500, color: "var(--accent)",
+              textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 10,
             }}>
-              Dataset  -  Ninapro DB5
+              Dataset · Ninapro DB5
             </div>
-
-            <p style={{
-              fontSize: 14,
-              color: "var(--text-secondary)",
-              lineHeight: 1.75,
-              fontWeight: 300
-            }}>
+            <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.75, fontWeight: 300 }}>
               The Ninapro database is a publicly available benchmark for EMG-based gesture recognition research.
               DB5 contains recordings from 10 intact subjects performing 52 hand movements, each repeated 6 times.
               Available at{" "}
@@ -239,37 +512,25 @@ export default function HowItWorks() {
           </div>
         </Reveal>
 
-        {/* CTA */}
         <Reveal>
-          <div style={{ marginTop: 56, display: "flex", gap: 12 }}>
+          <div style={{ marginTop: 48, display: "flex", gap: 12 }}>
             <button onClick={() => navigate("/demo")} style={{
-              background: "var(--accent)",
-              color: "#fff",
-              border: "none",
-              borderRadius: 100,
-              padding: "13px 32px",
-              fontSize: 15,
-              fontWeight: 500,
-              cursor: "pointer",
-              boxShadow: "0 4px 24px rgba(255,45,120,0.3)"
+              background: "var(--accent)", color: "#fff", border: "none",
+              borderRadius: 100, padding: "13px 32px", fontSize: 15,
+              fontWeight: 500, cursor: "pointer",
+              boxShadow: "0 4px 24px rgba(255,45,120,0.3)",
             }}>
               Try the demo
             </button>
-
             <button onClick={() => navigate("/about")} style={{
-              background: "transparent",
-              color: "var(--text)",
-              border: "1px solid var(--border-mid)",
-              borderRadius: 100,
-              padding: "13px 28px",
-              fontSize: 15,
-              cursor: "pointer"
+              background: "transparent", color: "var(--text)",
+              border: "1px solid var(--border-mid)", borderRadius: 100,
+              padding: "13px 28px", fontSize: 15, cursor: "pointer",
             }}>
               About the project
             </button>
           </div>
         </Reveal>
-
       </div>
 
       <Footer />
