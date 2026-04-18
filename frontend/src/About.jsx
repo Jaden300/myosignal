@@ -2,6 +2,7 @@ import Navbar from "./Navbar"
 import { useNavigate } from "react-router-dom"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
+import AboutHelix from "./components/AboutHelix"
 
 const VALUES = [
   {
@@ -26,16 +27,6 @@ const VALUES = [
   },
 ]
 
-const TIMELINE = [
-  { when:"Sept 2024", what:"Project conceived as a personal challenge: build a working EMG classifier from scratch using public data and consumer hardware." },
-  { when:"Oct 2024",  what:"First real EMG signal streamed from MyoWare 2.0 sensor via Arduino. Bandpass filtering implemented. Signal is noisy but real." },
-  { when:"Nov 2024",  what:"First Random Forest trained on Ninapro DB5. Initial accuracy 71.2%. Feature extraction pipeline locked in." },
-  { when:"Dec 2024",  what:"Cross-subject model trained across all 10 Ninapro subjects. 84.85% accuracy. Pipeline generalises to unseen individuals." },
-  { when:"Jan 2025",  what:"macOS desktop app launched. Gesture predictions control real mouse cursor and keyboard for the first time end-to-end." },
-  { when:"Feb 2025",  what:"Web demo launched at myojam.com. FastAPI backend on Render, React frontend on Vercel. No hardware required." },
-  { when:"Mar 2025",  what:"Full site redesign. Education hub, signal playground, AI chatbot, block coding environment (myocode) launched." },
-  { when:"Apr 2025",  what:"ELEVATE international competition launched. Educators hub with lesson plans, quizzes, and curriculum materials." },
-]
 
 const STATS = [
   { val:"84.85%", label:"Cross-subject accuracy", sub:"On held-out subjects never seen during training" },
@@ -48,7 +39,7 @@ export default function About() {
   const navigate = useNavigate()
 
   return (
-    <div style={{ minHeight:"100vh", background:"var(--bg)", overflow:"hidden" }}>
+    <div style={{ minHeight:"100vh", background:"var(--bg)", overflowX:"clip" }}>
       <style>{`
         @keyframes fadeUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
         @keyframes orbFloat { from{transform:translateY(0)} to{transform:translateY(-28px)} }
@@ -149,35 +140,8 @@ export default function About() {
         </div>
       </section>
 
-      {/* Timeline */}
-      <section style={{ padding:"80px 32px" }}>
-        <div style={{ maxWidth:860, margin:"0 auto" }}>
-          <Reveal>
-            <SectionPill>How we got here</SectionPill>
-            <h2 style={{ fontSize:"clamp(28px,4vw,42px)", fontWeight:600, letterSpacing:"-1.2px", color:"var(--text)", marginBottom:48 }}>
-              Built in public.
-            </h2>
-          </Reveal>
-          <div style={{ position:"relative" }}>
-            <div style={{ position:"absolute", left:17, top:8, bottom:8, width:2, background:"linear-gradient(to bottom, var(--accent), var(--border))", borderRadius:1 }}/>
-            <StaggerList items={TIMELINE} columns={1} gap={0} renderItem={(item,i)=>(
-              <div style={{ paddingLeft:52, paddingBottom:32, position:"relative" }}>
-                <div style={{ position:"absolute", left:6, top:2, width:24, height:24, borderRadius:"50%", background:"var(--accent-soft)", border:"2px solid var(--accent)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:11, fontWeight:700, color:"var(--accent)" }}>{i+1}</div>
-                <div style={{ fontSize:12, fontWeight:500, color:"var(--accent)", marginBottom:4, textTransform:"uppercase", letterSpacing:"0.06em" }}>{item.when}</div>
-                <p style={{ fontSize:15, color:"var(--text-secondary)", lineHeight:1.7, fontWeight:300, margin:0 }}>{item.what}</p>
-              </div>
-            )}/>
-          </div>
-          <Reveal delay={0.2}>
-            <div style={{ marginTop:16, paddingLeft:52 }}>
-              <button onClick={()=>navigate("/changelog")} style={{ background:"none", border:"1px solid var(--border-mid)", borderRadius:100, padding:"10px 24px", fontSize:13, color:"var(--text-secondary)", fontFamily:"var(--font)", cursor:"pointer", transition:"border-color 0.15s, color 0.15s" }}
-                onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)"}}
-                onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--border-mid)";e.currentTarget.style.color="var(--text-secondary)"}}
-              >Full changelog →</button>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      {/* Timeline — 3D helix */}
+      <AboutHelix />
 
       {/* Open source CTA */}
       <section style={{ padding:"0 32px 80px" }}>

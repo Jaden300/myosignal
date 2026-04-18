@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 
-const N = 7000 // particle count
+const N = 3500 // particle count
 
 // ─── Stage metadata ────────────────────────────────────────────────────────────
 const STAGES = [
@@ -133,7 +133,7 @@ export default function SignalModel3D() {
 
     // ── Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
     renderer.setSize(el.offsetWidth, el.offsetHeight)
     renderer.setClearColor(0x000000, 0)
     el.appendChild(renderer.domElement)
@@ -147,8 +147,10 @@ export default function SignalModel3D() {
     const SHAPES = [sphere(N), waveSphere(N), helix(N), torus(N), galaxy(N)]
 
     // ── Live position buffer (lerped each frame)
-    const liveBuf = new Float32Array(SHAPES[0])
-    const tgtBuf  = new Float32Array(SHAPES[0])
+    const liveBuf  = new Float32Array(SHAPES[0])
+    const tgtBuf   = new Float32Array(SHAPES[0])
+    let morphing   = false
+    let morphFrames = 0
 
     // ── Per-particle random size
     const sizes = new Float32Array(N)
@@ -175,6 +177,7 @@ export default function SignalModel3D() {
         }
       `,
       fragmentShader: `
+        precision mediump float;
         uniform vec3  uColor;
         uniform float uOpacity;
         void main() {
@@ -204,6 +207,8 @@ export default function SignalModel3D() {
         setActiveStage(stage)
         const src = SHAPES[stage]
         for (let i = 0; i < N * 3; i++) tgtBuf[i] = src[i]
+        morphing = true
+        morphFrames = 0
       }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -217,22 +222,31 @@ export default function SignalModel3D() {
     }
     window.addEventListener('resize', onResize)
 
+    // ── Pause when off-screen
+    let visible = false
+    const observer = new IntersectionObserver(
+      ([entry]) => { visible = entry.isIntersecting },
+      { threshold: 0 }
+    )
+    observer.observe(sec)
+
     // ── Animation loop
     let raf, autoRot = 0
     const targetColor = new THREE.Color(STAGES[0].hex)
 
     function tick() {
       raf = requestAnimationFrame(tick)
+      if (!visible) return
       autoRot += 0.0028
 
-      // Morph particles
-      const pa = geo.attributes.position.array
-      let dirty = false
-      for (let i = 0; i < N * 3; i++) {
-        const d = tgtBuf[i] - pa[i]
-        if (Math.abs(d) > 0.00015) { pa[i] += d * 0.038; dirty = true }
+      // Morph particles — only update while converging (max ~60 frames)
+      if (morphing) {
+        const pa = geo.attributes.position.array
+        const len = N * 3
+        for (let i = 0; i < len; i++) pa[i] += (tgtBuf[i] - pa[i]) * 0.06
+        geo.attributes.position.needsUpdate = true
+        if (++morphFrames > 60) morphing = false
       }
-      if (dirty) geo.attributes.position.needsUpdate = true
 
       // Camera drift
       camera.position.lerp(CAM[stageRef.current], 0.028)
@@ -251,6 +265,7 @@ export default function SignalModel3D() {
 
     return () => {
       cancelAnimationFrame(raf)
+      observer.disconnect()
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
       geo.dispose()
