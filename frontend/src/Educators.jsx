@@ -85,7 +85,7 @@ export default function Educators() {
   const navigate = useNavigate()
 
   return (
-    <div style={{ minHeight:"100vh", background:"var(--bg)", overflow:"hidden" }}>
+    <div style={{ minHeight:"100vh", background:"var(--bg)", overflowX:"clip" }}>
       <style>{`
         @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
         @keyframes orbFloat { from{transform:translateY(0)} to{transform:translateY(-28px)} }
