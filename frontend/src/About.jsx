@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 import AboutHelix from "./components/AboutHelix"
+import { t } from "./i18n"
+import NeuralNoise from "./components/NeuralNoise"
 
 const VALUES = [
   {
@@ -41,32 +43,26 @@ export default function About() {
   return (
     <div style={{ minHeight:"100vh", background:"var(--bg)", overflowX:"clip" }}>
       <style>{`
-        @keyframes fadeUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes orbFloat { from{transform:translateY(0)} to{transform:translateY(-28px)} }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
       <Navbar />
 
       {/* Hero */}
-      <section style={{ position:"relative", padding:"120px 32px 80px", overflow:"hidden", minHeight:500, display:"flex", alignItems:"center" }}>
-        {[
-          ["360px","-80px","-60px",0,"rgba(255,45,120,0.18)"],
-          ["260px","65%","40px",2,"rgba(139,92,246,0.14)"],
-          ["200px","80%","200px",4,"rgba(59,130,246,0.12)"],
-        ].map(([size,x,y,delay,color],i)=>(
-          <div key={i} style={{ position:"absolute",width:size,height:size,borderRadius:"50%",background:color,left:x,top:y,filter:"blur(70px)",pointerEvents:"none",animation:`orbFloat 9s ${delay}s ease-in-out infinite alternate` }}/>
-        ))}
-        <div style={{ maxWidth:860, margin:"0 auto", position:"relative", zIndex:1, width:"100%" }}>
+      <div style={{ position:"relative", overflow:"hidden", borderBottom:"1px solid var(--border)", padding:"120px 32px 90px", display:"flex", alignItems:"center", minHeight:500 }}>
+        <NeuralNoise color={[0.49, 0.23, 0.93]} opacity={0.85} speed={0.0006} />
+        <div style={{ position:"absolute", inset:0, background:"rgba(3,0,18,0.65)", zIndex:1 }}/>
+        <div style={{ maxWidth:860, margin:"0 auto", position:"relative", zIndex:2, width:"100%" }}>
           <div style={{ animation:"fadeUp 0.6s ease" }}>
-            <SectionPill>Open source · Assistive technology</SectionPill>
+            <SectionPill>{t("about_pill")}</SectionPill>
           </div>
-          <h1 style={{ fontSize:"clamp(40px,6vw,72px)", fontWeight:600, letterSpacing:"-2.5px", lineHeight:1.04, color:"var(--text)", marginBottom:24, animation:"fadeUp 0.6s 0.1s ease both" }}>
-            We believe muscle signals<br/>shouldn't be<br/><span style={{ color:"var(--accent)" }}>a barrier.</span>
+          <h1 style={{ fontSize:"clamp(40px,6vw,72px)", fontWeight:600, letterSpacing:"-2.5px", lineHeight:1.04, color:"#fff", marginBottom:24, animation:"fadeUp 0.6s 0.1s ease both" }}>
+            {t("about_hero")}
           </h1>
-          <p style={{ fontSize:18, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:580, marginBottom:0, animation:"fadeUp 0.6s 0.2s ease both" }}>
-            myojam is an open-source project that lets people control a computer using surface EMG signals from their forearm  -  and an education platform teaching the science behind it. No keyboard, no mouse, no hands required.
+          <p style={{ fontSize:18, color:"rgba(255,255,255,0.72)", fontWeight:300, lineHeight:1.75, maxWidth:580, marginBottom:0, animation:"fadeUp 0.6s 0.2s ease both" }}>
+            {t("about_sub")}
           </p>
         </div>
-      </section>
+      </div>
 
       {/* Stats */}
       <section style={{ background:"var(--bg-secondary)", borderTop:"1px solid var(--border)", borderBottom:"1px solid var(--border)" }}>

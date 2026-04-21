@@ -6,6 +6,7 @@ import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 import Threads from "./Threads"
 import SplitText from "./components/SplitText"
 import SignalModel3D from "./components/SignalModel3D"
+import { t } from "./i18n"
 
 const STATS = [
   { val:"84.85%", label:"Cross-subject accuracy",  sub:"Tested on unseen individuals" },
@@ -237,28 +238,28 @@ export default function Landing() {
           {/* Badge */}
           <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,255,255,0.85)", backdropFilter:"blur(8px)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:100, padding:"6px 18px", fontSize:13, color:"var(--accent)", fontWeight:500, marginBottom:36, animation:"fadeUp 0.6s ease", boxShadow:"0 2px 12px rgba(255,45,120,0.1)" }}>
             <span style={{ width:7,height:7,borderRadius:"50%",background:"var(--accent)",display:"inline-block",animation:"pulse 2s infinite" }}/>
-            Open source · Assistive technology · Education platform
+            {t("landing_badge")}
           </div>
 
           <HeroHeading />
 
           <p style={{ fontSize:"clamp(17px,2.5vw,21px)", color:"var(--text)", fontWeight:400, lineHeight:1.75, maxWidth:600, marginBottom:48, animation:"fadeUp 0.6s 0.2s ease both" }}>
-            myojam reads surface EMG signals from your forearm and classifies hand gestures in real time. An open-source platform for assistive technology, machine learning education, and human-computer interaction research.
+            {t("landing_sub")}
           </p>
 
           <div style={{ display:"flex", gap:12, flexWrap:"wrap", animation:"fadeUp 0.6s 0.3s ease both" }}>
             <button onClick={()=>navigate("/demos")} style={{ background:"var(--accent)", color:"#fff", border:"none", borderRadius:100, padding:"15px 40px", fontSize:16, fontFamily:"var(--font)", fontWeight:600, cursor:"pointer", boxShadow:"0 4px 24px rgba(255,45,120,0.35)", transition:"transform 0.2s, box-shadow 0.2s" }}
               onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.04)";e.currentTarget.style.boxShadow="0 8px 32px rgba(255,45,120,0.5)"}}
               onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 4px 24px rgba(255,45,120,0.35)"}}
-            >Try the demos</button>
+            >{t("landing_try")}</button>
             <button onClick={()=>navigate("/education")} style={{ background:"rgba(255,255,255,0.85)", backdropFilter:"blur(8px)", color:"var(--text)", border:"1px solid var(--border-mid)", borderRadius:100, padding:"15px 32px", fontSize:16, fontFamily:"var(--font)", fontWeight:400, cursor:"pointer", transition:"border-color 0.2s" }}
               onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,45,120,0.3)"}
               onMouseLeave={e=>e.currentTarget.style.borderColor="var(--border-mid)"}
-            >Read the science →</button>
+            >{t("landing_science")}</button>
             <button onClick={()=>navigate("/elevate")} style={{ background:"linear-gradient(135deg, rgba(255,45,120,0.1) 0%, rgba(192,38,211,0.1) 100%)", color:"var(--accent)", border:"1px solid rgba(255,45,120,0.25)", borderRadius:100, padding:"15px 28px", fontSize:16, fontFamily:"var(--font)", fontWeight:500, cursor:"pointer", transition:"all 0.2s" }}
               onMouseEnter={e=>{e.currentTarget.style.background="linear-gradient(135deg, rgba(255,45,120,0.18) 0%, rgba(192,38,211,0.18) 100%)";e.currentTarget.style.borderColor="var(--accent)"}}
               onMouseLeave={e=>{e.currentTarget.style.background="linear-gradient(135deg, rgba(255,45,120,0.1) 0%, rgba(192,38,211,0.1) 100%)";e.currentTarget.style.borderColor="rgba(255,45,120,0.25)"}}
-            >ELEVATE competition ✦</button>
+            >{t("landing_elevate")}</button>
           </div>
         </div>
       </section>

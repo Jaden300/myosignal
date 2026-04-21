@@ -40,6 +40,7 @@ import EducatorResources from "./educators/EducatorResources"
 import Changelog from "./Changelog"
 import Elevate from "./Elevate"
 import Research from "./Research"
+import WorkplacePolicy from "./WorkplacePolicy"
 
 import { initTheme } from "./theme"
 initTheme()
@@ -87,6 +88,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/changelog" element={<Changelog />} />
         <Route path="/elevate" element={<Elevate />} />
         <Route path="/research" element={<Research />} />
+        <Route path="/workplace-policy" element={<WorkplacePolicy />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

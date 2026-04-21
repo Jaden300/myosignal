@@ -4,7 +4,7 @@ import Footer from "./Footer"
 import { IconBolt, IconBrain, IconCode, IconChart } from "./Icons"
 import { useNavigate } from "react-router-dom"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
-import LineWaves from "./components/LineWaves"
+import NeuralNoise from "./components/NeuralNoise"
 
 const REASONS = [
   {
@@ -261,108 +261,106 @@ function StickyReasons() {
   const colorStr = `rgb(${r.color[0]},${r.color[1]},${r.color[2]})`
 
   return (
-    <section style={{ background: "var(--bg-secondary)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
-      {/* Section heading — above sticky */}
-      <div style={{ maxWidth: 860, margin: "0 auto", padding: "72px 32px 0", textAlign: "center" }}>
-        <p style={{ fontSize: 13, fontWeight: 500, color: "var(--accent)", letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 12 }}>
-          Why contribute
-        </p>
-        <h2 style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 600, letterSpacing: "-1px", color: "var(--text)", marginBottom: 8 }}>
-          Why myojam?
-        </h2>
-        <p style={{ fontSize: 15, color: "var(--text-secondary)", fontWeight: 300, marginBottom: 0, maxWidth: 400, margin: "0 auto" }}>
-          Scroll to explore the four reasons contributors keep coming back.
-        </p>
-      </div>
+    <div ref={containerRef} style={{ height: `${REASONS.length * 100}vh`, position: "relative", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+      <div style={{
+        position: "sticky", top: 0, height: "100vh",
+        display: "flex", flexDirection: isMobile ? "column" : "row",
+        background: "var(--bg-secondary)",
+        overflow: "hidden",
+      }}>
 
-      {/* Sticky container */}
-      <div ref={containerRef} style={{ height: `${REASONS.length * 100}vh`, position: "relative" }}>
+        {/* Left — orbital canvas */}
         <div style={{
-          position: "sticky", top: 0, height: "100vh",
-          display: "flex", flexDirection: isMobile ? "column" : "row",
-          overflow: "hidden",
+          flex: isMobile ? "0 0 44vh" : 1,
+          position: "relative",
+          borderRight: isMobile ? "none" : "1px solid var(--border)",
+          borderBottom: isMobile ? "1px solid var(--border)" : "none",
         }}>
+          <OrbitalViz activeReason={active} />
 
-          {/* Left — orbital canvas */}
+          {/* Progress pips */}
           <div style={{
-            flex: isMobile ? "0 0 44vh" : 1,
-            position: "relative",
-            borderRight: isMobile ? "none" : "1px solid var(--border)",
-            borderBottom: isMobile ? "1px solid var(--border)" : "none",
+            position: "absolute", bottom: 28, left: 0, right: 0,
+            display: "flex", justifyContent: "center", gap: 7, zIndex: 2,
           }}>
-            <OrbitalViz activeReason={active} />
-
-            {/* Progress pips */}
-            <div style={{
-              position: "absolute", bottom: 28, left: 0, right: 0,
-              display: "flex", justifyContent: "center", gap: 7, zIndex: 2,
-            }}>
-              {REASONS.map((reason, i) => (
-                <div key={i} style={{
-                  height: 6, borderRadius: 3,
-                  width: i === active ? 22 : 6,
-                  background: i === active
-                    ? `rgb(${reason.color[0]},${reason.color[1]},${reason.color[2]})`
-                    : "var(--border)",
-                  transition: "width 0.35s ease, background 0.35s ease",
-                }} />
-              ))}
-            </div>
+            {REASONS.map((reason, i) => (
+              <div key={i} style={{
+                height: 6, borderRadius: 3,
+                width: i === active ? 22 : 6,
+                background: i === active
+                  ? `rgb(${reason.color[0]},${reason.color[1]},${reason.color[2]})`
+                  : "var(--border)",
+                transition: "width 0.35s ease, background 0.35s ease",
+              }} />
+            ))}
           </div>
-
-          {/* Right — reason detail */}
-          <div style={{
-            flex: 1,
-            display: "flex", alignItems: "center",
-            padding: isMobile ? "24px 28px" : "0 64px",
-            overflow: "hidden",
-            background: "var(--bg-secondary)",
-          }}>
-            <div key={active} style={{ animation: "reasonIn 0.38s cubic-bezier(0.22,1,0.36,1) both" }}>
-              {/* Badge */}
-              <div style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                background: `rgba(${r.color[0]},${r.color[1]},${r.color[2]},0.1)`,
-                border: `1px solid rgba(${r.color[0]},${r.color[1]},${r.color[2]},0.25)`,
-                borderRadius: 100, padding: "5px 14px", marginBottom: 20,
-              }}>
-                <span style={{ width: 6, height: 6, borderRadius: "50%", background: colorStr, display: "inline-block" }} />
-                <span style={{ fontSize: 11, fontWeight: 600, color: colorStr, letterSpacing: "0.07em", textTransform: "uppercase" }}>
-                  {active + 1} of {REASONS.length} · {r.label}
-                </span>
-              </div>
-
-              {/* Icon tile */}
-              <div style={{
-                width: 52, height: 52, borderRadius: 16,
-                background: `rgba(${r.color[0]},${r.color[1]},${r.color[2]},0.12)`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                marginBottom: 20,
-              }}>
-                <r.Icon size={24} color={colorStr} />
-              </div>
-
-              <h2 style={{
-                fontSize: "clamp(22px, 2.8vw, 36px)", fontWeight: 600,
-                letterSpacing: "-0.8px", lineHeight: 1.15,
-                color: "var(--text)", marginBottom: 16,
-              }}>
-                {r.title}
-              </h2>
-
-              <p style={{
-                fontSize: 15, color: "var(--text-secondary)",
-                lineHeight: 1.78, fontWeight: 300,
-                maxWidth: 440, marginBottom: 0,
-              }}>
-                {r.body}
-              </p>
-            </div>
-          </div>
-
         </div>
+
+        {/* Right — reason detail */}
+        <div style={{
+          flex: 1,
+          display: "flex", flexDirection: "column", justifyContent: "center",
+          padding: isMobile ? "24px 28px" : "0 64px",
+          overflow: "hidden",
+          background: "var(--bg-secondary)",
+        }}>
+          {/* Section heading — inside sticky */}
+          <div style={{ marginBottom: 40 }}>
+            <p style={{ fontSize: 13, fontWeight: 500, color: "var(--accent)", letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 10 }}>
+              Why contribute
+            </p>
+            <h2 style={{ fontSize: "clamp(24px, 3vw, 38px)", fontWeight: 600, letterSpacing: "-1px", color: "var(--text)", marginBottom: 6 }}>
+              Why myojam?
+            </h2>
+            <p style={{ fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300, margin: 0 }}>
+              Scroll to explore {REASONS.length} reasons.
+            </p>
+          </div>
+
+          <div key={active} style={{ animation: "reasonIn 0.38s cubic-bezier(0.22,1,0.36,1) both" }}>
+            {/* Badge */}
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: 8,
+              background: `rgba(${r.color[0]},${r.color[1]},${r.color[2]},0.1)`,
+              border: `1px solid rgba(${r.color[0]},${r.color[1]},${r.color[2]},0.25)`,
+              borderRadius: 100, padding: "5px 14px", marginBottom: 20,
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: colorStr, display: "inline-block" }} />
+              <span style={{ fontSize: 11, fontWeight: 600, color: colorStr, letterSpacing: "0.07em", textTransform: "uppercase" }}>
+                {active + 1} of {REASONS.length} · {r.label}
+              </span>
+            </div>
+
+            {/* Icon tile */}
+            <div style={{
+              width: 52, height: 52, borderRadius: 16,
+              background: `rgba(${r.color[0]},${r.color[1]},${r.color[2]},0.12)`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              marginBottom: 20,
+            }}>
+              <r.Icon size={24} color={colorStr} />
+            </div>
+
+            <h3 style={{
+              fontSize: "clamp(20px, 2.4vw, 32px)", fontWeight: 600,
+              letterSpacing: "-0.8px", lineHeight: 1.15,
+              color: "var(--text)", marginBottom: 16,
+            }}>
+              {r.title}
+            </h3>
+
+            <p style={{
+              fontSize: 15, color: "var(--text-secondary)",
+              lineHeight: 1.78, fontWeight: 300,
+              maxWidth: 440, marginBottom: 0,
+            }}>
+              {r.body}
+            </p>
+          </div>
+        </div>
+
       </div>
-    </section>
+    </div>
   )
 }
 
@@ -459,23 +457,10 @@ export default function Careers() {
 
       {/* Hero */}
       <section style={{ position: "relative", padding: "120px 32px 100px", overflow: "hidden", minHeight: 520, display: "flex", alignItems: "center" }}>
-        {/* LineWaves background */}
-        <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-          <LineWaves
-            color1="#FF2D78"
-            color2="#c026d3"
-            color3="#7c3aed"
-            brightness={0.18}
-            speed={0.25}
-            warpIntensity={0.8}
-            rotation={-35}
-            enableMouseInteraction={false}
-          />
-        </div>
-        {/* Dark overlay */}
-        <div style={{ position: "absolute", inset: 0, zIndex: 0, background: "rgba(0,0,0,0.52)" }} />
+        <NeuralNoise color={[0.49, 0.23, 0.93]} opacity={0.85} speed={0.0006} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
 
-        <div style={{ maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 1, width: "100%" }}>
+        <div style={{ maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 2, width: "100%" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,45,120,0.2)", borderRadius: 100, padding: "6px 16px", fontSize: 13, color: "var(--accent)", fontWeight: 500, marginBottom: 32, animation: "fadeUp 0.6s ease forwards" }}>
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--accent)", display: "inline-block", animation: "pulse 2s infinite" }}/>
             We're building the future of assistive technology

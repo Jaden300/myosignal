@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react"
+import * as THREE from 'three'
 import Navbar from "./Navbar"
 import { useNavigate } from "react-router-dom"
 import Footer from "./Footer"
@@ -54,223 +55,256 @@ const STEPS = [
   },
 ]
 
-// ─── 3D Ring Canvas ───────────────────────────────────────────────────────────
+// ─── Three.js Pipeline Canvas ─────────────────────────────────────────────────
+const PN = 2600
+
+const CAM_STEPS = [
+  new THREE.Vector3(0,    0.0,  5.8),
+  new THREE.Vector3(0.5,  0.1,  5.5),
+  new THREE.Vector3(1.1,  0.9,  5.2),
+  new THREE.Vector3(0,    0.8,  5.6),
+  new THREE.Vector3(0,    0.0,  4.8),
+]
+
+const ROT_SPEEDS = [0.0003, 0.0007, 0.0040, 0.0030, 0.0012]
+
+function makeEmgWaves(n) {
+  const p = new Float32Array(n * 3)
+  const CH = 16
+  const freqs = [3.2,5.1,7.3,4.2,6.0,8.4,3.7,5.8,4.6,7.1,6.3,9.0,4.1,5.9,7.8,5.2]
+  const amps  = [.09,.13,.08,.11,.10,.07,.14,.08,.10,.09,.13,.07,.12,.09,.08,.11]
+  const ppch  = Math.floor(n / CH)
+  for (let ch = 0; ch < CH; ch++) {
+    for (let k = 0; k < ppch; k++) {
+      const i = ch * ppch + k
+      const t = (k / ppch) * Math.PI * 5
+      p[i*3]   = (k / ppch) * 3.6 - 1.8
+      p[i*3+1] = (ch - CH/2 + 0.5) * 0.20 + Math.sin(t * freqs[ch]) * amps[ch]
+      p[i*3+2] = (Math.random()-0.5) * 0.04
+    }
+  }
+  return p
+}
+
+function makeFilterBands(n) {
+  const p = new Float32Array(n * 3)
+  const CH = 8
+  const freqs = [4.8,5.6,3.9,6.2,4.4,5.3,6.7,4.1]
+  const amps  = [.10,.08,.11,.07,.10,.09,.08,.10]
+  const ppch  = Math.floor(n / CH)
+  for (let ch = 0; ch < CH; ch++) {
+    for (let k = 0; k < ppch; k++) {
+      const i = ch * ppch + k
+      const t = (k / ppch) * Math.PI * 5
+      p[i*3]   = (k / ppch) * 3.6 - 1.8
+      p[i*3+1] = (ch - CH/2 + 0.5) * 0.35 + Math.sin(t * freqs[ch]) * amps[ch]
+      p[i*3+2] = (Math.random()-0.5) * 0.03
+    }
+  }
+  return p
+}
+
+function makeFeatureMatrix(n) {
+  const p = new Float32Array(n * 3)
+  const COLS = 16, ROWS = 4
+  const vals = Array.from({length: COLS * ROWS}, (_,i) =>
+    0.2 + 0.7 * Math.abs(Math.sin(i*1.47) * Math.cos(i*0.93 + 0.5))
+  )
+  const perCell = Math.ceil(n / (COLS * ROWS))
+  let idx = 0
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const v = vals[r * COLS + c]
+      for (let k = 0; k < perCell && idx < n; k++) {
+        p[idx*3]   = (c - COLS/2 + 0.5) * 0.24 + (Math.random()-0.5)*0.055
+        p[idx*3+1] = (r - ROWS/2 + 0.5) * 0.52 + (Math.random()-0.5)*0.055
+        p[idx*3+2] = v * 1.1 - 0.55 + (Math.random()-0.5)*0.05
+        idx++
+      }
+    }
+  }
+  return p
+}
+
+function makeForest(n) {
+  const p = new Float32Array(n * 3)
+  const branches = []
+  function grow(x, y, z, angle, len, depth) {
+    if (depth === 0) return
+    const x2 = x + Math.cos(angle) * len
+    const y2 = y + Math.sin(angle) * len
+    branches.push({x1:x,y1:y,z,x2,y2})
+    grow(x2,y2,z, angle+0.42+Math.sin(depth*1.4)*0.05, len*0.65, depth-1)
+    grow(x2,y2,z, angle-0.42-Math.sin(depth*0.9)*0.05, len*0.65, depth-1)
+  }
+  grow(-1.1,-1.65, 0.12, Math.PI/2, 0.88, 6)
+  grow( 0.0,-1.65,-0.05, Math.PI/2, 0.88, 6)
+  grow( 1.1,-1.65, 0.08, Math.PI/2, 0.88, 6)
+  const total = branches.reduce((s,b)=>s+Math.hypot(b.x2-b.x1,b.y2-b.y1),0)
+  let idx = 0
+  for (const b of branches) {
+    const cnt = Math.floor((Math.hypot(b.x2-b.x1,b.y2-b.y1)/total)*n*0.92)
+    for (let k=0; k<cnt && idx<n; k++) {
+      const t = Math.random()
+      p[idx*3]   = b.x1+(b.x2-b.x1)*t+(Math.random()-0.5)*0.028
+      p[idx*3+1] = b.y1+(b.y2-b.y1)*t+(Math.random()-0.5)*0.028
+      p[idx*3+2] = b.z +(Math.random()-0.5)*0.20
+      idx++
+    }
+  }
+  while (idx<n) {
+    p[idx*3]=(Math.random()-0.5)*3.6; p[idx*3+1]=Math.random()*3.4-1.7; p[idx*3+2]=(Math.random()-0.5)*0.3
+    idx++
+  }
+  return p
+}
+
+function makeActionBeam(n) {
+  const p = new Float32Array(n * 3)
+  for (let i = 0; i < n; i++) {
+    if (i < n * 0.62) {
+      const t = Math.pow(Math.random(), 0.6)
+      const r = Math.random() * (1.0 - t * 0.85) * 0.9
+      const a = Math.random() * Math.PI * 2
+      p[i*3]=Math.cos(a)*r; p[i*3+1]=Math.sin(a)*r; p[i*3+2]=t*3.4-1.3
+    } else {
+      const r=0.6+Math.random()*0.9, th=Math.random()*Math.PI*2, ph=Math.acos(2*Math.random()-1)
+      p[i*3]=r*Math.sin(ph)*Math.cos(th); p[i*3+1]=r*Math.cos(ph); p[i*3+2]=r*Math.sin(ph)*Math.sin(th)-0.9
+    }
+  }
+  return p
+}
+
 function Pipeline3DCanvas({ activeStep }) {
-  const canvasRef = useRef(null)
-  const activeStepRef = useRef(activeStep)
+  const mountRef = useRef(null)
+  const stageRef = useRef(activeStep)
+
+  useEffect(() => { stageRef.current = activeStep }, [activeStep])
 
   useEffect(() => {
-    activeStepRef.current = activeStep
-  }, [activeStep])
+    const el = mountRef.current
+    if (!el) return
 
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext("2d")
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
+    renderer.setClearColor(0x000000, 0)
+    renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%'
+    el.appendChild(renderer.domElement)
+    renderer.setSize(el.offsetWidth || window.innerWidth/2, el.offsetHeight || window.innerHeight)
 
-    const N = STEPS.length
-    const RING_R = 1.3
-    const FOCAL = 360
-    const WORLD_SCALE = 145
-    const TILT_X = 0.28
-    const cosTilt = Math.cos(TILT_X)
-    const sinTilt = Math.sin(TILT_X)
+    const scene  = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(55, (el.offsetWidth||window.innerWidth/2)/(el.offsetHeight||window.innerHeight), 0.1, 100)
+    camera.position.copy(CAM_STEPS[0])
 
-    let width = 400
-    let height = 500
-    let dpr = 1
-    let rotY = Math.PI / 2
-    let time = 0
+    const SHAPES = [makeEmgWaves(PN), makeFilterBands(PN), makeFeatureMatrix(PN), makeForest(PN), makeActionBeam(PN)]
+
+    const liveBuf = new Float32Array(SHAPES[0])
+    const tgtBuf  = new Float32Array(SHAPES[0])
+    let morphing = false, morphFrames = 0, prevStage = 0
+
+    const sizes = new Float32Array(PN)
+    for (let i = 0; i < PN; i++) sizes[i] = 0.28 + Math.random() * 1.15
+
+    const geo = new THREE.BufferGeometry()
+    geo.setAttribute('position', new THREE.BufferAttribute(liveBuf, 3))
+    geo.setAttribute('aSize',    new THREE.BufferAttribute(sizes, 1))
+
+    const mat = new THREE.ShaderMaterial({
+      uniforms: {
+        uSize:  { value: 2.5 * renderer.getPixelRatio() },
+        uColor: { value: new THREE.Color(STEPS[0].color) },
+      },
+      vertexShader: `
+        uniform float uSize;
+        attribute float aSize;
+        void main() {
+          vec4 mvp = modelViewMatrix * vec4(position, 1.0);
+          gl_PointSize = uSize * aSize * (280.0 / -mvp.z);
+          gl_Position  = projectionMatrix * mvp;
+        }
+      `,
+      fragmentShader: `
+        precision mediump float;
+        uniform vec3 uColor;
+        void main() {
+          float d = length(gl_PointCoord - 0.5);
+          if (d > 0.5) discard;
+          float s = pow(1.0 - d * 2.0, 1.5);
+          gl_FragColor = vec4(uColor * (s * 1.6), s);
+        }
+      `,
+      transparent: true,
+      blending:   THREE.AdditiveBlending,
+      depthWrite: false,
+    })
+
+    const points = new THREE.Points(geo, mat)
+    scene.add(points)
+
+    const tgtColor  = new THREE.Color(STEPS[0].color)
+    const tgtCamPos = new THREE.Vector3().copy(CAM_STEPS[0])
+    let autoRot = 0, rotSpeed = ROT_SPEEDS[0]
+
+    let visible = true
+    const obs = new IntersectionObserver(([e])=>{ visible = e.isIntersecting }, { threshold:0 })
+    obs.observe(el)
+
     let raf
+    function tick() {
+      raf = requestAnimationFrame(tick)
+      if (!visible) return
 
-    // Particles flowing around the ring
-    const orbitPts = Array.from({ length: 55 }, () => ({
-      t: Math.random(),
-      speed: 0.004 + Math.random() * 0.005,
-      r: 1.3 + Math.random() * 1.8,
-    }))
+      const ai = stageRef.current
 
-    function worldNode(i, rot) {
-      const theta = i * (2 * Math.PI / N) + rot
-      const wx = Math.cos(theta) * RING_R
-      const wzRaw = Math.sin(theta) * RING_R
-      return {
-        wx,
-        wy: -wzRaw * sinTilt,
-        wz: wzRaw * cosTilt,
-      }
-    }
-
-    function project(wx, wy, wz) {
-      const ps = FOCAL / (FOCAL + wz * WORLD_SCALE)
-      return {
-        sx: width / 2 + wx * WORLD_SCALE * ps,
-        sy: height / 2 + wy * WORLD_SCALE * ps,
-        ps,
-        depth: (wz + 1.6) / 3.2,
-      }
-    }
-
-    function resize() {
-      dpr = window.devicePixelRatio || 1
-      const p = canvas.parentElement
-      if (!p) return
-      width = p.offsetWidth || 400
-      height = p.offsetHeight || 500
-      canvas.width = width * dpr
-      canvas.height = height * dpr
-      canvas.style.width = width + "px"
-      canvas.style.height = height + "px"
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-    }
-
-    function draw() {
-      raf = requestAnimationFrame(draw)
-      time += 0.016
-
-      // Shortest-arc lerp to target angle
-      const target = Math.PI / 2 - activeStepRef.current * (2 * Math.PI / N)
-      let diff = ((target - rotY) % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI
-      rotY += diff * 0.055
-
-      ctx.clearRect(0, 0, width, height)
-
-      // Subtle expanding rings for depth atmosphere
-      for (let k = 0; k < 4; k++) {
-        const progress = ((k / 4 + time * 0.015) % 1)
-        const opacity = 0.035 * (1 - progress)
-        ctx.beginPath()
-        ctx.arc(width / 2, height / 2, 50 + progress * 150, 0, Math.PI * 2)
-        ctx.strokeStyle = `rgba(255,45,120,${opacity})`
-        ctx.lineWidth = 1
-        ctx.stroke()
+      if (ai !== prevStage) {
+        prevStage = ai
+        const src = SHAPES[ai]
+        for (let i = 0; i < PN*3; i++) tgtBuf[i] = src[i]
+        morphing = true; morphFrames = 0
       }
 
-      // Project all nodes
-      const nodeProjs = STEPS.map((step, i) => {
-        const w = worldNode(i, rotY)
-        const p = project(w.wx, w.wy, w.wz)
-        return { ...p, i, step }
-      })
-
-      const sorted = [...nodeProjs].sort((a, b) => a.depth - b.depth)
-
-      // Connections between adjacent nodes
-      for (let i = 0; i < N; i++) {
-        const a = nodeProjs[i]
-        const b = nodeProjs[(i + 1) % N]
-        const active = activeStepRef.current
-        const lit = i === active || (i + 1) % N === active
-        const segs = 18
-
-        for (let j = 0; j < segs; j++) {
-          const t1 = j / segs
-          const t2 = (j + 1) / segs
-          const d = a.depth + (b.depth - a.depth) * ((t1 + t2) * 0.5)
-          const x1 = a.sx + (b.sx - a.sx) * t1
-          const y1 = a.sy + (b.sy - a.sy) * t1
-          const x2 = a.sx + (b.sx - a.sx) * t2
-          const y2 = a.sy + (b.sy - a.sy) * t2
-          const alpha = lit ? 0.2 + d * 0.55 : 0.04 + d * 0.1
-          ctx.beginPath()
-          ctx.moveTo(x1, y1)
-          ctx.lineTo(x2, y2)
-          ctx.strokeStyle = lit
-            ? `rgba(255,45,120,${alpha})`
-            : `rgba(160,100,220,${alpha})`
-          ctx.lineWidth = lit ? 1.5 * d + 0.5 : 0.4
-          ctx.stroke()
-        }
+      if (morphing) {
+        const pa = geo.attributes.position.array
+        for (let i = 0; i < PN*3; i++) pa[i] += (tgtBuf[i] - pa[i]) * 0.055
+        geo.attributes.position.needsUpdate = true
+        if (++morphFrames > 65) morphing = false
       }
 
-      // Orbit particles
-      orbitPts.forEach(p => {
-        p.t = (p.t + p.speed) % 1
-        const si = Math.floor(p.t * N)
-        const frac = (p.t * N) % 1
-        const a = nodeProjs[si]
-        const b = nodeProjs[(si + 1) % N]
-        const px = a.sx + (b.sx - a.sx) * frac
-        const py = a.sy + (b.sy - a.sy) * frac
-        const d = a.depth + (b.depth - a.depth) * frac
-        ctx.save()
-        ctx.globalAlpha = (0.15 + d * 0.85) * 0.65
-        ctx.shadowColor = "#FF2D78"
-        ctx.shadowBlur = 5
-        ctx.fillStyle = "#ffcce0"
-        ctx.beginPath()
-        ctx.arc(px, py, p.r * (0.4 + d * 0.6), 0, Math.PI * 2)
-        ctx.fill()
-        ctx.restore()
-      })
+      rotSpeed += (ROT_SPEEDS[ai] - rotSpeed) * 0.04
+      autoRot  += rotSpeed
+      points.rotation.y = autoRot
 
-      // Nodes back-to-front
-      sorted.forEach(({ sx, sy, ps, depth, i, step }) => {
-        const isActive = i === activeStepRef.current
-        const pulse = isActive ? 1 + Math.sin(time * 2.4) * 0.09 : 1
-        const baseR = isActive ? 21 : 12
-        const nr = baseR * ps * pulse
+      tgtCamPos.copy(CAM_STEPS[ai])
+      camera.position.lerp(tgtCamPos, 0.028)
+      camera.lookAt(0, 0, 0)
 
-        // Soft aura for active node
-        if (isActive) {
-          const grd = ctx.createRadialGradient(sx, sy, 0, sx, sy, nr * 3.2)
-          grd.addColorStop(0, step.color + "45")
-          grd.addColorStop(1, step.color + "00")
-          ctx.save()
-          ctx.globalAlpha = 0.55
-          ctx.beginPath()
-          ctx.arc(sx, sy, nr * 3.2, 0, Math.PI * 2)
-          ctx.fillStyle = grd
-          ctx.fill()
-          ctx.restore()
-        }
+      tgtColor.set(STEPS[ai].color)
+      mat.uniforms.uColor.value.lerp(tgtColor, 0.045)
 
-        // Sphere with radial gradient
-        ctx.save()
-        ctx.shadowColor = step.color
-        ctx.shadowBlur = isActive ? 22 * ps : 7 * ps
-        ctx.globalAlpha = 0.4 + depth * 0.6
-
-        const grad = ctx.createRadialGradient(
-          sx - nr * 0.3, sy - nr * 0.3, nr * 0.05,
-          sx, sy, nr
-        )
-        grad.addColorStop(0, "#fff")
-        grad.addColorStop(0.3, step.color)
-        grad.addColorStop(1, step.color + "77")
-
-        ctx.beginPath()
-        ctx.arc(sx, sy, nr, 0, Math.PI * 2)
-        ctx.fillStyle = grad
-        ctx.fill()
-        ctx.restore()
-
-        // Label
-        if (depth > 0.22 || isActive) {
-          const lAlpha = isActive ? 1 : Math.max(0, (depth - 0.22) / 0.78)
-          ctx.save()
-          ctx.globalAlpha = lAlpha
-          ctx.font = `${isActive ? 700 : 400} ${Math.round(9 + ps * 6)}px -apple-system, system-ui, sans-serif`
-          ctx.fillStyle = isActive ? "#fff" : "rgba(220,180,255,0.9)"
-          ctx.textAlign = "center"
-          ctx.textBaseline = "top"
-          ctx.fillText(step.title.split(" ")[0], sx, sy + nr + 7 * ps)
-          ctx.restore()
-        }
-      })
+      renderer.render(scene, camera)
     }
+    tick()
 
-    resize()
-    window.addEventListener("resize", resize)
-    draw()
+    function onResize() {
+      const w = el.offsetWidth  || window.innerWidth/2
+      const h = el.offsetHeight || window.innerHeight
+      camera.aspect = w / h
+      camera.updateProjectionMatrix()
+      renderer.setSize(w, h)
+    }
+    window.addEventListener('resize', onResize)
+    requestAnimationFrame(onResize)
 
     return () => {
       cancelAnimationFrame(raf)
-      window.removeEventListener("resize", resize)
+      obs.disconnect()
+      window.removeEventListener('resize', onResize)
+      geo.dispose(); mat.dispose(); renderer.dispose()
+      if (el.contains(renderer.domElement)) el.removeChild(renderer.domElement)
     }
   }, [])
 
-  return <canvas ref={canvasRef} style={{ display: "block", width: "100%", height: "100%" }} />
+  return <div ref={mountRef} style={{ position: 'absolute', inset: 0 }} />
 }
 
 // ─── Sticky Pipeline Section ──────────────────────────────────────────────────
@@ -316,6 +350,7 @@ function StickyPipeline() {
         <div style={{
           flex: isMobile ? "0 0 42vh" : 1,
           position: "relative",
+          background: "#03000d",
           borderRight: isMobile ? "none" : "1px solid var(--border)",
           borderBottom: isMobile ? "1px solid var(--border)" : "none",
           height: isMobile ? "42vh" : "100%",

@@ -3,6 +3,7 @@ import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 import { IconAccessibility, IconHeart, IconBrain, IconRobot } from "./Icons"
+import NeuralNoise from "./components/NeuralNoise"
 
 const USE_CASES = [
   {
@@ -41,35 +42,22 @@ export default function Corporations() {
     <div style={{ minHeight: "100vh", background: "var(--bg)", overflowX: "clip" }}>
       <style>{`
         @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes orbFloat { from { transform:translateY(0) scale(1); } to { transform:translateY(-30px) scale(1.06); } }
       `}</style>
 
       <Navbar />
 
       {/* Hero */}
       <section style={{ position: "relative", padding: "120px 32px 96px", overflow: "hidden" }}>
-        {/* Orbs */}
-        {[
-          ["400px", "-100px", "-80px", 0,   "rgba(255,45,120,0.2)"],
-          ["280px", "65%",    "40px",  1.5, "rgba(59,130,246,0.15)"],
-          ["220px", "80%",    "200px", 3,   "rgba(139,92,246,0.15)"],
-        ].map(([size, x, y, delay, color], i) => (
-          <div key={i} style={{
-            position: "absolute", width: size, height: size,
-            borderRadius: "50%", background: color,
-            left: x, top: y, filter: "blur(70px)", opacity: 0.5,
-            animation: `orbFloat 9s ${delay}s ease-in-out infinite alternate`,
-            pointerEvents: "none"
-          }}/>
-        ))}
+        <NeuralNoise color={[0.49, 0.23, 0.93]} opacity={0.85} speed={0.0006} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
 
-        <div style={{ maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <div style={{ maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 8,
-            background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)",
-            border: "1px solid rgba(255,45,120,0.2)",
+            background: "rgba(255,255,255,0.08)", backdropFilter: "blur(10px)",
+            border: "1px solid rgba(255,45,120,0.3)",
             borderRadius: 100, padding: "6px 16px",
-            fontSize: 13, color: "var(--accent)", fontWeight: 500, marginBottom: 32,
+            fontSize: 13, color: "rgba(255,255,255,0.85)", fontWeight: 500, marginBottom: 32,
             animation: "fadeUp 0.6s ease forwards"
           }}>
             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--accent)", display: "inline-block" }}/>
@@ -78,7 +66,7 @@ export default function Corporations() {
 
           <h1 style={{
             fontSize: "clamp(40px, 6vw, 72px)", fontWeight: 600,
-            letterSpacing: "-2.5px", lineHeight: 1.04, color: "var(--text)",
+            letterSpacing: "-2.5px", lineHeight: 1.04, color: "#fff",
             marginBottom: 28, animation: "fadeUp 0.6s 0.1s ease both"
           }}>
             Open-source EMG<br />
@@ -87,7 +75,7 @@ export default function Corporations() {
           </h1>
 
           <p style={{
-            fontSize: 18, color: "var(--text-secondary)", fontWeight: 300,
+            fontSize: 18, color: "rgba(255,255,255,0.72)", fontWeight: 300,
             lineHeight: 1.75, maxWidth: 560, marginBottom: 44,
             animation: "fadeUp 0.6s 0.2s ease both"
           }}>
@@ -109,14 +97,14 @@ export default function Corporations() {
               onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 4px 24px rgba(255,45,120,0.35)" }}
             >Get in touch ↓</a>
             <a href="https://github.com/Jaden300/myojam" target="_blank" rel="noreferrer" style={{
-              background: "rgba(255,255,255,0.85)", backdropFilter: "blur(8px)",
-              color: "var(--text)", border: "1px solid var(--border-mid)",
+              background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)",
+              color: "#fff", border: "1px solid rgba(255,255,255,0.2)",
               borderRadius: 100, padding: "14px 28px",
               fontSize: 15, fontWeight: 400, textDecoration: "none",
               transition: "border-color 0.2s"
             }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(255,45,120,0.3)"}
-              onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border-mid)"}
+              onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(255,45,120,0.5)"}
+              onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"}
             >View on GitHub ↗</a>
           </div>
         </div>

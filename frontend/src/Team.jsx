@@ -100,6 +100,55 @@ const TEAM = [
     bio: "Contributed to the research methodology, reviewing the signal processing pipeline and feature extraction approach. Provided feedback on model evaluation strategy and cross-subject generalization.",
     tags: ["Signal Processing", "Research", "Model Evaluation"]
   },
+  {
+    seed: 4,
+    name: "Kathleen T.",
+    role: "UX Researcher",
+    bio: "Leads user research initiatives focused on accessibility and motor-impaired users. Conducts usability studies, synthesizes findings into design recommendations, and ensures myojam's interfaces remain intuitive for everyone.",
+    tags: ["UX Research", "Accessibility", "User Testing"]
+  },
+  {
+    seed: 5,
+    name: "Mavis W.",
+    role: "Education Content Lead",
+    bio: "Develops the curriculum behind myojam's education hub — from neuroscience explainers to hands-on lesson plans. Bridges the gap between cutting-edge biosignal research and classroom-ready material.",
+    tags: ["Curriculum Design", "Science Communication", "Biology"]
+  },
+  {
+    seed: 6,
+    name: "Eric F.",
+    role: "ML Engineer",
+    bio: "Works on improving gesture classification accuracy and cross-subject generalization. Experiments with feature engineering, ensemble methods, and domain adaptation techniques on the Ninapro dataset pipeline.",
+    tags: ["scikit-learn", "Feature Engineering", "Signal Processing"]
+  },
+  {
+    seed: 7,
+    name: "Derick Z.",
+    role: "Frontend Developer",
+    bio: "Builds and maintains interactive features across myojam.com — from WebGL visualizations to the signal playground. Obsessed with making complex technical concepts feel effortless to explore in the browser.",
+    tags: ["React", "Three.js", "WebGL"]
+  },
+  {
+    seed: 8,
+    name: "Basil T.",
+    role: "Embedded Systems Engineer",
+    bio: "Maintains the Arduino firmware layer and explores higher-density electrode configurations. Focused on making the hardware setup more reproducible and accessible for researchers and students building their own rigs.",
+    tags: ["Arduino", "C++", "Hardware Design"]
+  },
+  {
+    seed: 9,
+    name: "Tam Y.",
+    role: "Biomedical Research Contributor",
+    bio: "Contributes to the scientific documentation of myojam's methodology, reviewing signal processing decisions and helping design controlled experiments. Brings a neuroscience lens to the project's EMG pipeline.",
+    tags: ["Neuroscience", "EMG", "Research Methods"]
+  },
+  {
+    seed: 3,
+    name: "Aaron C.",
+    role: "Community & Outreach",
+    bio: "Grows the myojam community and coordinates ELEVATE competition participants. Manages communications, supports contributors onboarding onto the codebase, and amplifies the project's reach across research and education circles.",
+    tags: ["Community", "Outreach", "Writing"]
+  },
 ]
 
 export default function Team() {

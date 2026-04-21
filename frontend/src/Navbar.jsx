@@ -1,9 +1,8 @@
 import { useNavigate, useLocation } from "react-router-dom"
-import { useState, useEffect, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import Logo from "./Logo"
-import { t, getLang, setLang } from "./i18n"
-import { IconGear, IconBook, IconBulb, IconPeople, IconRocket, IconBuilding, IconCode } from "./Icons"
-import { getTheme, setTheme } from "./theme"
+import { t } from "./i18n"
+import { IconGear, IconBook, IconBulb, IconPeople, IconRocket, IconBuilding, IconCode, IconShield } from "./Icons"
 
 function Dropdown({ label, items, pathname }) {
   const [open, setOpen] = useState(false)
@@ -119,32 +118,6 @@ export default function Navbar() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
-  const [lang, setLangState] = useState(getLang())
-  const [theme, setThemeState] = useState(getTheme())
-
-  useEffect(() => {
-    const handler = () => setLangState(getLang())
-    window.addEventListener("langchange", handler)
-    return () => window.removeEventListener("langchange", handler)
-  }, [])
-
-  useEffect(() => {
-    const handler = () => setThemeState(getTheme())
-    window.addEventListener("themechange", handler)
-    return () => window.removeEventListener("themechange", handler)
-  }, [])
-
-  function switchLang(l) {
-    setLang(l)
-    setLangState(l)
-  }
-
-  function toggleTheme() {
-    const next = theme === "light" ? "dark" : "light"
-    setTheme(next)
-    setThemeState(next)
-  }
-
   return (
     <nav style={{
       position:"fixed", top:0, left:0, right:0, zIndex:100,
@@ -160,84 +133,26 @@ export default function Navbar() {
       </div>
 
       <div style={{ display:"flex", alignItems:"center", gap:24 }}>
-        <NavLink label="Demos" path="/demos" pathname={pathname}/>
+        <NavLink label={t("nav_demos")} path="/demos" pathname={pathname}/>
 
-        <Dropdown label="Learn" pathname={pathname} items={[
-          ["How it works", "/how-it-works", IconGear],
-          ["Education hub", "/education", IconBook],
-          ["For educators", "/educators", IconPeople],
+        <Dropdown label={t("nav_learn")} pathname={pathname} items={[
+          [t("nav_howItWorks"),  "/how-it-works", IconGear],
+          [t("nav_education"),   "/education",    IconBook],
+          [t("nav_educators"),   "/educators",    IconPeople],
         ]}/>
 
-        <Dropdown label="Company" pathname={pathname} items={[
-          ["About", "/about", IconBulb],
-          ["Team", "/team", IconPeople],
-          ["Careers", "/careers", IconRocket],
-          ["For corporations", "/corporations", IconBuilding],
-          ["Changelog", "/changelog", IconCode],
-          ["Research paper", "/research", IconBook],
+        <Dropdown label={t("nav_company")} pathname={pathname} items={[
+          [t("nav_about"),        "/about",             IconBulb],
+          [t("nav_team"),         "/team",              IconPeople],
+          [t("nav_careers"),      "/careers",           IconRocket],
+          [t("nav_corporations"), "/corporations",      IconBuilding],
+          ["Workplace policy",    "/workplace-policy",  IconShield],
+          [t("nav_changelog"),    "/changelog",         IconCode],
+          [t("nav_research"),     "/research",          IconBook],
         ]}/>
 
-        <NavLink label="Contact" path="/contact" pathname={pathname}/>
-        <NavLink label="ELEVATE" path="/elevate" pathname={pathname} accent={true}/>
-
-        {/* Theme toggle */}
-        <button
-          onClick={toggleTheme}
-          style={{
-            background:"none",
-            border:"1px solid var(--border)",
-            borderRadius:"50%",
-            width:32,
-            height:32,
-            display:"flex",
-            alignItems:"center",
-            justifyContent:"center",
-            cursor:"pointer",
-            fontSize:15,
-            color:"var(--text-secondary)",
-            transition:"border-color 0.15s, transform 0.2s"
-          }}
-          onMouseEnter={e=>{
-            e.currentTarget.style.borderColor="var(--accent)"
-            e.currentTarget.style.transform="rotate(20deg)"
-          }}
-          onMouseLeave={e=>{
-            e.currentTarget.style.borderColor="var(--border)"
-            e.currentTarget.style.transform="rotate(0deg)"
-          }}
-          title={theme==="light" ? "Switch to dark mode" : "Switch to light mode"}
-        >
-          {theme === "light" ? "◐" : "◑"}
-        </button>
-
-        {/* Language toggle */}
-        <div style={{
-          display:"flex",
-          background:"var(--bg-secondary)",
-          border:"1px solid var(--border)",
-          borderRadius:100,
-          padding:2
-        }}>
-          {["en","fr"].map(l=>(
-            <button
-              key={l}
-              onClick={()=>switchLang(l)}
-              style={{
-                background: lang===l?"#fff":"transparent",
-                border:"none",
-                borderRadius:100,
-                padding:"3px 10px",
-                fontSize:12,
-                fontWeight:lang===l?600:400,
-                color: lang===l?"var(--text)":"var(--text-tertiary)",
-                cursor:"pointer",
-                boxShadow: lang===l?"0 1px 4px rgba(0,0,0,0.08)":"none"
-              }}
-            >
-              {l.toUpperCase()}
-            </button>
-          ))}
-        </div>
+        <NavLink label={t("nav_contact")} path="/contact" pathname={pathname}/>
+        <NavLink label={t("nav_elevate")} path="/elevate" pathname={pathname} accent={true}/>
       </div>
     </nav>
   )

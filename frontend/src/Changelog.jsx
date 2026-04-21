@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, SectionPill } from "./Animate"
+import NeuralNoise from "./components/NeuralNoise"
 
 const LOGS = [
   {
@@ -169,25 +170,27 @@ export default function Changelog() {
       <Navbar />
 
       {/* Header */}
-      <div style={{ background:"linear-gradient(135deg, #f5f0ff 0%, #ffffff 60%)", borderBottom:"1px solid var(--border)", padding:"100px 32px 64px" }}>
-        <div style={{ maxWidth:760, margin:"0 auto" }}>
+      <div style={{ position:"relative", overflow:"hidden", borderBottom:"1px solid var(--border)", padding:"100px 32px 64px" }}>
+        <NeuralNoise color={[0.49, 0.23, 0.93]} opacity={0.85} speed={0.0006} />
+        <div style={{ position:"absolute", inset:0, background:"rgba(3,0,18,0.65)", zIndex:1 }}/>
+        <div style={{ maxWidth:760, margin:"0 auto", position:"relative", zIndex:2 }}>
           <Reveal>
             <SectionPill>Company history</SectionPill>
-            <h1 style={{ fontSize:"clamp(36px,6vw,64px)", fontWeight:600, letterSpacing:"-2px", lineHeight:1.04, color:"var(--text)", marginBottom:24 }}>
+            <h1 style={{ fontSize:"clamp(36px,6vw,64px)", fontWeight:600, letterSpacing:"-2px", lineHeight:1.04, color:"#fff", marginBottom:24 }}>
               How myojam<br /><span style={{ color:"var(--accent)" }}>got here.</span>
             </h1>
-            <p style={{ fontSize:17, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:520, marginBottom:48 }}>
+            <p style={{ fontSize:17, color:"rgba(255,255,255,0.72)", fontWeight:300, lineHeight:1.75, maxWidth:520, marginBottom:48 }}>
               A complete development log  -  every version, every milestone, every bug that took too long to fix.
               Built in public, documented in public.
             </p>
           </Reveal>
 
           {/* Stats */}
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:1, borderRadius:"var(--radius)", overflow:"hidden", border:"1px solid var(--border)" }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:1, borderRadius:"var(--radius)", overflow:"hidden", border:"1px solid rgba(255,255,255,0.12)" }}>
             {STATS.map((s,i) => (
-              <div key={s.label} style={{ background:"rgba(255,255,255,0.7)", backdropFilter:"blur(8px)", padding:"24px 20px", borderRight: i<3 ? "1px solid var(--border)" : "none" }}>
+              <div key={s.label} style={{ background:"rgba(255,255,255,0.07)", backdropFilter:"blur(8px)", padding:"24px 20px", borderRight: i<3 ? "1px solid rgba(255,255,255,0.1)" : "none" }}>
                 <div style={{ fontSize:28, fontWeight:700, color:"var(--accent)", letterSpacing:"-1px", marginBottom:4 }}>{s.val}</div>
-                <div style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300 }}>{s.label}</div>
+                <div style={{ fontSize:12, color:"rgba(255,255,255,0.55)", fontWeight:300 }}>{s.label}</div>
               </div>
             ))}
           </div>
