@@ -2,6 +2,7 @@ import { useState } from "react"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, SectionPill } from "./Animate"
+import NeuralNoise from "./components/NeuralNoise"
 
 // Real-ish confusion matrix derived from 84.85% overall accuracy
 // Rows = true label, cols = predicted label
@@ -15,7 +16,7 @@ const GESTURES = [
   { name: "Fist",        short: "FST", color: "#EF4444" },
 ]
 
-// Confusion matrix  -  rows=true, cols=predicted
+// Confusion matrix - rows=true, cols=predicted
 const MATRIX = [
   [88, 4,  3,  1,  2,  2],  // index
   [5,  83, 6,  2,  2,  2],  // middle
@@ -27,9 +28,9 @@ const MATRIX = [
 
 const CONFUSION_NOTES = {
   "0-1": "Index and middle flex both activate the superficial flexor digitorum on the anterior forearm. Their EMG bursts overlap spatially, making them the most commonly confused pair.",
-  "1-2": "Middle and ring share a common muscle belly in some subjects  -  the flexor digitorum superficialis  -  causing their signals to partially overlap across electrode channels.",
+  "1-2": "Middle and ring share a common muscle belly in some subjects - the flexor digitorum superficialis - causing their signals to partially overlap across electrode channels.",
   "2-3": "Ring and pinky are anatomically close and often co-activate. At 200Hz with 16 channels, the spatial resolution isn't always sufficient to separate them cleanly.",
-  "4-5": "Thumb and fist are occasionally confused because fist involves a strong thumb opposition component that activates the thenar eminence  -  the same area thumb flex uses.",
+  "4-5": "Thumb and fist are occasionally confused because fist involves a strong thumb opposition component that activates the thenar eminence - the same area thumb flex uses.",
   "0-4": "Index and thumb rarely co-activate, so confusion here is usually due to electrode drift between sessions rather than biomechanical overlap.",
 }
 
@@ -49,19 +50,18 @@ export default function ConfusionExplorer() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
-      <div style={{
-        background: "linear-gradient(135deg, #f0fff8 0%, #ffffff 60%)",
-        borderBottom: "1px solid var(--border)", padding: "100px 32px 48px"
-      }}>
-        <div style={{ maxWidth: 820, margin: "0 auto" }}>
+      <div style={{ position: "relative", overflow: "hidden", borderBottom: "1px solid var(--border)", padding: "100px 32px 48px" }}>
+        <NeuralNoise color={[0.10, 0.65, 0.45]} opacity={0.85} speed={0.0006} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
+        <div style={{ maxWidth: 820, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <Reveal>
             <SectionPill>Model evaluation · Academic</SectionPill>
-            <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 600, letterSpacing: "-1.5px", color: "var(--text)", marginBottom: 16, lineHeight: 1.1 }}>
+            <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 600, letterSpacing: "-1.5px", color: "#fff", marginBottom: 16, lineHeight: 1.1 }}>
               Confusion Matrix Explorer.
             </h1>
-            <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, maxWidth: 560 }}>
+            <p style={{ fontSize: 16, color: "rgba(255,255,255,0.72)", fontWeight: 300, lineHeight: 1.7, maxWidth: 560 }}>
               The model doesn't get everything right. Click any cell to see how often one gesture is
-              mistaken for another  -  and why. Diagonal = correct. Off-diagonal = errors.
+              mistaken for another - and why. Diagonal = correct. Off-diagonal = errors.
             </p>
           </Reveal>
         </div>
@@ -181,12 +181,12 @@ export default function ConfusionExplorer() {
               </p>
             ) : isDiag ? (
               <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.75, fontWeight: 300, margin: 0 }}>
-                {GESTURES[selected[0]].name} has strong discriminative features  -  its MAV and WL profile
+                {GESTURES[selected[0]].name} has strong discriminative features - its MAV and WL profile
                 is sufficiently distinct from other gestures that the classifier rarely confuses it.
               </p>
             ) : (
               <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.75, fontWeight: 300, margin: 0 }}>
-                This pair shows low confusion  -  their frequency profiles and channel activation patterns
+                This pair shows low confusion - their frequency profiles and channel activation patterns
                 are distinct enough that errors are rare in cross-subject testing.
               </p>
             )}
@@ -221,7 +221,7 @@ export default function ConfusionExplorer() {
           <div style={{ fontSize: 11, fontWeight: 600, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>Reading this matrix</div>
           <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.8, fontWeight: 300, margin: 0 }}>
             Each row represents what the true gesture was. Each column represents what the model predicted.
-            The diagonal (green) is the recall  -  how often each gesture was correctly identified.
+            The diagonal (green) is the recall - how often each gesture was correctly identified.
             Off-diagonal cells (red) show confusion: a non-zero value at row i, column j means the model
             predicted gesture j when the true gesture was i. The overall accuracy of 84.85% is the
             weighted average of the diagonal values across all 6 classes.

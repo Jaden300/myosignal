@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
+import NeuralNoise from "./components/NeuralNoise"
+import { IconPuzzle } from "./Icons"
 
 // ── Constants
 const STAGE_W = 360, STAGE_H = 260
@@ -27,29 +29,29 @@ const BLOCK_DEFS = {
   },
   when_gesture: {
     cat:"events", color:"#FF2D78", isHat:true,
-    parts:["💪  When", {p:"gesture"}, "detected"],
+    parts:["When", {p:"gesture"}, "detected"],
     params:[{ key:"gesture", type:"select", options:GESTURE_LIST.map(g=>g.name), def:"index flex" }],
   },
   // Control
   wait: {
     cat:"control", color:"#F97316",
-    parts:["⏱  Wait", {p:"secs"}, "seconds"],
+    parts:["Wait", {p:"secs"}, "seconds"],
     params:[{ key:"secs", type:"num", def:1 }],
   },
   repeat: {
     cat:"control", color:"#F97316",
-    parts:["🔁  Repeat next blocks", {p:"n"}, "times"],
+    parts:["Repeat", {p:"n"}, "times"],
     params:[{ key:"n", type:"num", def:5 }],
   },
   wait_for_any: {
     cat:"control", color:"#F97316",
-    parts:["👂  Wait for any gesture"],
+    parts:["Wait for any gesture"],
     params:[],
   },
   // Motion
   move: {
     cat:"motion", color:"#3B82F6",
-    parts:["🖱  Move", {p:"dir"}, {p:"px"}, "px"],
+    parts:["Move", {p:"dir"}, {p:"px"}, "px"],
     params:[
       { key:"dir", type:"select", options:["left","right","up","down"], def:"right" },
       { key:"px",  type:"num", def:30 },
@@ -57,44 +59,44 @@ const BLOCK_DEFS = {
   },
   go_center: {
     cat:"motion", color:"#3B82F6",
-    parts:["📍  Go to center"],
+    parts:["Go to center"],
     params:[],
   },
   go_random: {
     cat:"motion", color:"#3B82F6",
-    parts:["🎲  Jump to random position"],
+    parts:["Jump to random position"],
     params:[],
   },
   // Draw
   pen_down: {
     cat:"draw", color:"#8B5CF6",
-    parts:["✏️  Pen down"],
+    parts:["Pen down"],
     params:[],
   },
   pen_up: {
     cat:"draw", color:"#8B5CF6",
-    parts:["✋  Pen up"],
+    parts:["Pen up"],
     params:[],
   },
   set_color: {
     cat:"draw", color:"#8B5CF6",
-    parts:["🎨  Set pen color", {p:"color"}],
+    parts:["Set pen color", {p:"color"}],
     params:[{ key:"color", type:"color", def:"#FF2D78" }],
   },
   dot: {
     cat:"draw", color:"#8B5CF6",
-    parts:["⚫  Stamp dot, size", {p:"size"}],
+    parts:["Stamp dot, size", {p:"size"}],
     params:[{ key:"size", type:"num", def:10 }],
   },
   clear: {
     cat:"draw", color:"#8B5CF6",
-    parts:["🗑  Clear stage"],
+    parts:["Clear stage"],
     params:[],
   },
   // Looks
   say: {
     cat:"looks", color:"#10B981",
-    parts:["💬  Say", {p:"text"}, "for", {p:"secs"}, "s"],
+    parts:["Say", {p:"text"}, "for", {p:"secs"}, "s"],
     params:[
       { key:"text", type:"text", def:"Hello!" },
       { key:"secs", type:"num",  def:2 },
@@ -102,12 +104,12 @@ const BLOCK_DEFS = {
   },
   beep: {
     cat:"looks", color:"#10B981",
-    parts:["🔊  Play beep"],
+    parts:["Play beep"],
     params:[],
   },
   set_bg: {
     cat:"looks", color:"#10B981",
-    parts:["🖼  Set background", {p:"color"}],
+    parts:["Set background", {p:"color"}],
     params:[{ key:"color", type:"color", def:"#F5F5F7" }],
   },
 }
@@ -145,10 +147,10 @@ const EXAMPLES = [
       { type:"when_start",   params:{} },
       { type:"say",          params:{ text:"Flex to greet!", secs:2 } },
       { type:"when_gesture", params:{ gesture:"index flex" } },
-      { type:"say",          params:{ text:"Hello! 👋", secs:2 } },
+      { type:"say",          params:{ text:"Hello!", secs:2 } },
       { type:"beep",         params:{} },
       { type:"when_gesture", params:{ gesture:"fist" } },
-      { type:"say",          params:{ text:"💪", secs:1 } },
+      { type:"say",          params:{ text:"Flex!", secs:1 } },
     ],
   },
   {
@@ -511,16 +513,18 @@ export default function MyoCode() {
       `}</style>
 
       {/* Header */}
-      <div style={{ background:"linear-gradient(135deg,#f5f0ff 0%,#ffffff 60%)", borderBottom:"1px solid var(--border)", padding:"100px 32px 40px" }}>
-        <div style={{ maxWidth:1140, margin:"0 auto" }}>
-          <div style={{ display:"inline-flex", alignItems:"center", gap:6, background:"var(--accent-soft)", border:"1px solid rgba(255,45,120,0.15)", borderRadius:100, padding:"5px 16px", fontSize:13, color:"var(--accent)", fontWeight:500, marginBottom:20 }}>
+      <div style={{ position:"relative", overflow:"hidden", borderBottom:"1px solid var(--border)", padding:"100px 32px 40px" }}>
+        <NeuralNoise color={[0.30, 0.20, 0.85]} opacity={0.85} speed={0.0006} />
+        <div style={{ position:"absolute", inset:0, background:"rgba(3,0,18,0.65)", zIndex:1 }} />
+        <div style={{ maxWidth:1140, margin:"0 auto", position:"relative", zIndex:2 }}>
+          <div style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(255,255,255,0.08)", backdropFilter:"blur(8px)", border:"1px solid rgba(255,45,120,0.3)", borderRadius:100, padding:"5px 16px", fontSize:13, color:"var(--accent)", fontWeight:500, marginBottom:20 }}>
             <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--accent)", display:"inline-block" }}/>
             Block coding · EMG powered
           </div>
-          <h1 style={{ fontSize:"clamp(32px,5vw,56px)", fontWeight:600, letterSpacing:"-2px", color:"var(--text)", marginBottom:12, lineHeight:1.06 }}>
+          <h1 style={{ fontSize:"clamp(32px,5vw,56px)", fontWeight:600, letterSpacing:"-2px", color:"#fff", marginBottom:12, lineHeight:1.06 }}>
             myocode.
           </h1>
-          <p style={{ fontSize:16, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, maxWidth:520 }}>
+          <p style={{ fontSize:16, color:"rgba(255,255,255,0.72)", fontWeight:300, lineHeight:1.7, maxWidth:520 }}>
             A block-based coding environment where EMG gestures are first-class events. Snap blocks together, press Run, then trigger gestures with keys 1–6 to control the program.
           </p>
         </div>
@@ -554,7 +558,7 @@ export default function MyoCode() {
           {running && (
             <div style={{ display:"flex", alignItems:"center", gap:8, fontSize:13, color:"var(--accent)", fontWeight:400, padding:"0 8px" }}>
               <div style={{ width:8, height:8, borderRadius:"50%", background:"var(--accent)", animation:"pulse 1s infinite" }}/>
-              Running  -  press 1–6 or tap gestures below
+              Running - press 1–6 or tap gestures below
             </div>
           )}
 
@@ -628,7 +632,7 @@ export default function MyoCode() {
           >
             {script.length === 0 && (
               <div style={{ position:"absolute", inset:0, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", pointerEvents:"none" }}>
-                <div style={{ fontSize:40, marginBottom:12, opacity:0.25 }}>🧩</div>
+                <div style={{ marginBottom:12, opacity:0.25 }}><IconPuzzle size={40} color="#8B5CF6" /></div>
                 <div style={{ fontSize:13, color:"var(--text-tertiary)", fontWeight:300, textAlign:"center", lineHeight:1.7 }}>
                   Click blocks in the palette<br/>to add them here,<br/>or try an example →
                 </div>
@@ -784,7 +788,7 @@ export default function MyoCode() {
         <div style={{ marginTop:40, display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:12 }}>
           {[
             { title:"1. Build",    body:"Click or drag blocks from the palette into the script area. Reorder by dragging. Delete with ✕." },
-            { title:"2. Edit",     body:"Change values inline  -  type a number, pick from a dropdown, or click the color swatch." },
+            { title:"2. Edit",     body:"Change values inline - type a number, pick from a dropdown, or click the color swatch." },
             { title:"3. Run",      body:"Press ▶ Run. Blocks highlight as they execute. The stage shows your program in action." },
             { title:"4. Gesture",  body:"When the program hits a 'When gesture detected' block, press the matching key 1–6 or the buttons above." },
           ].map(c=>(

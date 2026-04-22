@@ -2,17 +2,19 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, SectionPill } from "./Animate"
+import NeuralNoise from "./components/NeuralNoise"
+import { IconFire, IconGestureIndex, IconGestureMiddle, IconGestureRing, IconGesturePinky, IconGestureThumb, IconGestureFist } from "./Icons"
 
 const GESTURES = [
-  { id: 1, name: "index flex",  key: "1", symbol: "☝", color: "#FF2D78", action: "Cursor left" },
-  { id: 2, name: "middle flex", key: "2", symbol: "✌", color: "#3B82F6", action: "Cursor right" },
-  { id: 3, name: "ring flex",   key: "3", symbol: "💍", color: "#8B5CF6", action: "Cursor down" },
-  { id: 4, name: "pinky flex",  key: "4", symbol: "🤙", color: "#10B981", action: "Cursor up" },
-  { id: 5, name: "thumb flex",  key: "5", symbol: "👍", color: "#F59E0B", action: "Click" },
-  { id: 6, name: "fist",        key: "6", symbol: "✊", color: "#EF4444", action: "Spacebar" },
+  { id: 1, name: "index flex",  key: "1", color: "#FF2D78", action: "Cursor left" },
+  { id: 2, name: "middle flex", key: "2", color: "#3B82F6", action: "Cursor right" },
+  { id: 3, name: "ring flex",   key: "3", color: "#8B5CF6", action: "Cursor down" },
+  { id: 4, name: "pinky flex",  key: "4", color: "#10B981", action: "Cursor up" },
+  { id: 5, name: "thumb flex",  key: "5", color: "#F59E0B", action: "Click" },
+  { id: 6, name: "fist",        key: "6", color: "#EF4444", action: "Spacebar" },
 ]
 
-const SYMBOLS = ["☝", "✌", "🖐", "👊", "👍", "🤙"]
+const GESTURE_ICONS = [IconGestureIndex, IconGestureMiddle, IconGestureRing, IconGesturePinky, IconGestureThumb, IconGestureFist]
 
 const LEVELS = [
   { label: "Easy",   time: 3000, rounds: 8  },
@@ -123,18 +125,16 @@ export default function GestureGame() {
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
 
-      <div style={{
-        background: "linear-gradient(135deg, #fff5f0 0%, #ffffff 60%)",
-        borderBottom: "1px solid var(--border)",
-        padding: "100px 32px 48px"
-      }}>
-        <div style={{ maxWidth: 720, margin: "0 auto" }}>
+      <div style={{ position: "relative", overflow: "hidden", borderBottom: "1px solid var(--border)", padding: "100px 32px 48px" }}>
+        <NeuralNoise color={[0.80, 0.15, 0.35]} opacity={0.85} speed={0.0006} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
+        <div style={{ maxWidth: 720, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <Reveal>
             <SectionPill>Mini-game · Keyboard</SectionPill>
-            <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 600, letterSpacing: "-1.5px", color: "var(--text)", marginBottom: 16, lineHeight: 1.1 }}>
+            <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 600, letterSpacing: "-1.5px", color: "#fff", marginBottom: 16, lineHeight: 1.1 }}>
               Gesture Reaction Game.
             </h1>
-            <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, maxWidth: 480 }}>
+            <p style={{ fontSize: 16, color: "rgba(255,255,255,0.72)", fontWeight: 300, lineHeight: 1.7, maxWidth: 480 }}>
               A target gesture flashes on screen. Press the matching key (1–6) before time runs out.
               How fast can your fingers react?
             </p>
@@ -208,7 +208,7 @@ export default function GestureGame() {
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 32, fontSize: 13, color: "var(--text-tertiary)" }}>
               <span>Round {round + 1} / {level.rounds}</span>
               <span>Score {score}</span>
-              {streak > 1 && <span style={{ color: "var(--accent)" }}>🔥 {streak} streak</span>}
+              {streak > 1 && <span style={{ color: "var(--accent)", display: "flex", alignItems: "center", gap: 4 }}><IconFire size={13} color="var(--accent)" /> {streak} streak</span>}
             </div>
 
             {/* Timer bar */}
@@ -239,7 +239,9 @@ export default function GestureGame() {
               transition: "box-shadow 0.2s",
               animation: "pop 0.25s cubic-bezier(0.34,1.56,0.64,1)"
             }}>
-              <div style={{ fontSize: 56, marginBottom: 8 }}>{SYMBOLS[target.id - 1]}</div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8 }}>
+                {(() => { const GIcon = GESTURE_ICONS[target.id - 1]; return <GIcon size={72} color={target.color} /> })()}
+              </div>
               <div style={{ fontSize: 16, fontWeight: 600, color: target.color }}>{target.name}</div>
               <div style={{ fontSize: 12, color: "var(--text-tertiary)", fontWeight: 300 }}>Press [{target.key}]</div>
             </div>

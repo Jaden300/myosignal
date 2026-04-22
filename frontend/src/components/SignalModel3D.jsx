@@ -8,7 +8,7 @@ const STAGES = [
   {
     sub:   'Step 01 · Hardware',
     title: 'Signal capture.',
-    desc:  'Surface EMG electrodes pick up electrical activity across 16 channels at 200 Hz — raw bioelectric data, straight from your forearm.',
+    desc:  'Surface EMG electrodes pick up electrical activity across 16 channels at 200 Hz - raw bioelectric data, straight from your forearm.',
     hex:   '#FF2D78',
   },
   {
@@ -20,7 +20,7 @@ const STAGES = [
   {
     sub:   'Step 03 · Analysis',
     title: 'Feature extraction.',
-    desc:  "Four time-domain features across 16 channels compress each window into a 64-number fingerprint — the gesture's mathematical DNA.",
+    desc:  "Four time-domain features across 16 channels compress each window into a 64-number fingerprint - the gesture's mathematical DNA.",
     hex:   '#7c3aed',
   },
   {
@@ -32,7 +32,7 @@ const STAGES = [
   {
     sub:   'Step 05 · Output',
     title: 'Assistive action.',
-    desc:  'Under 50ms end-to-end. Cursor, click, keypress — direct system-level control via CoreGraphics. No accessibility overlays.',
+    desc:  'Under 50ms end-to-end. Cursor, click, keypress - direct system-level control via CoreGraphics. No accessibility overlays.',
     hex:   '#06b6d4',
   },
 ]
@@ -239,7 +239,7 @@ export default function SignalModel3D() {
       if (!visible) return
       autoRot += 0.0028
 
-      // Morph particles — only update while converging (max ~60 frames)
+      // Morph particles - only update while converging (max ~60 frames)
       if (morphing) {
         const pa = geo.attributes.position.array
         const len = N * 3
@@ -294,20 +294,6 @@ export default function SignalModel3D() {
 
           {/* Three.js canvas mount */}
           <div ref={mountRef} style={{ position: 'absolute', inset: 0 }} />
-
-          {/* Top label */}
-          <div style={{
-            position: 'absolute', top: 40, left: 0, right: 0,
-            display: 'flex', justifyContent: 'center', zIndex: 10,
-            pointerEvents: 'none',
-          }}>
-            <div style={{
-              fontSize: 11, fontWeight: 600, letterSpacing: '0.12em',
-              textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)',
-            }}>
-              How myojam works — scroll to explore
-            </div>
-          </div>
 
           {/* Stage text */}
           <div style={{

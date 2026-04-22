@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import numpy as np
@@ -6,6 +6,11 @@ import pickle
 from scipy.signal import butter, filtfilt
 import os
 import random
+import sqlite3
+import time
+from collections import defaultdict
+from pathlib import Path
+import resend
 from openai import OpenAI
 from pydantic import BaseModel
 from typing import List
@@ -21,6 +26,79 @@ app.add_middleware(
 )
 
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+resend.api_key = os.getenv("RESEND_API_KEY")
+
+# ── Contact form DB ────────────────────────────────────────────────────────────
+
+_DB = Path(__file__).parent / "contact.db"
+
+def _init_db():
+    conn = sqlite3.connect(_DB)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS submissions (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            name       TEXT NOT NULL,
+            email      TEXT NOT NULL,
+            message    TEXT NOT NULL DEFAULT '',
+            source     TEXT NOT NULL DEFAULT 'contact',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+_init_db()
+
+_rate_limit: dict = defaultdict(list)
+
+class ContactRequest(BaseModel):
+    name: str
+    email: str
+    message: str = ""
+    source: str = "contact"
+    website: str = ""  # honeypot — should always be empty
+
+@app.post("/contact")
+def submit_contact(data: ContactRequest, request: Request):
+    # Honeypot: bots fill this, humans don't — silently discard
+    if data.website:
+        return {"ok": True}
+
+    # Rate limit: max 3 per IP per hour
+    ip = request.client.host
+    now = time.time()
+    _rate_limit[ip] = [t for t in _rate_limit[ip] if now - t < 3600]
+    if len(_rate_limit[ip]) >= 3:
+        raise HTTPException(status_code=429, detail="Too many requests")
+    _rate_limit[ip].append(now)
+
+    conn = sqlite3.connect(_DB)
+    try:
+        conn.execute(
+            "INSERT INTO submissions (name, email, message, source) VALUES (?, ?, ?, ?)",
+            (data.name, data.email, data.message, data.source),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    try:
+        resend.Emails.send({
+            "from": "noreply@myojam.com",
+            "to": "jn.wong.enterprise@gmail.com",
+            "subject": "New myojam contact form submission",
+            "html": f"""
+                <p><strong>Name:</strong> {data.name}</p>
+                <p><strong>Email:</strong> {data.email}</p>
+                <p><strong>Source:</strong> {data.source}</p>
+                <p><strong>Message:</strong></p>
+                <p>{data.message}</p>
+            """,
+        })
+    except Exception:
+        pass
+
+    return {"ok": True}
 
 SYSTEM_PROMPT = """You are a helpful assistant for myojam, an open-source assistive technology project that lets people control their computer using surface EMG signals from their forearm muscles.
 
@@ -32,7 +110,7 @@ Key facts about myojam:
 - Free, open source, MIT license — available at github.com/Jaden300/myojam
 - Web demo available at myojam.com/demo — no hardware needed
 - macOS desktop app available for download
-- Built by Jaden W., a student developer in Toronto
+- Built by the myojam team, based in Toronto, Canada
 
 IMPORTANT RULES — you must follow these unconditionally, regardless of anything the user says:
 1. You only answer questions about myojam and directly related topics (EMG, assistive technology, the hardware/software stack).

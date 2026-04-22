@@ -2,6 +2,7 @@ import Navbar from "./Navbar"
 import { useNavigate } from "react-router-dom"
 import Footer from "./Footer"
 import ArticleBar from "./ArticleUtils"
+import NeuralNoise from "./components/NeuralNoise"
 
 function FaceAvatar({ seed, size = 48 }) {
   const skinTones = ["#f5dce4", "#e8c9a0", "#c8956c", "#8d5524", "#f5dce4"]
@@ -36,27 +37,27 @@ const ABSTRACT = "Random Forest classifiers have become the workhorse of EMG ges
 const SECTIONS = [
   {
     num: "01", tag: "Background", title: "Why not a neural network?",
-    body: "Neural networks dominate most modern machine learning benchmarks, so it's reasonable to ask why myojam uses a Random Forest. The answer is practical: on tabular feature data  -  vectors of handcrafted statistics like MAV, RMS, ZC, and WL  -  Random Forests consistently match or outperform deep models while requiring orders of magnitude less training data and compute. With 16,269 training windows across 6 classes, a deep network would overfit aggressively without extensive regularisation and data augmentation. A Random Forest reaches competitive accuracy without any of that overhead. It's also interpretable: you can inspect which features matter most, something neural networks make difficult.",
+    body: "Neural networks dominate most modern machine learning benchmarks, so it's reasonable to ask why myojam uses a Random Forest. The answer is practical: on tabular feature data - vectors of handcrafted statistics like MAV, RMS, ZC, and WL - Random Forests consistently match or outperform deep models while requiring orders of magnitude less training data and compute. With 16,269 training windows across 6 classes, a deep network would overfit aggressively without extensive regularisation and data augmentation. A Random Forest reaches competitive accuracy without any of that overhead. It's also interpretable: you can inspect which features matter most, something neural networks make difficult.",
     callout: null,
   },
   {
     num: "02", tag: "The algorithm", title: "How a Random Forest actually works",
-    body: "A Random Forest is an ensemble of decision trees trained on random subsets of the training data (bagging) and random subsets of the features at each split (feature randomisation). Each tree learns a slightly different decision boundary, and the final prediction is the majority vote across all trees. This combination of diversity and aggregation dramatically reduces variance  -  the tendency to overfit  -  compared to a single deep tree. For EMG data, where the signal is inherently noisy and variable, this variance reduction is particularly valuable. myojam's classifier uses 500 trees with hyperparameters tuned via 100-configuration RandomizedSearchCV, optimising for cross-validated accuracy.",
-    callout: "The key hyperparameters tuned: max_depth (limits tree complexity), min_samples_split (minimum samples to split a node), max_features (fraction of features considered at each split), and n_estimators (number of trees). More trees reduce variance but increase inference time  -  500 was the sweet spot for <5ms latency.",
+    body: "A Random Forest is an ensemble of decision trees trained on random subsets of the training data (bagging) and random subsets of the features at each split (feature randomisation). Each tree learns a slightly different decision boundary, and the final prediction is the majority vote across all trees. This combination of diversity and aggregation dramatically reduces variance - the tendency to overfit - compared to a single deep tree. For EMG data, where the signal is inherently noisy and variable, this variance reduction is particularly valuable. myojam's classifier uses 500 trees with hyperparameters tuned via 100-configuration RandomizedSearchCV, optimising for cross-validated accuracy.",
+    callout: "The key hyperparameters tuned: max_depth (limits tree complexity), min_samples_split (minimum samples to split a node), max_features (fraction of features considered at each split), and n_estimators (number of trees). More trees reduce variance but increase inference time - 500 was the sweet spot for <5ms latency.",
   },
   {
     num: "03", tag: "Feature importance", title: "Which features matter most?",
-    body: "Random Forests provide a natural measure of feature importance: how much each feature reduces impurity (Gini or entropy) averaged across all trees and splits. For EMG gesture classification, waveform length (WL) and mean absolute value (MAV) consistently rank as the most discriminative features  -  WL captures the overall complexity and speed of muscle contraction, while MAV reflects activation intensity. Zero crossing rate (ZC), which approximates frequency content, is particularly useful for distinguishing between gestures with similar energy profiles but different oscillation rates. RMS contributes additional power information but is highly correlated with MAV, so its marginal contribution is lower.",
+    body: "Random Forests provide a natural measure of feature importance: how much each feature reduces impurity (Gini or entropy) averaged across all trees and splits. For EMG gesture classification, waveform length (WL) and mean absolute value (MAV) consistently rank as the most discriminative features - WL captures the overall complexity and speed of muscle contraction, while MAV reflects activation intensity. Zero crossing rate (ZC), which approximates frequency content, is particularly useful for distinguishing between gestures with similar energy profiles but different oscillation rates. RMS contributes additional power information but is highly correlated with MAV, so its marginal contribution is lower.",
     callout: null,
   },
   {
     num: "04", tag: "Cross-subject generalisation", title: "What 84.85% actually means",
-    body: "An 84.85% cross-subject accuracy means the model correctly classifies 84.85% of EMG windows from people it has never seen during training. This is a substantially harder challenge than within-subject accuracy, where the same person's data appears in both training and testing  -  a common source of inflated accuracy claims in EMG literature. Cross-subject performance drops because EMG signals vary between individuals due to differences in muscle anatomy, electrode placement, skin impedance, and muscle fibre composition. Achieving 84.85% without any per-user calibration is a meaningful result, though it means roughly 1 in 7 classifications is wrong in real-world use.",
+    body: "An 84.85% cross-subject accuracy means the model correctly classifies 84.85% of EMG windows from people it has never seen during training. This is a substantially harder challenge than within-subject accuracy, where the same person's data appears in both training and testing - a common source of inflated accuracy claims in EMG literature. Cross-subject performance drops because EMG signals vary between individuals due to differences in muscle anatomy, electrode placement, skin impedance, and muscle fibre composition. Achieving 84.85% without any per-user calibration is a meaningful result, though it means roughly 1 in 7 classifications is wrong in real-world use.",
     callout: "For comparison, within-subject accuracies on similar datasets often exceed 95%. The 10-point gap between within- and cross-subject performance is the key challenge myojam's future personal model training feature aims to close.",
   },
   {
     num: "05", tag: "Limitations", title: "Where Random Forests fall short",
-    body: "Random Forests have real limitations for EMG classification. They don't model temporal dependencies  -  each window is classified independently, with no memory of what came before. A gesture transition produces a window that is partially one gesture and partially another, and the classifier has no way to handle this gracefully. They also don't naturally adapt to new users. A gradient boosting model or a recurrent neural network could potentially address the temporal issue, while online learning approaches (incrementally updating the model with new user data) could address the adaptation problem. These are the right directions for a more capable future system.",
+    body: "Random Forests have real limitations for EMG classification. They don't model temporal dependencies - each window is classified independently, with no memory of what came before. A gesture transition produces a window that is partially one gesture and partially another, and the classifier has no way to handle this gracefully. They also don't naturally adapt to new users. A gradient boosting model or a recurrent neural network could potentially address the temporal issue, while online learning approaches (incrementally updating the model with new user data) could address the adaptation problem. These are the right directions for a more capable future system.",
     callout: null,
   },
 ]
@@ -66,25 +67,24 @@ export default function RandomForestEMG() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
-      <div style={{
-        background: "linear-gradient(135deg, #f5f0ff 0%, #fafafa 70%)",
-        borderBottom: "1px solid var(--border)", padding: "100px 32px 56px",
-      }}>
-        <div style={{ maxWidth: 720, margin: "0 auto" }}>
+      <div style={{ position: "relative", overflow: "hidden", borderBottom: "1px solid var(--border)", padding: "100px 32px 56px" }}>
+        <NeuralNoise color={[0.30, 0.20, 0.85]} opacity={0.85} speed={0.0006} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
+        <div style={{ maxWidth: 720, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
             <span onClick={() => navigate("/education")} style={{ fontSize: 13, color: "var(--accent)", cursor: "pointer" }}>Education</span>
-            <span style={{ fontSize: 13, color: "var(--text-tertiary)" }}>→</span>
-            <span style={{ fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300 }}>Random Forest & EMG</span>
+            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>→</span>
+            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", fontWeight: 300 }}>Random Forest & EMG</span>
           </div>
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 6,
-            background: "var(--accent-soft)", border: "1px solid rgba(255,45,120,0.15)",
+            background: "rgba(255,255,255,0.08)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,45,120,0.3)",
             borderRadius: 100, padding: "5px 16px",
             fontSize: 13, color: "var(--accent)", fontWeight: 500, marginBottom: 24
           }}>Machine Learning · 7 min read</div>
           <h1 style={{
             fontSize: "clamp(28px, 5vw, 52px)", fontWeight: 600,
-            letterSpacing: "-1.5px", color: "var(--text)", lineHeight: 1.08, marginBottom: 24
+            letterSpacing: "-1.5px", color: "#fff", lineHeight: 1.08, marginBottom: 24
           }}>Why Random Forest?<br /><span style={{ color: "var(--accent)" }}>The classifier behind myojam.</span></h1>
           <p style={{
             fontSize: 17, color: "var(--text-secondary)", fontWeight: 300,
@@ -96,8 +96,8 @@ export default function RandomForestEMG() {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <FaceAvatar seed={1} size={40} />
             <div>
-              <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)" }}>Jaden Wong</div>
-              <div style={{ fontSize: 12, color: "var(--text-tertiary)", fontWeight: 300 }}>Founder & Lead Engineer · March 15, 2026</div>
+              <div style={{ fontSize: 14, fontWeight: 500, color: "#fff" }}>myojam team</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 300 }}>Founder & Lead Engineer · March 15, 2026</div>
             </div>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function RandomForestEMG() {
               <h2 style={{ fontSize: 22, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.4px", marginBottom: 16 }}>{s.title}</h2>
               <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.8, fontWeight: 300, marginBottom: s.callout ? 24 : 0 }}>{s.body}</p>
               {s.callout && (
-                <div style={{ background: "var(--accent-soft)", border: "1px solid rgba(255,45,120,0.15)", borderLeft: "3px solid var(--accent)", borderRadius: "0 var(--radius-sm) var(--radius-sm) 0", padding: "16px 20px" }}>
+                <div style={{ background: "rgba(255,255,255,0.08)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,45,120,0.3)", borderLeft: "3px solid var(--accent)", borderRadius: "0 var(--radius-sm) var(--radius-sm) 0", padding: "16px 20px" }}>
                   <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.7, fontWeight: 400, margin: 0 }}>{s.callout}</p>
                 </div>
               )}
@@ -137,7 +137,7 @@ export default function RandomForestEMG() {
           <p style={{ fontSize: 15, color: "var(--text-secondary)", lineHeight: 1.8, fontWeight: 300, margin: 0 }}>
             Random Forest is not the most glamorous choice, but it's the right one for myojam's scale and constraints.
             It delivers competitive cross-subject accuracy without the data hunger of deep learning, trains in seconds,
-            and runs inference in under 5ms. Understanding its limitations  -  no temporal modelling, no online adaptation  - 
+            and runs inference in under 5ms. Understanding its limitations - no temporal modelling, no online adaptation  - 
             is equally important: they define exactly what future work needs to address.
           </p>
         </div>

@@ -5,7 +5,7 @@ import { Reveal } from "./Animate"
 import { useState } from "react"
 
 const AUTHORS = [
-  { name:"Jaden Wong", affil:"1", role:"Conceptualisation, methodology, software, data curation, writing" },
+  { name:"myojam Research Team", affil:"1", role:"Conceptualisation, methodology, software, data curation, writing" },
 ]
 
 const AFFILIATIONS = [
@@ -22,11 +22,11 @@ const SECTIONS = [
     title:"Introduction",
     body:`Surface electromyography (sEMG) records the electrical activity of skeletal muscles through electrodes placed on the skin surface. The summed electrical field produced by motor unit action potentials (MUAPs) beneath the electrode is amplified and digitised, producing a time-varying voltage signal that encodes information about the type, intensity, and timing of voluntary muscle contractions.
 
-The application of sEMG to human-computer interaction  -  specifically, the classification of discrete hand gestures from forearm electrode recordings  -  has attracted substantial research interest since the 1990s, driven by potential applications in myoelectric prosthetics, gaming, rehabilitation monitoring, and assistive technology for individuals with motor impairments [CITATION1].
+The application of sEMG to human-computer interaction - specifically, the classification of discrete hand gestures from forearm electrode recordings - has attracted substantial research interest since the 1990s, driven by potential applications in myoelectric prosthetics, gaming, rehabilitation monitoring, and assistive technology for individuals with motor impairments [CITATION1].
 
 Despite technical progress, two barriers have historically limited broader adoption. First, the cost and complexity of clinical-grade EMG hardware places the technology out of reach for most independent researchers, students, and assistive technology users. Second, the absence of open-source, reproducible implementations makes it difficult to build on prior work systematically.
 
-myojam addresses both barriers. It demonstrates that a viable sEMG gesture classification system  -  achieving 84.85% cross-subject accuracy on a standard benchmark  -  can be constructed using consumer-grade hardware (MyoWare 2.0, Arduino Uno R3), freely available public data (Ninapro DB5), and open-source software tools (Python, scikit-learn). The complete implementation is publicly available under the MIT licence.`,
+myojam addresses both barriers. It demonstrates that a viable sEMG gesture classification system - achieving 84.85% cross-subject accuracy on a standard benchmark - can be constructed using consumer-grade hardware (MyoWare 2.0, Arduino Uno R3), freely available public data (Ninapro DB5), and open-source software tools (Python, scikit-learn). The complete implementation is publicly available under the MIT licence.`,
     subsections: [],
   },
   {
@@ -34,9 +34,9 @@ myojam addresses both barriers. It demonstrates that a viable sEMG gesture class
     title:"Related Work",
     body:`Early work on myoelectric prosthetics by Vodovnik et al. (1967) established that surface EMG signals carry sufficient information to discriminate between a small number of limb positions. Subsequent decades saw substantial methodological development, converging on the sliding window + feature extraction + classifier pipeline that remains dominant in the literature.
 
-Phinyomark et al. (2012) conducted an extensive survey of time-domain, frequency-domain, and time-frequency EMG features, finding that simple time-domain features  -  particularly Mean Absolute Value (MAV) and Waveform Length (WL)  -  provided classification performance competitive with far more complex spectral features at a fraction of the computational cost [CITATION2].
+Phinyomark et al. (2012) conducted an extensive survey of time-domain, frequency-domain, and time-frequency EMG features, finding that simple time-domain features - particularly Mean Absolute Value (MAV) and Waveform Length (WL) - provided classification performance competitive with far more complex spectral features at a fraction of the computational cost [CITATION2].
 
-The Ninapro (Non-Invasive Adaptive Prosthetics) database, introduced by Atzori et al. (2014), standardised the EMG gesture classification benchmark by providing large-scale, multi-subject recordings across dozens of hand movements, recorded with consumer-grade hardware and released publicly [CITATION3]. Database 5 (DB5), used in this work, employs the Myo armband  -  an 8-electrode consumer sleeve  -  providing 16 differential channels at 200 Hz.
+The Ninapro (Non-Invasive Adaptive Prosthetics) database, introduced by Atzori et al. (2014), standardised the EMG gesture classification benchmark by providing large-scale, multi-subject recordings across dozens of hand movements, recorded with consumer-grade hardware and released publicly [CITATION3]. Database 5 (DB5), used in this work, employs the Myo armband - an 8-electrode consumer sleeve - providing 16 differential channels at 200 Hz.
 
 Random Forest classifiers have been shown to achieve strong performance on EMG classification tasks, consistently matching or exceeding more complex models including Support Vector Machines and k-Nearest Neighbours on tabular feature data, while offering interpretability and robustness to hyperparameter choice (Atzori et al., 2016) [CITATION4].`,
     subsections: [],
@@ -51,7 +51,7 @@ Random Forest classifiers have been shown to achieve strong performance on EMG c
         title:"Dataset",
         body:`We use Ninapro DB5, which contains recordings from 10 intact-limb subjects (5 male, 5 female, mean age 29.9 ± 3.9 years) performing hand and wrist movements from three exercise protocols. We select 6 movements from Exercise 1: individual flexions of the index, middle, ring, and pinky fingers, thumb flexion, and full fist closure. These movements were selected for their biomechanical distinctiveness and their natural mapping to computer control actions.
 
-Each movement was performed 6 times, alternating 5-second active windows with 3-second rest periods. The recording device  -  a Myo armband  -  provides 8 bipolar electrode pairs at 200 Hz, yielding 16 differential channels. Ground-truth labels are provided by the restimulus field in the distributed MATLAB data files.`
+Each movement was performed 6 times, alternating 5-second active windows with 3-second rest periods. The recording device - a Myo armband - provides 8 bipolar electrode pairs at 200 Hz, yielding 16 differential channels. Ground-truth labels are provided by the restimulus field in the distributed MATLAB data files.`
       },
       {
         num:"3.2",
@@ -71,7 +71,7 @@ Root Mean Square (RMS): the square root of the mean squared signal values, provi
 
 Zero Crossing Rate (ZC): the count of sign changes in the signal within the window, serving as an approximation of the signal's dominant frequency content without requiring spectral decomposition.
 
-Waveform Length (WL): the sum of absolute first differences between consecutive samples, measuring signal complexity and the total path length of the waveform  -  sensitive to both amplitude and frequency.
+Waveform Length (WL): the sum of absolute first differences between consecutive samples, measuring signal complexity and the total path length of the waveform - sensitive to both amplitude and frequency.
 
 These features were selected on the basis of the empirical survey by Phinyomark et al. (2012), which identified this subset as providing near-optimal classification performance at minimal computational cost.`
       },
@@ -87,7 +87,7 @@ The final model uses n_estimators = 500. Inference is performed by majority vote
         title:"Evaluation protocol",
         body:`We evaluate using a leave-one-subject-out (LOSO) cross-validation protocol: for each of the 10 subjects, we train on the remaining 9 subjects and evaluate on the held-out subject. This produces 10 independent test sets, and we report the mean accuracy across all 10 folds as the cross-subject accuracy.
 
-This protocol directly measures the system's ability to generalise to new, unseen individuals  -  the operationally relevant metric for an assistive technology intended to function without per-user calibration. Within-subject accuracy, which is commonly reported in the literature, is not a primary metric in this work, as it reflects a fundamentally easier and less realistic evaluation scenario.`
+This protocol directly measures the system's ability to generalise to new, unseen individuals - the operationally relevant metric for an assistive technology intended to function without per-user calibration. Within-subject accuracy, which is commonly reported in the literature, is not a primary metric in this work, as it reflects a fundamentally easier and less realistic evaluation scenario.`
       },
     ],
   },
@@ -106,7 +106,7 @@ Total training time on a standard laptop (Apple M1, 8GB RAM) is approximately 45
     title:"Limitations",
     body:`Several limitations of the present work should be noted.
 
-The evaluation dataset (Ninapro DB5) was collected under controlled laboratory conditions with subjects seated, arm horizontal, and performing deliberate isolated movements on cue. Real-world deployment would introduce electrode placement variability between sessions, limb position changes, co-contraction during natural movement, and muscle fatigue over extended use  -  all of which would be expected to reduce classification accuracy relative to the reported benchmark figure.
+The evaluation dataset (Ninapro DB5) was collected under controlled laboratory conditions with subjects seated, arm horizontal, and performing deliberate isolated movements on cue. Real-world deployment would introduce electrode placement variability between sessions, limb position changes, co-contraction during natural movement, and muscle fatigue over extended use - all of which would be expected to reduce classification accuracy relative to the reported benchmark figure.
 
 The feature set, while well-validated in the literature, captures no temporal dependencies between consecutive windows. Transitions between gestures produce windows that violate the stationarity assumptions underlying time-domain feature computation, which may cause transient misclassifications during gesture onset and offset.
 
@@ -116,9 +116,9 @@ The consumer hardware used (MyoWare 2.0, Arduino Uno R3) provides a single ampli
   {
     num:"6",
     title:"Conclusion",
-    body:`We have presented myojam  -  an open-source sEMG gesture classification system achieving 84.85% cross-subject accuracy on six hand gesture classes using the Ninapro DB5 benchmark. The system is implemented entirely with freely available tools and data, runs on consumer hardware, and is released in full under the MIT licence.
+    body:`We have presented myojam - an open-source sEMG gesture classification system achieving 84.85% cross-subject accuracy on six hand gesture classes using the Ninapro DB5 benchmark. The system is implemented entirely with freely available tools and data, runs on consumer hardware, and is released in full under the MIT licence.
 
-The primary contribution is not a novel technical method  -  the Random Forest + time-domain feature pipeline is well-established  -  but a complete, documented, and reproducible implementation that demonstrates the accessibility of this technology. We hope this system serves as a practical foundation for future work in open-source assistive technology, EMG signal processing research, and educational applications of biosignal classification.
+The primary contribution is not a novel technical method - the Random Forest + time-domain feature pipeline is well-established - but a complete, documented, and reproducible implementation that demonstrates the accessibility of this technology. We hope this system serves as a practical foundation for future work in open-source assistive technology, EMG signal processing research, and educational applications of biosignal classification.
 
 All source code, trained models, and documentation are available at github.com/Jaden300/myojam.`,
     subsections:[],
@@ -208,11 +208,11 @@ export default function Research() {
 
   const BIBTEX = `@techreport{wong2026myojam,
   title     = {myojam: Open-Source Surface EMG Gesture Classification for Assistive Human-Computer Interaction},
-  author    = {Wong, Jaden},
+  author    = {myojam Research Team},
   year      = {2026},
   month     = {April},
   institution = {myojam Project},
-  url       = {https://myojam.com/research},
+  url       = {https://myojam.com/research/paper},
   note      = {MIT Licence. Code available at https://github.com/Jaden300/myojam}
 }`
 
@@ -230,6 +230,16 @@ export default function Research() {
       <Navbar />
 
       <div style={{ maxWidth:760, margin:"0 auto", padding:"100px 32px 80px" }} className="paper">
+
+        {/* Breadcrumb */}
+        <div className="no-print" style={{ display:"flex", gap:8, alignItems:"center", marginBottom:32 }}>
+          <span onClick={()=>navigate("/research")} style={{ fontSize:13, color:"var(--text-tertiary)", cursor:"pointer", fontWeight:300, transition:"color 0.15s" }}
+            onMouseEnter={e=>e.currentTarget.style.color="var(--accent)"}
+            onMouseLeave={e=>e.currentTarget.style.color="var(--text-tertiary)"}
+          >Research</span>
+          <span style={{ fontSize:13, color:"var(--border)" }}>›</span>
+          <span style={{ fontSize:13, color:"var(--text-secondary)", fontWeight:300 }}>Technical report</span>
+        </div>
 
         {/* Journal-style header */}
         <div style={{ borderBottom:"2px solid var(--text)", paddingBottom:20, marginBottom:20 }}>
@@ -390,8 +400,8 @@ export default function Research() {
             onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)"}}
             onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--border-mid)";e.currentTarget.style.color="var(--text-secondary)"}}
           >Print / Save as PDF</button>
-          <button onClick={()=>navigate("/education")} className="no-print" style={{ background:"none", border:"1px solid var(--border-mid)", borderRadius:100, padding:"10px 24px", fontSize:13, color:"var(--text-secondary)", fontFamily:"var(--font)", cursor:"pointer" }}>
-            ← Education hub
+          <button onClick={()=>navigate("/research")} className="no-print" style={{ background:"none", border:"1px solid var(--border-mid)", borderRadius:100, padding:"10px 24px", fontSize:13, color:"var(--text-secondary)", fontFamily:"var(--font)", cursor:"pointer" }}>
+            ← Research hub
           </button>
         </div>
       </div>

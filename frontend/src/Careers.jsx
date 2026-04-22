@@ -5,6 +5,7 @@ import { IconBolt, IconBrain, IconCode, IconChart } from "./Icons"
 import { useNavigate } from "react-router-dom"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 import NeuralNoise from "./components/NeuralNoise"
+import ContactForm from "./components/ContactForm"
 
 const REASONS = [
   {
@@ -28,7 +29,7 @@ const REASONS = [
   {
     Icon: IconCode,
     title: "Fully open source",
-    body: "Everything we build is public. Your contributions are visible to the world  -  a portfolio piece that speaks for itself on any application.",
+    body: "Everything we build is public. Your contributions are visible to the world - a portfolio piece that speaks for itself on any application.",
     color: [59, 130, 246],
     rotY: 2.2,
     speedMult: 0.8,
@@ -269,7 +270,7 @@ function StickyReasons() {
         overflow: "hidden",
       }}>
 
-        {/* Left — orbital canvas */}
+        {/* Left - orbital canvas */}
         <div style={{
           flex: isMobile ? "0 0 44vh" : 1,
           position: "relative",
@@ -296,7 +297,7 @@ function StickyReasons() {
           </div>
         </div>
 
-        {/* Right — reason detail */}
+        {/* Right - reason detail */}
         <div style={{
           flex: 1,
           display: "flex", flexDirection: "column", justifyContent: "center",
@@ -304,7 +305,7 @@ function StickyReasons() {
           overflow: "hidden",
           background: "var(--bg-secondary)",
         }}>
-          {/* Section heading — inside sticky */}
+          {/* Section heading - inside sticky */}
           <div style={{ marginBottom: 40 }}>
             <p style={{ fontSize: 13, fontWeight: 500, color: "var(--accent)", letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 10 }}>
               Why contribute
@@ -312,9 +313,6 @@ function StickyReasons() {
             <h2 style={{ fontSize: "clamp(24px, 3vw, 38px)", fontWeight: 600, letterSpacing: "-1px", color: "var(--text)", marginBottom: 6 }}>
               Why myojam?
             </h2>
-            <p style={{ fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300, margin: 0 }}>
-              Scroll to explore {REASONS.length} reasons.
-            </p>
           </div>
 
           <div key={active} style={{ animation: "reasonIn 0.38s cubic-bezier(0.22,1,0.36,1) both" }}>
@@ -369,7 +367,7 @@ const ROLES = [
     title:"ML Research Contributor",
     type:"Volunteer · Remote",
     tags:["Python","scikit-learn","EMG","Signal Processing"],
-    desc:"Help improve the gesture classifier  -  better features, new architectures, cross-subject adaptation. You'll work directly with Ninapro DB5 and real sensor data.",
+    desc:"Help improve the gesture classifier - better features, new architectures, cross-subject adaptation. You'll work directly with Ninapro DB5 and real sensor data.",
   },
   {
     title:"Frontend Developer",
@@ -393,7 +391,7 @@ const ROLES = [
     title:"Technical Writer",
     type:"Volunteer · Remote",
     tags:["Documentation","Markdown","API docs","Education"],
-    desc:"Write and maintain technical documentation  -  API references, setup guides, hardware walkthroughs, and tutorials. Make the project accessible to people at every skill level.",
+    desc:"Write and maintain technical documentation - API references, setup guides, hardware walkthroughs, and tutorials. Make the project accessible to people at every skill level.",
   },
   {
     title:"Education Content Creator",
@@ -405,7 +403,7 @@ const ROLES = [
     title:"iOS / Android Developer",
     type:"Volunteer · Remote",
     tags:["React Native","iOS","Android","Bluetooth"],
-    desc:"Build a companion mobile app for monitoring gesture classification in real time  -  current gesture, confidence score, and session statistics over Bluetooth.",
+    desc:"Build a companion mobile app for monitoring gesture classification in real time - current gesture, confidence score, and session statistics over Bluetooth.",
   },
   {
     title:"UX / Accessibility Researcher",
@@ -417,7 +415,7 @@ const ROLES = [
     title:"Community Manager",
     type:"Volunteer · Remote",
     tags:["Community","Social Media","Outreach","Writing"],
-    desc:"Help grow the myojam community  -  manage communications, coordinate ELEVATE competition participants, support the Discord, and amplify the project's reach.",
+    desc:"Help grow the myojam community - manage communications, support the Discord, onboard new contributors, and amplify the project's reach.",
   },
   {
     title:"Windows / Linux Port Contributor",
@@ -489,7 +487,7 @@ export default function Careers() {
         </div>
       </section>
 
-      {/* Why myojam — sticky 3D orbital section */}
+      {/* Why myojam - sticky 3D orbital section */}
       <StickyReasons />
 
       {/* Open roles */}
@@ -498,7 +496,7 @@ export default function Careers() {
           <div style={{ marginBottom: 48 }}>
             <p style={{ fontSize: 13, fontWeight: 500, color: "var(--accent)", letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 12 }}>Open roles</p>
             <h2 style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 600, letterSpacing: "-1px", color: "var(--text)", marginBottom: 16 }}>Where you fit in.</h2>
-            <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, maxWidth: 520 }}>All roles are volunteer and remote. This is a portfolio-building, mission-driven project  -  not a job. But the work is real and the impact is real.</p>
+            <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, maxWidth: 520 }}>All roles are volunteer and remote. This is a portfolio-building, mission-driven project - not a job. But the work is real and the impact is real.</p>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 64 }}>
@@ -528,7 +526,13 @@ export default function Careers() {
               <p style={{ fontSize: 14, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7 }}>Tell us about yourself, what role interests you, and what you'd like to build. We review every application personally.</p>
             </div>
             <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius)", border: "1px solid var(--border)", overflow: "hidden", padding: "0 24px" }}>
-              <iframe src="https://tally.so/embed/NpJAGB?hideTitle=1&transparentBackground=1&dynamicHeight=1" width="100%" height="600" frameBorder="0" title="Careers application" style={{ display: "block" }} />
+              <ContactForm
+                source="careers"
+                namePlaceholder="Your name"
+                emailPlaceholder="your@email.com"
+                messagePlaceholder="Tell us about yourself, the role you're interested in, and what you'd like to build."
+                submitLabel="Submit application"
+              />
             </div>
           </div>
         </div>

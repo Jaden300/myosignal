@@ -193,7 +193,7 @@ const Threads = ({ color = [1, 1, 1], amplitude = 1, distance = 0, enableMouseIn
       renderer.render({ scene: mesh });
     }
 
-    // Context loss — browser suspends WebGL on scroll in some cases
+    // Context loss - browser suspends WebGL on scroll in some cases
     canvas.addEventListener('webglcontextlost', (e) => {
       e.preventDefault();
       if (active) cancelAnimationFrame(animationFrameId.current);

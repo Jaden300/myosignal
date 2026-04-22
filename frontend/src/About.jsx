@@ -5,36 +5,37 @@ import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 import AboutHelix from "./components/AboutHelix"
 import { t } from "./i18n"
 import NeuralNoise from "./components/NeuralNoise"
+import { IconRefresh, IconGlobe, IconMicroscope, IconBook } from "./Icons"
 
 const VALUES = [
   {
-    icon:"🔄",
-    title:"Technology should adapt to people",
-    body:"Most assistive tech forces users to conform to hardware constraints. We believe the opposite  -  the system should learn to understand you, not the other way around.",
+    icon:IconBook,
+    title:"Education as the mission",
+    body:"The articles, lesson plans, and interactive tools aren't supplements to the project - they are the project. Understanding EMG is as important as building with it.",
   },
   {
-    icon:"🌐",
+    icon:IconGlobe,
     title:"Open source by default",
-    body:"Every line of code, every model weight decision, every dataset choice is public. If myojam helps someone, we want them to be able to understand, modify, and build on it.",
+    body:"Every line of code, every model weight decision, every dataset choice is public. If myojam teaches someone, we want them to be able to understand, modify, and build on it.",
   },
   {
-    icon:"🔬",
+    icon:IconMicroscope,
     title:"Research-grade, human-scale",
-    body:"The underlying science  -  EMG signal processing, gesture classification, real-time inference  -  is rigorous. But the experience should feel as simple as flexing a finger.",
+    body:"The underlying science - EMG signal processing, gesture classification, real-time inference - is rigorous. But the experience of learning it should feel approachable from day one.",
   },
   {
-    icon:"📚",
-    title:"Education as infrastructure",
-    body:"Technology without understanding is fragile. The education hub, lesson plans, and articles aren't extras  -  they're core to making myojam's work durable and reproducible.",
+    icon:IconRefresh,
+    title:"Technology should adapt to people",
+    body:"Assistive technology that requires users to conform to hardware constraints has it backwards. The platform should learn to understand people, not the other way around.",
   },
 ]
 
 
 const STATS = [
   { val:"84.85%", label:"Cross-subject accuracy", sub:"On held-out subjects never seen during training" },
-  { val:"16,269", label:"Training windows",        sub:"From 10 subjects across Ninapro DB5" },
-  { val:"11",     label:"Published articles",      sub:"Ranging from neuroscience to hardware guides" },
-  { val:"MIT",    label:"License",                 sub:"Fully open  -  modify, fork, build on it" },
+  { val:"11",     label:"Published articles",      sub:"From neuroscience to hardware guides" },
+  { val:"3",      label:"Lesson plans",            sub:"Middle school through university" },
+  { val:"MIT",    label:"License",                 sub:"Fully open - modify, fork, build on it" },
 ]
 
 export default function About() {
@@ -85,22 +86,21 @@ export default function About() {
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:48, alignItems:"center" }}>
               <div>
                 <h2 style={{ fontSize:"clamp(28px,4vw,42px)", fontWeight:600, letterSpacing:"-1.2px", color:"var(--text)", lineHeight:1.15, marginBottom:20 }}>
-                  Make gesture-based control accessible, open, and free.
+                  Make EMG education accessible, open, and free.
                 </h2>
                 <p style={{ fontSize:16, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.8, marginBottom:16 }}>
-                  Starting with people who need it most  -  and building the educational resources to ensure the next generation of engineers understands both the technology and the humans it serves.
+                  Starting with the students, teachers, and researchers who want to understand it - and building the resources to ensure the next generation of engineers grasps both the technology and the humans it serves.
                 </p>
                 <p style={{ fontSize:16, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.8 }}>
-                  myojam began as a personal research challenge and grew into something larger: a working platform, an education hub, an international competition, and a growing body of open documentation that anyone can build on.
+                  myojam began as a personal research challenge and grew into something larger: a working classifier, a published education platform, lesson plans in use in real classrooms, and a growing body of open documentation that anyone can build on.
                 </p>
               </div>
               <div style={{ background:"var(--bg-secondary)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"32px" }}>
                 <div style={{ fontSize:11, fontWeight:600, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:20 }}>What myojam is</div>
                 {[
                   ["A gesture classifier","84.85% cross-subject accuracy on Ninapro DB5"],
-                  ["A desktop app","Native macOS  -  connect a sensor, control your computer"],
-                  ["An education hub","11 articles, 3 lesson plans, 5 interactive demos"],
-                  ["A block coding env","myocode  -  EMG gestures as first-class events"],
+                  ["An education hub","11 articles, 3 lesson plans, 4 interactive tools"],
+                  ["A published research pipeline","Documented signal processing, feature extraction, and classification"],
                   ["An open platform","MIT licensed, fully documented, publicly built"],
                 ].map(([title, sub])=>(
                   <div key={title} style={{ display:"flex", gap:12, marginBottom:14, alignItems:"flex-start" }}>
@@ -128,7 +128,7 @@ export default function About() {
           </Reveal>
           <StaggerList items={VALUES} columns={2} gap={16} renderItem={v=>(
             <HoverCard style={{ background:"var(--bg)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"28px 32px" }}>
-              <div style={{ fontSize:28, marginBottom:16 }}>{v.icon}</div>
+              <div style={{ width:36, height:36, borderRadius:10, background:"var(--accent-soft)", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:16 }}><v.icon size={20} color="var(--accent)" /></div>
               <div style={{ fontSize:16, fontWeight:600, color:"var(--text)", marginBottom:10 }}>{v.title}</div>
               <p style={{ fontSize:14, color:"var(--text-secondary)", lineHeight:1.75, fontWeight:300, margin:0 }}>{v.body}</p>
             </HoverCard>
@@ -136,7 +136,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Timeline — 3D helix */}
+      {/* Timeline - 3D helix */}
       <AboutHelix />
 
       {/* Open source CTA */}
@@ -147,7 +147,7 @@ export default function About() {
               <div>
                 <div style={{ fontSize:20, fontWeight:600, color:"var(--text)", letterSpacing:"-0.4px", marginBottom:8 }}>myojam is fully open source</div>
                 <p style={{ fontSize:15, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, margin:0, maxWidth:480 }}>
-                  Signal processing pipeline, ML model, React frontend, FastAPI backend, macOS desktop app  -  all public on GitHub under the MIT license.
+                  Signal processing pipeline, ML model, React frontend, FastAPI backend - all public on GitHub under the MIT license.
                 </p>
               </div>
               <a href="https://github.com/Jaden300/myojam" target="_blank" rel="noreferrer" style={{ background:"var(--accent)", color:"#fff", borderRadius:100, padding:"13px 28px", fontSize:15, fontWeight:500, textDecoration:"none", flexShrink:0, boxShadow:"0 4px 16px rgba(255,45,120,0.3)", transition:"transform 0.15s, box-shadow 0.15s" }}

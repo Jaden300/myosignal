@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import Navbar from "../Navbar"
 import Footer from "../Footer"
+import NeuralNoise from "../components/NeuralNoise"
 
 const META = {
   grade: "Grades 9–12",
@@ -15,30 +16,30 @@ const SECTIONS = [
   {
     num:"01", phase:"Warm-up", time:"10 min", color:"#FF2D78",
     title:"What happens when you clench your fist?",
-    body:"Open with this question on the board. Give students 2 minutes to write their answer individually, then discuss as a class. Expected answers will mention muscles, tendons, the brain  -  but rarely electricity. Introduce the concept that every muscle contraction is fundamentally an electrical event: motor neurons fire, depolarisation propagates along muscle fibres, and that electrical activity can be detected from outside the body.",
+    body:"Open with this question on the board. Give students 2 minutes to write their answer individually, then discuss as a class. Expected answers will mention muscles, tendons, the brain - but rarely electricity. Introduce the concept that every muscle contraction is fundamentally an electrical event: motor neurons fire, depolarisation propagates along muscle fibres, and that electrical activity can be detected from outside the body.",
     activity:null,
     teacher:"Draw the motor neuron → neuromuscular junction → muscle fibre pathway on the board. The key concept: action potentials in motor neurons trigger action potentials in muscle fibres via acetylcholine release at the NMJ.",
   },
   {
     num:"02", phase:"Direct instruction", time:"15 min", color:"#F97316",
     title:"The biology of EMG",
-    body:"Introduce surface electromyography. A surface electrode is a voltage sensor  -  it measures the difference in electrical potential between two points on the skin surface. When motor units beneath the electrode fire synchronously, the summed electrical field is large enough to be detected through skin, subcutaneous fat, and fascia. The result is a time-varying voltage signal: flat at rest, bursting during contraction.",
+    body:"Introduce surface electromyography. A surface electrode is a voltage sensor - it measures the difference in electrical potential between two points on the skin surface. When motor units beneath the electrode fire synchronously, the summed electrical field is large enough to be detected through skin, subcutaneous fat, and fascia. The result is a time-varying voltage signal: flat at rest, bursting during contraction.",
     activity:null,
     teacher:"Key terms to define and put on board: motor unit, motor unit action potential (MUAP), summation, recruitment threshold, conduction velocity. Ask: why does a stronger contraction produce a larger EMG signal? Answer: more motor units are recruited simultaneously.",
   },
   {
     num:"03", phase:"Exploration", time:"20 min", color:"#3B82F6",
     title:"Explore real EMG data",
-    body:"Direct students to myojam.com/demo. In Dataset mode, students click each of the 6 gesture buttons and observe the waveform displayed. They should answer these questions in their worksheet: Which gesture produces the largest amplitude signal? Which produces the most rapid oscillations? Does the signal return to baseline immediately when you stop, or does it decay gradually? What happens to the graph when you click the same gesture repeatedly  -  does it look the same each time?",
+    body:"Direct students to myojam.com/demo. In Dataset mode, students click each of the 6 gesture buttons and observe the waveform displayed. They should answer these questions in their worksheet: Which gesture produces the largest amplitude signal? Which produces the most rapid oscillations? Does the signal return to baseline immediately when you stop, or does it decay gradually? What happens to the graph when you click the same gesture repeatedly - does it look the same each time?",
     activity:"Student worksheet Q1–4: Describe the waveform shape for each gesture. Estimate the amplitude range. Count visible oscillations in 0.5 seconds for two different gestures and compare.",
     teacher:"Circulate and prompt students who finish early: 'What do you think the signal looks like for someone with more upper body mass? Would their amplitude be higher or lower and why?'",
   },
   {
     num:"04", phase:"Investigation", time:"15 min", color:"#8B5CF6",
     title:"Draw your own signal",
-    body:"Move students to myojam.com/playground. They draw waveforms with the mouse and observe the feature extraction panel update in real time. Guide them through the four features: MAV (overall energy), RMS (signal power), ZC (frequency content), WL (signal complexity). Students draw three waveforms  -  one flat (rest), one smooth and slow, one rapid and jagged  -  and record the feature values for each.",
+    body:"Move students to myojam.com/playground. They draw waveforms with the mouse and observe the feature extraction panel update in real time. Guide them through the four features: MAV (overall energy), RMS (signal power), ZC (frequency content), WL (signal complexity). Students draw three waveforms - one flat (rest), one smooth and slow, one rapid and jagged - and record the feature values for each.",
     activity:"Worksheet Q5–8: Fill in the feature table for each drawn signal. Which feature changes most between rest and active states? Which feature changes most between a slow contraction and a fast one?",
-    teacher:"The key insight to draw out: MAV and RMS capture 'how much' energy; ZC and WL capture 'how complex' the signal is. These are complementary  -  you need both types to distinguish gestures.",
+    teacher:"The key insight to draw out: MAV and RMS capture 'how much' energy; ZC and WL capture 'how complex' the signal is. These are complementary - you need both types to distinguish gestures.",
   },
   {
     num:"05", phase:"Discussion", time:"10 min", color:"#10B981",
@@ -50,9 +51,9 @@ const SECTIONS = [
   {
     num:"06", phase:"Exit ticket", time:"5 min", color:"#F59E0B",
     title:"3-2-1 exit ticket",
-    body:"Students write: 3 things they learned, 2 questions they still have, 1 real-world application they'd want to build if they could. Collect these  -  the questions are excellent material for the next lesson and for formative assessment.",
-    activity:"Exit ticket slip (half sheet). Students keep the 'application' section  -  they'll build on it in the myocode lesson.",
-    teacher:"Common misconceptions to watch for: 'EMG reads thoughts' (no  -  it reads muscle activity, which is one step downstream of thought), 'the signal is digital' (no  -  it's analogue voltage, digitised by the ADC).",
+    body:"Students write: 3 things they learned, 2 questions they still have, 1 real-world application they'd want to build if they could. Collect these - the questions are excellent material for the next lesson and for formative assessment.",
+    activity:"Exit ticket slip (half sheet). Students keep the 'application' section - they'll revisit it in the applications and ethics lesson.",
+    teacher:"Common misconceptions to watch for: 'EMG reads thoughts' (no - it reads muscle activity, which is one step downstream of thought), 'the signal is digital' (no - it's analogue voltage, digitised by the ADC).",
   },
 ]
 
@@ -69,7 +70,7 @@ const QUIZ_QUESTIONS = [
     question: "Where is the electrical signal that EMG measures actually generated?",
     options: ["In the brain's motor cortex","At the neuromuscular junction and muscle fibre membrane","In the tendon connecting muscle to bone","In the skin surface beneath the electrode"],
     correct: 1,
-    explanation: "EMG records the summed electrical activity of muscle fibre action potentials. These are triggered at the neuromuscular junction when motor neurons release acetylcholine, causing depolarisation along the muscle fibre membrane  -  not in the brain or tendon."
+    explanation: "EMG records the summed electrical activity of muscle fibre action potentials. These are triggered at the neuromuscular junction when motor neurons release acetylcholine, causing depolarisation along the muscle fibre membrane - not in the brain or tendon."
   },
   {
     question: "Why does a stronger muscle contraction produce a larger amplitude EMG signal?",
@@ -81,19 +82,19 @@ const QUIZ_QUESTIONS = [
     question: "What does the Zero Crossing Rate (ZC) feature primarily capture about an EMG signal?",
     options: ["The average energy of the signal","The total signal length or path","A proxy for the frequency content of the signal","The time between bursts of activity"],
     correct: 2,
-    explanation: "ZC counts how often the signal crosses zero. A high-frequency signal crosses zero many times per second; a low-frequency signal crosses few times. ZC is therefore a proxy for frequency content  -  cheaper to compute than a full spectral analysis."
+    explanation: "ZC counts how often the signal crosses zero. A high-frequency signal crosses zero many times per second; a low-frequency signal crosses few times. ZC is therefore a proxy for frequency content - cheaper to compute than a full spectral analysis."
   },
   {
     question: "A myojam window contains 200 samples recorded at 200Hz. How long is that window in time?",
     options: ["0.1 seconds","0.5 seconds","1 second","2 seconds"],
     correct: 2,
-    explanation: "Time = samples / sample rate = 200 / 200 = 1 second. This is myojam's window length  -  each classification uses exactly one second of EMG data."
+    explanation: "Time = samples / sample rate = 200 / 200 = 1 second. This is myojam's window length - each classification uses exactly one second of EMG data."
   },
   {
     question: "Which of the following is NOT a source of noise in a surface EMG signal?",
     options: ["Powerline interference at 50/60Hz","Cross-talk from neighbouring muscles","The electrode's distance from the motor cortex","Motion artefacts from electrode movement"],
     correct: 2,
-    explanation: "Surface EMG detects local muscle fibre activity  -  it doesn't measure anything from the motor cortex directly. The cortex is the source of the motor command, but what EMG captures is the downstream effect at the muscle level. The electrode's distance from the cortex is irrelevant."
+    explanation: "Surface EMG detects local muscle fibre activity - it doesn't measure anything from the motor cortex directly. The cortex is the source of the motor command, but what EMG captures is the downstream effect at the muscle level. The electrode's distance from the cortex is irrelevant."
   },
   {
     question: "What is the purpose of the 20–90Hz bandpass filter applied to myojam's EMG signal?",
@@ -105,13 +106,13 @@ const QUIZ_QUESTIONS = [
     question: "Surface EMG electrodes are placed on skin, not inside the muscle. What limitation does this introduce?",
     options: ["The signal is too strong to record accurately","The signal picks up activity from multiple nearby muscles, causing cross-talk","The electrodes can only detect rest, not contraction","The sampling rate is limited to 20Hz at the skin surface"],
     correct: 1,
-    explanation: "Surface electrodes pick up the summed electrical field from all motor units within detection range  -  which often spans multiple muscles. This means a ring finger flex also partially activates signals from middle and pinky muscles, blurring the classification problem."
+    explanation: "Surface electrodes pick up the summed electrical field from all motor units within detection range - which often spans multiple muscles. This means a ring finger flex also partially activates signals from middle and pinky muscles, blurring the classification problem."
   },
   {
     question: "A student draws a flat, nearly horizontal line in the Signal Playground. Which feature would you expect to be highest relative to other drawn signals?",
     options: ["MAV (Mean Absolute Value)","RMS (Root Mean Square)","ZC (Zero Crossing Rate)","WL (Waveform Length)"],
     correct: 2,
-    explanation: "A flat line oscillating near zero would cross zero frequently if it has any noise at all, giving a relatively high ZC. MAV and RMS would be very low (little energy), and WL would also be low (little variation between samples). But actually  -  for a truly flat signal all features approach zero; ZC would be highest relatively because any tiny fluctuation crosses zero multiple times. In the playground, rapidly jagged signals have the highest ZC."
+    explanation: "A flat line oscillating near zero would cross zero frequently if it has any noise at all, giving a relatively high ZC. MAV and RMS would be very low (little energy), and WL would also be low (little variation between samples). But actually - for a truly flat signal all features approach zero; ZC would be highest relatively because any tiny fluctuation crosses zero multiple times. In the playground, rapidly jagged signals have the highest ZC."
   },
 ]
 
@@ -124,25 +125,27 @@ export default function LessonEMGBasics() {
       <Navbar />
 
       {/* Hero */}
-      <div style={{ background:"linear-gradient(135deg, #fff0f5 0%, #fafafa 70%)", borderBottom:"1px solid var(--border)", padding:"100px 32px 56px" }}>
-        <div style={{ maxWidth:760, margin:"0 auto" }}>
+      <div style={{ position:"relative", overflow:"hidden", borderBottom:"1px solid var(--border)", padding:"100px 32px 56px" }}>
+        <NeuralNoise color={[0.90, 0.18, 0.47]} opacity={0.85} speed={0.0006} />
+        <div style={{ position:"absolute", inset:0, background:"rgba(3,0,18,0.65)", zIndex:1 }} />
+        <div style={{ maxWidth:760, margin:"0 auto", position:"relative", zIndex:2 }}>
           <div style={{ display:"flex", gap:8, marginBottom:24, flexWrap:"wrap" }}>
             <span onClick={()=>navigate("/educators")} style={{ fontSize:13, color:"#10B981", cursor:"pointer", fontWeight:400 }}>For educators</span>
-            <span style={{ fontSize:13, color:"var(--text-tertiary)" }}>→</span>
-            <span style={{ fontSize:13, color:"var(--text-tertiary)", fontWeight:300 }}>Lesson plan</span>
+            <span style={{ fontSize:13, color:"rgba(255,255,255,0.5)" }}>→</span>
+            <span style={{ fontSize:13, color:"rgba(255,255,255,0.5)", fontWeight:300 }}>Lesson plan</span>
           </div>
 
           <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:24 }}>
             {[META.grade, META.subject, `⏱ ${META.duration}`].map(tag=>(
-              <span key={tag} style={{ fontSize:11, fontWeight:500, color:"#FF2D78", background:"rgba(255,45,120,0.08)", border:"1px solid rgba(255,45,120,0.15)", borderRadius:100, padding:"4px 12px" }}>{tag}</span>
+              <span key={tag} style={{ fontSize:11, fontWeight:500, color:"#FF2D78", background:"rgba(255,45,120,0.12)", border:"1px solid rgba(255,45,120,0.3)", borderRadius:100, padding:"4px 12px" }}>{tag}</span>
             ))}
           </div>
 
-          <h1 style={{ fontSize:"clamp(28px,5vw,48px)", fontWeight:600, letterSpacing:"-1.5px", color:"var(--text)", lineHeight:1.08, marginBottom:20 }}>
+          <h1 style={{ fontSize:"clamp(28px,5vw,48px)", fontWeight:600, letterSpacing:"-1.5px", color:"#fff", lineHeight:1.08, marginBottom:20 }}>
             What is EMG? Reading<br/><span style={{ color:"#FF2D78" }}>muscle signals in the classroom.</span>
           </h1>
-          <p style={{ fontSize:16, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:580 }}>
-            Students discover how surface electromyography works, explore real EMG waveforms, and connect the biology of motor neurons to measurable electrical signals  -  using live data from the myojam demo.
+          <p style={{ fontSize:16, color:"rgba(255,255,255,0.72)", fontWeight:300, lineHeight:1.75, maxWidth:580 }}>
+            Students discover how surface electromyography works, explore real EMG waveforms, and connect the biology of motor neurons to measurable electrical signals - using live data from the myojam demo.
           </p>
         </div>
       </div>
@@ -246,7 +249,7 @@ export default function LessonEMGBasics() {
         </div>
 
         <Quiz
-          title="EMG Basics  -  quick check"
+          title="EMG Basics - quick check"
           questions={QUIZ_QUESTIONS}
           accentColor="#FF2D78"
         />

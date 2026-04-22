@@ -21,22 +21,23 @@ export default function Footer() {
           <div>
             <div onClick={()=>navigate("/")} style={{ fontSize:20, fontWeight:700, color:"var(--text)", letterSpacing:"-0.5px", marginBottom:8, cursor:"pointer" }}>myojam</div>
             <p style={{ fontSize:13, color:"var(--text-tertiary)", fontWeight:300, lineHeight:1.7, maxWidth:280, margin:0 }}>
-              Open-source surface EMG gesture classification for assistive human-computer interaction.
+              An open educational platform for learning EMG signal processing, gesture classification, and assistive technology.
             </p>
           </div>
 
           {/* Links */}
           <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:"8px 40px" }}>
             {[
-              ["Home",         "/"],
-              ["Demos",        "/demos"],
-              ["Education",    "/education"],
-              ["For educators","/educators"],
-              ["About",        "/about"],
-              ["Careers",      "/careers"],
-              ["Research",     "/research"],
-              ["ELEVATE",      "/elevate"],
-              ["Changelog",    "/changelog"],
+              ["Home",            "/"],
+              ["Education hub",   "/education"],
+              ["For educators",   "/educators"],
+              ["Interactive tools","/demos"],
+              ["About",           "/about"],
+              ["How it works",    "/how-it-works"],
+              ["Research",        "/research"],
+              ["Resources",       "/resources"],
+              ["Blog",            "/blog"],
+              ["Changelog",       "/changelog"],
             ].map(([label, path])=>(
               <span key={path} onClick={()=>navigate(path)} style={{ fontSize:13, color:"var(--text-tertiary)", fontWeight:300, cursor:"pointer", transition:"color 0.15s", whiteSpace:"nowrap" }}
                 onMouseEnter={e=>e.currentTarget.style.color="var(--accent)"}
@@ -65,7 +66,7 @@ export default function Footer() {
         {/* Bottom row */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:12, paddingTop:24, borderTop:"1px solid var(--border)" }}>
           <span style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300 }}>
-            © 2026 myojam. MIT License. Built by Jaden Wong.
+            © 2026 myojam. MIT License.
           </span>
           <div style={{ display:"flex", gap:20 }}>
             <span onClick={()=>navigate("/privacy")} style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300, cursor:"pointer", transition:"color 0.15s" }}

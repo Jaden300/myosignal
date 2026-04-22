@@ -2,6 +2,7 @@ import Navbar from "../Navbar"
 import { useNavigate } from "react-router-dom"
 import Footer from "../Footer"
 import ArticleBar from "../ArticleUtils"
+import NeuralNoise from "../components/NeuralNoise"
 
 function FaceAvatar({ seed, size = 48 }) {
   const skinTones = ["#f5dce4","#e8c9a0","#c8956c","#8d5524","#f5dce4"]
@@ -28,12 +29,12 @@ function FaceAvatar({ seed, size = 48 }) {
   )
 }
 
-const ABSTRACT = "Surface EMG gesture classification has achieved impressive accuracy in controlled laboratory settings  -  myojam included, at 84.85% cross-subject. But controlled lab conditions are not the real world. This article catalogues six specific sources of degradation that occur when EMG systems move from bench to daily use, and surveys the technical approaches being developed to address each one."
+const ABSTRACT = "Surface EMG gesture classification has achieved impressive accuracy in controlled laboratory settings - myojam included, at 84.85% cross-subject. But controlled lab conditions are not the real world. This article catalogues six specific sources of degradation that occur when EMG systems move from bench to daily use, and surveys the technical approaches being developed to address each one."
 
 const SECTIONS = [
   {
     num:"01", tag:"Electrode displacement", title:"The placement problem",
-    body:"Every time you reattach surface electrodes, they land in a slightly different position. The EMG signal is exquisitely sensitive to electrode location  -  a shift of just a few millimetres changes which motor units are closest to the electrode, altering the signal's amplitude, frequency content, and waveform shape. Studies have shown that electrode displacement alone can reduce within-subject accuracy from 95% to below 70%. No amount of better machine learning fixes a fundamentally different input signal.",
+    body:"Every time you reattach surface electrodes, they land in a slightly different position. The EMG signal is exquisitely sensitive to electrode location - a shift of just a few millimetres changes which motor units are closest to the electrode, altering the signal's amplitude, frequency content, and waveform shape. Studies have shown that electrode displacement alone can reduce within-subject accuracy from 95% to below 70%. No amount of better machine learning fixes a fundamentally different input signal.",
     callout:"The practical mitigation is anatomical landmarks. Placing electrodes relative to the muscle belly centre, muscle-tendon junction, or bony prominences gives more consistent positioning than eyeballing it. myojam's documentation includes a placement guide for exactly this reason."
   },
   {
@@ -43,12 +44,12 @@ const SECTIONS = [
   },
   {
     num:"03", tag:"Limb position", title:"The forgotten variable",
-    body:"Almost all EMG training datasets  -  including Ninapro DB5  -  collect data with subjects seated, arm horizontal, elbow at roughly 90 degrees. In real life, people gesture with their arm in arbitrary positions: arm raised, elbow extended, hand pronated. Limb position changes the geometry of underlying muscles relative to electrodes, and also activates postural muscles that create EMG cross-talk. A classifier that works perfectly for arm-at-rest completely breaks for arm-raised.",
+    body:"Almost all EMG training datasets - including Ninapro DB5 - collect data with subjects seated, arm horizontal, elbow at roughly 90 degrees. In real life, people gesture with their arm in arbitrary positions: arm raised, elbow extended, hand pronated. Limb position changes the geometry of underlying muscles relative to electrodes, and also activates postural muscles that create EMG cross-talk. A classifier that works perfectly for arm-at-rest completely breaks for arm-raised.",
     callout:"This is arguably the most underappreciated failure mode in the literature. It's the reason myojam's web demo performs well (you're probably sitting at a desk with your arm in a similar position to the training subjects) while real-world mobile use would be significantly worse."
   },
   {
     num:"04", tag:"Muscle fatigue", title:"The signal that changes under load",
-    body:"Fatigue shifts the EMG power spectrum toward lower frequencies while increasing overall amplitude. A classifier trained on fresh-muscle data sees a fatigued signal and interprets the frequency shift as a different gesture. Long continuous use sessions  -  exactly the scenarios where assistive technology is most critical  -  are the ones most likely to break the classifier.",
+    body:"Fatigue shifts the EMG power spectrum toward lower frequencies while increasing overall amplitude. A classifier trained on fresh-muscle data sees a fatigued signal and interprets the frequency shift as a different gesture. Long continuous use sessions - exactly the scenarios where assistive technology is most critical - are the ones most likely to break the classifier.",
     callout:null
   },
   {
@@ -58,7 +59,7 @@ const SECTIONS = [
   },
   {
     num:"06", tag:"Distribution shift", title:"The population problem",
-    body:"A classifier trained on controlled lab subjects faces significant distribution shift when deployed on real users: elderly individuals, users with spasticity, or natural co-articulated movement patterns. The 84.85% accuracy figure is valid for evaluation conditions  -  not for populations that differ from the training distribution.",
+    body:"A classifier trained on controlled lab subjects faces significant distribution shift when deployed on real users: elderly individuals, users with spasticity, or natural co-articulated movement patterns. The 84.85% accuracy figure is valid for evaluation conditions - not for populations that differ from the training distribution.",
     callout:null
   },
 ]
@@ -69,32 +70,34 @@ export default function WhyEMGHard() {
     <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
       <Navbar />
 
-      <div style={{ background:"linear-gradient(135deg, #fff5f0 0%, #fafafa 70%)", borderBottom:"1px solid var(--border)", padding:"100px 32px 56px" }}>
-        <div style={{ maxWidth:720, margin:"0 auto" }}>
+      <div style={{ position:"relative", overflow:"hidden", borderBottom:"1px solid var(--border)", padding:"100px 32px 56px" }}>
+        <NeuralNoise color={[0.85, 0.10, 0.30]} opacity={0.85} speed={0.0006} />
+        <div style={{ position:"absolute", inset:0, background:"rgba(3,0,18,0.65)", zIndex:1 }} />
+        <div style={{ maxWidth:720, margin:"0 auto", position:"relative", zIndex:2 }}>
           <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:28 }}>
             <span onClick={()=>navigate("/education")} style={{ fontSize:13, color:"var(--accent)", cursor:"pointer" }}>Education</span>
-            <span style={{ fontSize:13, color:"var(--text-tertiary)" }}>→</span>
-            <span style={{ fontSize:13, color:"var(--text-tertiary)", fontWeight:300 }}>Why EMG is hard</span>
+            <span style={{ fontSize:13, color:"rgba(255,255,255,0.5)" }}>→</span>
+            <span style={{ fontSize:13, color:"rgba(255,255,255,0.5)", fontWeight:300 }}>Why EMG is hard</span>
           </div>
 
-          <div style={{ display:"inline-flex", alignItems:"center", gap:6, background:"var(--accent-soft)", border:"1px solid rgba(255,45,120,0.15)", borderRadius:100, padding:"5px 16px", fontSize:13, color:"var(--accent)", fontWeight:500, marginBottom:24 }}>
+          <div style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(255,255,255,0.08)", backdropFilter:"blur(8px)", border:"1px solid rgba(255,45,120,0.3)", borderRadius:100, padding:"5px 16px", fontSize:13, color:"var(--accent)", fontWeight:500, marginBottom:24 }}>
             Signal processing · 7 min read
           </div>
 
-          <h1 style={{ fontSize:"clamp(28px, 5vw, 52px)", fontWeight:600, letterSpacing:"-1.5px", color:"var(--text)", lineHeight:1.08, marginBottom:24 }}>
+          <h1 style={{ fontSize:"clamp(28px, 5vw, 52px)", fontWeight:600, letterSpacing:"-1.5px", color:"#fff", lineHeight:1.08, marginBottom:24 }}>
             Why EMG is harder than it looks.<br/>
             <span style={{ color:"var(--accent)" }}>The six reasons gesture classification keeps failing.</span>
           </h1>
 
-          <p style={{ fontSize:17, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, marginBottom:36, maxWidth:580 }}>
-            Lab accuracy numbers are impressive. Real-world performance is not. Here's why  -  and what’s being done about it.
+          <p style={{ fontSize:17, color:"rgba(255,255,255,0.72)", fontWeight:300, lineHeight:1.75, marginBottom:36, maxWidth:580 }}>
+            Lab accuracy numbers are impressive. Real-world performance is not. Here's why - and what’s being done about it.
           </p>
 
           <div style={{ display:"flex", alignItems:"center", gap:12 }}>
             <FaceAvatar seed={2} size={40} />
             <div>
-              <div style={{ fontSize:14, fontWeight:500, color:"var(--text)" }}>Jaden Wong</div>
-              <div style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300 }}>Founder & Lead Engineer · November 18, 2025</div>
+              <div style={{ fontSize:14, fontWeight:500, color:"#fff" }}>myojam team</div>
+              <div style={{ fontSize:12, color:"rgba(255,255,255,0.5)", fontWeight:300 }}>Founder & Lead Engineer · November 18, 2025</div>
             </div>
           </div>
         </div>
@@ -129,7 +132,7 @@ export default function WhyEMGHard() {
         <div style={{ marginTop:56, background:"var(--bg-secondary)", borderRadius:"var(--radius)", padding:"40px", border:"1px solid var(--border)" }}>
           <div style={{ fontSize:11, fontWeight:500, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:14 }}>Conclusion</div>
           <p style={{ fontSize:15, color:"var(--text-secondary)", lineHeight:1.8, fontWeight:300, margin:0 }}>
-            None of these problems are unsolvable. Each failure mode maps cleanly to an engineering solution  -  better placement protocols, calibration, adaptive models, and more representative datasets. EMG is hard, but it is tractable. Progress in this field is incremental, but real.
+            None of these problems are unsolvable. Each failure mode maps cleanly to an engineering solution - better placement protocols, calibration, adaptive models, and more representative datasets. EMG is hard, but it is tractable. Progress in this field is incremental, but real.
           </p>
         </div>
 

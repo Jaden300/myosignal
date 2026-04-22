@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { IconLink } from "./Icons"
 
 function HeartBurst({ onDone }) {
   useEffect(() => {
@@ -112,7 +113,7 @@ function ShareModal({ url, title, onClose }) {
           }}
             onMouseEnter={btnHover} onMouseLeave={btnLeave}
           >
-            <span style={{ fontSize: 20 }}>{copied ? "✓" : "🔗"}</span>
+            <span style={{ fontSize: 20, display:"flex", alignItems:"center" }}>{copied ? "✓" : <IconLink size={18} />}</span>
             <span style={{ fontSize: 14, color: copied ? "var(--accent)" : "var(--text)" }}>
               {copied ? "Link copied!" : "Copy article link"}
             </span>

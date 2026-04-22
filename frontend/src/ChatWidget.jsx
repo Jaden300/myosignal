@@ -229,7 +229,7 @@ export default function ChatWidget() {
               </div>
             ))}
 
-            {/* Thinking state — shining text */}
+            {/* Thinking state - shining text */}
             {loading && (
               <div style={{
                 alignSelf: "flex-start",

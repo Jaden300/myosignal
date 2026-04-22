@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { useState, useRef, useEffect } from "react"
 import Logo from "./Logo"
 import { t } from "./i18n"
-import { IconGear, IconBook, IconBulb, IconPeople, IconRocket, IconBuilding, IconCode, IconShield } from "./Icons"
+import { IconBook, IconGraduate, IconBulb, IconPeople, IconRocket, IconBuilding, IconCode, IconShield, IconPencil, IconBolt, IconMicroscope, IconNote, IconLink } from "./Icons"
 
 function Dropdown({ label, items, pathname }) {
   const [open, setOpen] = useState(false)
@@ -133,12 +133,13 @@ export default function Navbar() {
       </div>
 
       <div style={{ display:"flex", alignItems:"center", gap:24 }}>
-        <NavLink label={t("nav_demos")} path="/demos" pathname={pathname}/>
-
         <Dropdown label={t("nav_learn")} pathname={pathname} items={[
-          [t("nav_howItWorks"),  "/how-it-works", IconGear],
-          [t("nav_education"),   "/education",    IconBook],
-          [t("nav_educators"),   "/educators",    IconPeople],
+          [t("nav_education"),   "/education",       IconBook],
+          [t("nav_educators"),   "/educators",       IconGraduate],
+          [t("nav_howItWorks"),  "/how-it-works",    IconMicroscope],
+          ["Interactive tools",  "/demos",           IconBolt],
+          ["Resources",          "/resources",       IconLink],
+          ["Submit an article",  "/submit-article",  IconPencil],
         ]}/>
 
         <Dropdown label={t("nav_company")} pathname={pathname} items={[
@@ -147,12 +148,12 @@ export default function Navbar() {
           [t("nav_careers"),      "/careers",           IconRocket],
           [t("nav_corporations"), "/corporations",      IconBuilding],
           ["Workplace policy",    "/workplace-policy",  IconShield],
+          ["Blog",                "/blog",              IconNote],
           [t("nav_changelog"),    "/changelog",         IconCode],
-          [t("nav_research"),     "/research",          IconBook],
+          ["Research",            "/research",          IconMicroscope],
         ]}/>
 
         <NavLink label={t("nav_contact")} path="/contact" pathname={pathname}/>
-        <NavLink label={t("nav_elevate")} path="/elevate" pathname={pathname} accent={true}/>
       </div>
     </nav>
   )

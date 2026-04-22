@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import "./index.css"
 import Landing from "./Landing"
-import App from "./App"
 import About from "./About"
 import HowItWorks from "./HowItWorks"
 import Contact from "./Contact"
@@ -32,15 +31,18 @@ import BuildYourOwn from "./articles/BuildYourOwn"
 import FutureOfBCI from "./articles/FutureOfBCI"
 import EMGEthics from "./articles/EMGEthics"
 import WindowingExplained from "./articles/WindowingExplained"
-import MyoCode from "./MyoCode"
 import Educators from "./Educators"
 import LessonEMGBasics from "./educators/LessonEMGBasics"
 import LessonGestureClassifier from "./educators/LessonGestureClassifier"
+import LessonApplicationsEthics from "./educators/LessonApplicationsEthics"
 import EducatorResources from "./educators/EducatorResources"
+import Blog from "./Blog"
+import ResearchHub from "./ResearchHub"
+import ResourcesPage from "./ResourcesPage"
 import Changelog from "./Changelog"
-import Elevate from "./Elevate"
 import Research from "./Research"
 import WorkplacePolicy from "./WorkplacePolicy"
+import SubmitArticle from "./SubmitArticle"
 
 import { initTheme } from "./theme"
 initTheme()
@@ -54,7 +56,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <ChatWidget />
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/demo" element={<App />} />
         <Route path="/about" element={<About />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/contact" element={<Contact />} />
@@ -80,15 +81,18 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/education/future-of-bci" element={<FutureOfBCI />} />
         <Route path="/education/ethics-of-emg" element={<EMGEthics />} />
         <Route path="/education/windowing-explained" element={<WindowingExplained />} />
-        <Route path="/myocode" element={<MyoCode />} />
         <Route path="/educators" element={<Educators />} />
         <Route path="/educators/lesson-emg-basics" element={<LessonEMGBasics />} />
         <Route path="/educators/lesson-gesture-classifier" element={<LessonGestureClassifier />} />
+        <Route path="/educators/lesson-applications-ethics" element={<LessonApplicationsEthics />} />
         <Route path="/educators/resources" element={<EducatorResources />} />
         <Route path="/changelog" element={<Changelog />} />
-        <Route path="/elevate" element={<Elevate />} />
-        <Route path="/research" element={<Research />} />
+        <Route path="/research" element={<ResearchHub />} />
+        <Route path="/research/paper" element={<Research />} />
+        <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/workplace-policy" element={<WorkplacePolicy />} />
+        <Route path="/submit-article" element={<SubmitArticle />} />
+        <Route path="/blog" element={<Blog />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

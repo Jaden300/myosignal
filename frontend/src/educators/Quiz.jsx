@@ -1,9 +1,10 @@
 import { useState } from "react"
+import { IconNote } from "../Icons"
 
 const RESULTS = [
-  { min:0,  max:49,  label:"Keep exploring",  color:"#EF4444", msg:"Review the lesson material and try again  -  the concepts will click with another pass." },
-  { min:50, max:74,  label:"Getting there",   color:"#F59E0B", msg:"Good foundation. A few concepts need consolidating  -  review the sections you missed." },
-  { min:75, max:89,  label:"Solid",           color:"#3B82F6", msg:"Strong understanding. You've got the core concepts  -  push further with the extension activities." },
+  { min:0,  max:49,  label:"Keep exploring",  color:"#EF4444", msg:"Review the lesson material and try again - the concepts will click with another pass." },
+  { min:50, max:74,  label:"Getting there",   color:"#F59E0B", msg:"Good foundation. A few concepts need consolidating - review the sections you missed." },
+  { min:75, max:89,  label:"Solid",           color:"#3B82F6", msg:"Strong understanding. You've got the core concepts - push further with the extension activities." },
   { min:90, max:100, label:"Excellent",        color:"#10B981", msg:"Outstanding. You're ready to teach this material yourself." },
 ]
 
@@ -54,7 +55,7 @@ export default function Quiz({ title, questions, accentColor = "#FF2D78" }) {
   if (phase === "intro") return (
     <div style={{ background:"var(--bg-secondary)", borderRadius:"var(--radius)", border:"1px solid var(--border)", overflow:"hidden", marginTop:48 }}>
       <div style={{ borderBottom:"1px solid var(--border)", padding:"24px 28px", display:"flex", alignItems:"center", gap:12 }}>
-        <div style={{ width:36, height:36, borderRadius:10, background:accentColor+"18", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>📝</div>
+        <div style={{ width:36, height:36, borderRadius:10, background:accentColor+"18", display:"flex", alignItems:"center", justifyContent:"center" }}><IconNote size={18} color={accentColor} /></div>
         <div>
           <div style={{ fontSize:13, fontWeight:600, color:accentColor, textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:2 }}>Quick check</div>
           <div style={{ fontSize:16, fontWeight:600, color:"var(--text)" }}>{title}</div>
@@ -143,7 +144,7 @@ export default function Quiz({ title, questions, accentColor = "#FF2D78" }) {
           <div style={{ background: selected===q.correct ? "rgba(16,185,129,0.07)" : "rgba(239,68,68,0.05)", border: `1px solid ${selected===q.correct ? "rgba(16,185,129,0.25)" : "rgba(239,68,68,0.2)"}`, borderLeft:`3px solid ${selected===q.correct ? "#10B981" : "#EF4444"}`, borderRadius:"0 10px 10px 0", padding:"16px 20px", marginBottom:20, animation:"fadeIn 0.25s ease" }}>
             <style>{`@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}`}</style>
             <div style={{ fontSize:11, fontWeight:600, color: selected===q.correct ? "#10B981" : "#EF4444", textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:6 }}>
-              {selected===q.correct ? "Correct!" : `Incorrect  -  the answer is ${String.fromCharCode(65+q.correct)}`}
+              {selected===q.correct ? "Correct!" : `Incorrect - the answer is ${String.fromCharCode(65+q.correct)}`}
             </div>
             <p style={{ fontSize:13, color:"var(--text-secondary)", lineHeight:1.75, fontWeight:300, margin:0 }}>{q.explanation}</p>
           </div>

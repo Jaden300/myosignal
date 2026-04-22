@@ -2,51 +2,35 @@ import { useNavigate } from "react-router-dom"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
-import { IconBolt, IconPencil, IconBrain, IconChart, IconDemo } from "./Icons"
-import LiquidChrome from "./components/LiquidChrome"
+import { IconPencil, IconBrain, IconChart, IconDemo } from "./Icons"
+import NeuralNoise from "./components/NeuralNoise"
 
-// Map demo icon names to actual SVG components
 const ICON_MAP = {
-  live:   IconBolt,
   pencil: IconPencil,
   game:   IconBrain,
   chart:  IconChart,
   matrix: IconDemo,
 }
 
-// Demo data
-const DEMOS = [
-  {
-    slug: "/demo",
-    icon: "live",
-    tag: "Live classifier",
-    title: "EMG Gesture Demo",
-    desc: "Load real EMG windows from the Ninapro DB5 dataset and watch the Random Forest classifier predict gestures in real time. Includes a 3D hand model, confidence scores, and per-gesture accuracy breakdown. No hardware needed.",
-    features: ["Real Ninapro DB5 data", "6 gesture classes", "Live confidence scoring", "3D hand visualization"],
-    cta: "Open demo →",
-    bg: "linear-gradient(135deg, #fff0f5 0%, #fafafa 100%)",
-    accent: "#FF2D78",
-  },
+const TOOLS = [
   {
     slug: "/playground",
     icon: "pencil",
-    tag: "Interactive",
+    tag: "Signal processing",
     title: "Signal Playground",
-    desc: "Draw an EMG-like waveform with your mouse and watch the feature extraction pipeline compute MAV, RMS, ZC, and WL live as you draw. No data loading needed  -  just draw.",
+    desc: "Draw an EMG-like waveform with your mouse and watch the feature extraction pipeline compute MAV, RMS, ZC, and WL live as you draw. A hands-on way to understand what the classifier actually sees.",
     features: ["Draw any waveform", "Live feature extraction", "Heuristic classification", "Feature explainer"],
     cta: "Open playground →",
-    bg: "linear-gradient(135deg, #f0f4ff 0%, #fafafa 100%)",
     accent: "#3B82F6",
   },
   {
     slug: "/game",
     icon: "game",
-    tag: "Mini-game",
+    tag: "Learning game",
     title: "Gesture Reaction Game",
-    desc: "A gesture flashes on screen. Press the matching key before the timer runs out. Three difficulty levels  -  how fast can your fingers react?",
-    features: ["3 difficulty levels", "Streak tracking", "Reaction scoring", "Keyboard-driven"],
+    desc: "A target gesture appears on screen - press the matching key before time runs out. Three difficulty levels designed to build intuition for the 6 gesture classes used in myojam's classifier.",
+    features: ["3 difficulty levels", "6 gesture classes", "Reaction scoring", "Keyboard-driven"],
     cta: "Play now →",
-    bg: "linear-gradient(135deg, #fff5f0 0%, #fafafa 100%)",
     accent: "#F59E0B",
   },
   {
@@ -54,10 +38,9 @@ const DEMOS = [
     icon: "chart",
     tag: "Signal processing",
     title: "EMG Frequency Analyzer",
-    desc: "Load a real Ninapro EMG window and inspect its frequency spectrum. Watch the 20–90Hz bandpass filter isolate gesture signal from noise in real time across any of the 16 electrode channels.",
+    desc: "Load a real Ninapro EMG window and inspect its frequency spectrum. Watch the 20–90 Hz bandpass filter isolate gesture signal from noise in real time across any of the 16 electrode channels.",
     features: ["Real Ninapro windows", "16 channel selector", "Bandpass filter viz", "Frequency band legend"],
     cta: "Open analyzer →",
-    bg: "linear-gradient(135deg, #f5f0ff 0%, #fafafa 100%)",
     accent: "#8B5CF6",
   },
   {
@@ -65,22 +48,10 @@ const DEMOS = [
     icon: "matrix",
     tag: "Model evaluation",
     title: "Confusion Matrix Explorer",
-    desc: "An interactive heatmap of the classifier's cross-subject accuracy. Click any cell to see how often one gesture is confused for another  -  and the biomechanical reason why.",
+    desc: "An interactive heatmap of the classifier's cross-subject accuracy. Click any cell to see how often one gesture is confused for another - and the biomechanical reason why.",
     features: ["Interactive heatmap", "Per-gesture recall", "Confusion explanations", "Click-to-explore"],
     cta: "Explore →",
-    bg: "linear-gradient(135deg, #f0fff8 0%, #fafafa 100%)",
     accent: "#10B981",
-  },
-  {
-    slug: "/myocode",
-    icon: "code",
-    tag: "Block coding",
-    title: "myocode",
-    desc: "A Scratch-like block coding environment where EMG gestures are first-class events. Snap blocks together, draw on a canvas, move a sprite, and build programs that respond to muscle signals  -  no hardware needed.",
-    features: ["Visual block coding", "EMG gesture events", "Live canvas stage", "Example programs"],
-    cta: "Open myocode →",
-    bg: "linear-gradient(135deg, #f5f0ff 0%, #fafafa 100%)",
-    accent: "#8B5CF6",
   },
 ]
 
@@ -98,46 +69,41 @@ export default function Demos() {
         borderBottom: "1px solid var(--border)",
         padding: "100px 32px 64px"
       }}>
-        {/* LiquidChrome background */}
-        <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-          <LiquidChrome baseColor={[0.18, 0.04, 0.08]} speed={0.15} amplitude={0.25} interactive={false} />
-        </div>
-        {/* Dark overlay for text legibility */}
-        <div style={{ position: "absolute", inset: 0, zIndex: 0, background: "rgba(0,0,0,0.45)" }} />
-        {/* Content */}
-        <div style={{ maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 1 }}>
+        <NeuralNoise color={[0.85, 0.10, 0.30]} opacity={0.85} speed={0.0006} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
+        <div style={{ maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <Reveal>
-            <SectionPill>Interactive demos</SectionPill>
+            <SectionPill>Interactive learning tools</SectionPill>
             <h1 style={{
               fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 600,
               letterSpacing: "-1.5px", color: "#fff", marginBottom: 20, lineHeight: 1.08,
               textShadow: "0 2px 16px rgba(0,0,0,0.4)"
             }}>
-              See myojam<br />
-              <span style={{ color: "var(--accent)" }}>working in your browser.</span>
+              Learn by doing.<br />
+              <span style={{ color: "var(--accent)" }}>No hardware required.</span>
             </h1>
             <p style={{
               fontSize: 17, color: "rgba(255,255,255,0.88)", fontWeight: 400,
               lineHeight: 1.7, maxWidth: 520
             }}>
-              No hardware required. Both demos run entirely in the browser using
-              real data from the Ninapro DB5 dataset and the same signal processing
-              pipeline as the desktop app.
+              Four hands-on tools for exploring EMG signal processing, gesture classification,
+              and machine learning - all running in your browser using real data from the
+              Ninapro DB5 dataset.
             </p>
           </Reveal>
         </div>
       </div>
 
-      {/* Demo cards */}
+      {/* Tool cards */}
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "64px 32px 80px" }}>
         <StaggerList
-          items={DEMOS}
+          items={TOOLS}
           columns={1}
           gap={24}
-          renderItem={(demo) => (
+          renderItem={(tool) => (
             <HoverCard
               color="rgba(255,45,120,0.08)"
-              onClick={() => navigate(demo.slug)}
+              onClick={() => navigate(tool.slug)}
               style={{
                 borderRadius: "var(--radius)",
                 border: "1px solid var(--border)",
@@ -146,81 +112,78 @@ export default function Demos() {
             >
               {/* Card banner */}
               <div style={{
-                background: demo.bg,
+                background: "var(--bg-secondary)",
                 borderBottom: "1px solid var(--border)",
                 padding: "36px 40px",
                 display: "flex", alignItems: "flex-start", gap: 24
               }}>
-                {/* Icon container */}
                 {(() => {
-                  const Icon = ICON_MAP[demo.icon] || IconBolt
+                  const Icon = ICON_MAP[tool.icon]
                   return (
                     <div style={{
                       width: 56, height: 56, borderRadius: 18, flexShrink: 0,
-                      background: demo.accent + "18",
+                      background: tool.accent + "18",
                       display: "flex", alignItems: "center", justifyContent: "center"
                     }}>
-                      <Icon size={26} color={demo.accent} />
+                      <Icon size={26} color={tool.accent} />
                     </div>
                   )
                 })()}
 
-                {/* Text content */}
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
                     <span style={{
-                      fontSize: 11, fontWeight: 500, color: demo.accent,
-                      background: demo.accent + "18", border: `1px solid ${demo.accent}30`,
+                      fontSize: 11, fontWeight: 500, color: tool.accent,
+                      background: tool.accent + "18", border: `1px solid ${tool.accent}30`,
                       borderRadius: 100, padding: "3px 10px"
-                    }}>{demo.tag}</span>
+                    }}>{tool.tag}</span>
                   </div>
                   <h2 style={{
                     fontSize: 24, fontWeight: 600, color: "var(--text)",
                     letterSpacing: "-0.5px", marginBottom: 10
-                  }}>{demo.title}</h2>
+                  }}>{tool.title}</h2>
                   <p style={{
                     fontSize: 15, color: "var(--text-secondary)",
                     lineHeight: 1.7, fontWeight: 300, margin: 0, maxWidth: 560
-                  }}>{demo.desc}</p>
+                  }}>{tool.desc}</p>
                 </div>
               </div>
 
               {/* Card footer */}
               <div style={{
                 padding: "20px 40px",
-                background: "var(--bg-secondary)",
+                background: "var(--bg)",
                 display: "flex", justifyContent: "space-between", alignItems: "center",
                 flexWrap: "wrap", gap: 16
               }}>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {demo.features.map(f => (
+                  {tool.features.map(f => (
                     <span key={f} style={{
                       fontSize: 12, color: "var(--text-secondary)",
-                      background: "var(--bg)", border: "1px solid var(--border)",
+                      background: "var(--bg-secondary)", border: "1px solid var(--border)",
                       borderRadius: 100, padding: "4px 12px", fontWeight: 300
                     }}>✓ {f}</span>
                   ))}
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 500, color: demo.accent }}>{demo.cta}</span>
+                <span style={{ fontSize: 14, fontWeight: 500, color: tool.accent }}>{tool.cta}</span>
               </div>
             </HoverCard>
           )}
         />
 
-        {/* Desktop app CTA */}
+        {/* Education hub CTA */}
         <Reveal delay={0.3}>
-          <div style={{ marginTop:48, background:"var(--bg-secondary)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"36px 40px", display:"flex", justifyContent:"space-between", alignItems:"center", gap:24, flexWrap:"wrap" }}>
+          <div style={{ marginTop: 48, background: "var(--bg-secondary)", borderRadius: "var(--radius)", border: "1px solid var(--border)", padding: "36px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
             <div>
-              <div style={{ fontSize:16, fontWeight:600, color:"var(--text)", marginBottom:8 }}>Want to try with real hardware?</div>
-              <p style={{ fontSize:14, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, margin:0, maxWidth:440 }}>
-                The native macOS application connects directly to a MyoWare 2.0 sensor over USB serial. Six gestures, real-time classification, full cursor and keyboard control.
+              <div style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>Want to go deeper?</div>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, margin: 0, maxWidth: 440 }}>
+                The education hub has 11 articles covering the neuroscience, signal processing, and machine learning behind these tools - from first principles to implementation details.
               </p>
-              <div style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300, marginTop:8 }}>macOS 12+ · Requires Accessibility permission · MyoWare 2.0 sensor optional</div>
             </div>
-            <a href="https://github.com/user-attachments/files/26291771/myojam-mac.zip" style={{ background:"var(--accent)", color:"#fff", borderRadius:100, padding:"13px 28px", fontSize:15, fontWeight:500, textDecoration:"none", flexShrink:0, boxShadow:"0 4px 16px rgba(255,45,120,0.3)", transition:"transform 0.15s, box-shadow 0.15s", display:"flex", alignItems:"center", gap:8 }}
-              onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.04)";e.currentTarget.style.boxShadow="0 8px 24px rgba(255,45,120,0.4)"}}
-              onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 4px 16px rgba(255,45,120,0.3)"}}
-            >↓ Download for Mac</a>
+            <button onClick={() => navigate("/education")} style={{ background: "var(--accent)", color: "#fff", borderRadius: 100, padding: "13px 28px", fontSize: 15, fontWeight: 500, border: "none", fontFamily: "var(--font)", cursor: "pointer", flexShrink: 0, boxShadow: "0 4px 16px rgba(255,45,120,0.3)", transition: "transform 0.15s, box-shadow 0.15s" }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.04)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(255,45,120,0.4)" }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(255,45,120,0.3)" }}
+            >Explore the education hub →</button>
           </div>
         </Reveal>
       </div>

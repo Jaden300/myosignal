@@ -6,7 +6,9 @@ import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 import NeuralNoise from "./components/NeuralNoise"
 import {
   IconPeople, IconHeart, IconShield, IconBulb,
-  IconBolt, IconBrain, IconCode, IconRocket
+  IconBolt, IconBrain, IconCode, IconRocket,
+  IconClock, IconDocument, IconMegaphone, IconBellOff, IconGlobe, IconRefresh,
+  IconPhoneOff, IconSprout, IconHandshake
 } from "./Icons"
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -16,7 +18,7 @@ const PILLARS = [
     Icon: IconPeople,
     color: [255, 45, 120],
     title: "Fully distributed by design",
-    body: "myojam has no central office and never will. Every process, meeting format, and communication norm is built for people who are not in the same room — not retrofitted from in-person habits.",
+    body: "myojam has no central office and never will. Every process, meeting format, and communication norm is built for people who are not in the same room - not retrofitted from in-person habits.",
   },
   {
     Icon: IconHeart,
@@ -49,7 +51,7 @@ const DEI_COMMITMENTS = [
   },
   {
     label: "Accessibility",
-    text: "Every public-facing tool we build is tested against WCAG 2.1 AA. Accessibility is a feature requirement, not an afterthought — it is directly aligned with our mission.",
+    text: "Every public-facing tool we build is tested against WCAG 2.1 AA. Accessibility is a feature requirement, not an afterthought - it is directly aligned with our mission.",
   },
   {
     label: "Economic inclusion",
@@ -61,38 +63,38 @@ const DEI_COMMITMENTS = [
   },
   {
     label: "Disability",
-    text: "Given that we build assistive technology, we centre the voices of people with disabilities in our design and research processes — not as token consultees, but as core contributors.",
+    text: "Given that we build assistive technology, we centre the voices of people with disabilities in our design and research processes - not as token consultees, but as core contributors.",
   },
 ]
 
 const REMOTE_NORMS = [
   {
-    icon: "🕐",
+    icon: IconClock,
     title: "Work when it works for you",
-    body: "We have no set hours. The only expectation is that you communicate proactively — if you're unavailable, say so. We optimise for output and trust contributors to manage their own time.",
+    body: "We have no set hours. The only expectation is that you communicate proactively - if you're unavailable, say so. We optimise for output and trust contributors to manage their own time.",
   },
   {
-    icon: "📝",
+    icon: IconDocument,
     title: "Write things down",
     body: "Decisions, context, and reasoning all live in writing. If a conversation happened in a DM or a call, the outcome gets documented where the team can find it. Institutional memory shouldn't depend on who attended which meeting.",
   },
   {
-    icon: "📣",
+    icon: IconMegaphone,
     title: "Over-communicate context",
     body: "When you share work, include the why. When you leave a review comment, explain your reasoning. When you're blocked, say so early. Context-rich communication eliminates the anxiety of silence.",
   },
   {
-    icon: "🔕",
+    icon: IconBellOff,
     title: "Respect deep work",
-    body: "Notifications are not urgent by default. We do not expect instant replies. If something is genuinely time-sensitive, say so explicitly — otherwise, assume people will respond when they surface from focused work.",
+    body: "Notifications are not urgent by default. We do not expect instant replies. If something is genuinely time-sensitive, say so explicitly - otherwise, assume people will respond when they surface from focused work.",
   },
   {
-    icon: "🌍",
+    icon: IconGlobe,
     title: "Time-zone aware scheduling",
     body: "When synchronous conversation is necessary, we rotate meeting times so the same people aren't always burdened with off-hours calls. We record and summarise everything for those who can't attend live.",
   },
   {
-    icon: "🔁",
+    icon: IconRefresh,
     title: "Iterate in public",
     body: "Draft thinking, half-formed ideas, and works in progress are welcome. We'd rather see messy early work than polished output that arrives too late for feedback. Progress over perfection, always.",
   },
@@ -101,23 +103,23 @@ const REMOTE_NORMS = [
 const CONDUCT_ITEMS = [
   ["We do not tolerate", [
     "Harassment, discrimination, or exclusion based on race, gender, sexuality, disability, nationality, religion, age, or any other identity",
-    "Condescending or dismissive communication — in reviews, comments, or discussions",
+    "Condescending or dismissive communication - in reviews, comments, or discussions",
     "Gatekeeping knowledge or treating expertise as a social hierarchy",
     "Retaliation against anyone who raises a concern in good faith",
   ]],
   ["We actively encourage", [
-    "Asking questions at any experience level — there are no dumb questions here",
-    "Constructive disagreement — challenge ideas, not people",
+    "Asking questions at any experience level - there are no dumb questions here",
+    "Constructive disagreement - challenge ideas, not people",
     "Crediting contributors generously and by name",
     "Pointing out where our own processes fall short of our values",
   ]],
 ]
 
 const WELLBEING = [
-  { icon: "🧠", title: "Mental health", body: "Burnout is treated as a systems failure, not a personal one. If you're overwhelmed, say so. We will reduce scope, adjust timelines, or redistribute work — no questions asked." },
-  { icon: "📵", title: "Right to disconnect", body: "Once you're done for the day, you're done. No one is expected to monitor channels, respond to pings, or be reachable outside their own working hours." },
-  { icon: "🌱", title: "Growth support", body: "We invest in contributors' development. Whether that's reviewing your code in depth, co-authoring a research write-up, or connecting you with mentors in the field — we want you to leave myojam more capable than when you arrived." },
-  { icon: "🤝", title: "Onboarding care", body: "No one should feel dropped in at the deep end. Every new contributor gets a dedicated onboarding guide, a point of contact, and an explicit invitation to ask any question they have — however basic it might seem." },
+  { icon: IconBrain, title: "Mental health", body: "Burnout is treated as a systems failure, not a personal one. If you're overwhelmed, say so. We will reduce scope, adjust timelines, or redistribute work - no questions asked." },
+  { icon: IconPhoneOff, title: "Right to disconnect", body: "Once you're done for the day, you're done. No one is expected to monitor channels, respond to pings, or be reachable outside their own working hours." },
+  { icon: IconSprout, title: "Growth support", body: "We invest in contributors' development. Whether that's reviewing your code in depth, co-authoring a research write-up, or connecting you with mentors in the field - we want you to leave myojam more capable than when you arrived." },
+  { icon: IconHandshake, title: "Onboarding care", body: "No one should feel dropped in at the deep end. Every new contributor gets a dedicated onboarding guide, a point of contact, and an explicit invitation to ask any question they have - however basic it might seem." },
 ]
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -232,7 +234,7 @@ export default function WorkplacePolicy() {
             lineHeight: 1.78, maxWidth: 600, margin: "0 auto",
             animation: "fadeUp 0.55s 0.16s ease both",
           }}>
-            myojam is a remote-first, open-source project. This page outlines how we work, how we treat each other, and the values we hold ourselves to — not as aspirations, but as operating principles.
+            myojam is a remote-first, open-source project. This page outlines how we work, how we treat each other, and the values we hold ourselves to - not as aspirations, but as operating principles.
           </p>
         </div>
       </div>
@@ -278,7 +280,7 @@ export default function WorkplacePolicy() {
               </div>
               <div>
                 <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.8, margin: 0 }}>
-                  Remote work done well requires explicit norms, not just trust and good intentions. These are the habits we have committed to as a team — each one chosen because we've seen what happens when it's missing.
+                  Remote work done well requires explicit norms, not just trust and good intentions. These are the habits we have committed to as a team - each one chosen because we've seen what happens when it's missing.
                 </p>
               </div>
             </div>
@@ -288,7 +290,7 @@ export default function WorkplacePolicy() {
               background: "var(--bg)", border: "1px solid var(--border)",
               borderRadius: "var(--radius)", padding: "28px",
             }}>
-              <div style={{ fontSize: 28, marginBottom: 14 }}>{n.icon}</div>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--accent-soft)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}><n.icon size={18} color="var(--accent)" /></div>
               <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 10 }}>{n.title}</div>
               <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.75, fontWeight: 300, margin: 0 }}>{n.body}</p>
             </HoverCard>
@@ -309,7 +311,7 @@ export default function WorkplacePolicy() {
               </div>
               <div>
                 <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.8, margin: 0 }}>
-                  We don't have a diversity statement on a shelf. We have specific commitments in specific areas of how we operate — and we hold ourselves accountable to them publicly.
+                  We don't have a diversity statement on a shelf. We have specific commitments in specific areas of how we operate - and we hold ourselves accountable to them publicly.
                 </p>
               </div>
             </div>
@@ -335,7 +337,7 @@ export default function WorkplacePolicy() {
               Clear lines, no grey areas.
             </h2>
             <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.8, maxWidth: 600, marginBottom: 40 }}>
-              Our code of conduct applies everywhere myojam exists — GitHub, Discord, email, research collaborations, and in-person interactions at events like ELEVATE.
+              Our code of conduct applies everywhere myojam exists - GitHub, Discord, email, research collaborations, and any in-person interactions.
             </p>
           </Reveal>
           <Reveal>
@@ -377,7 +379,7 @@ export default function WorkplacePolicy() {
               borderRadius: "var(--radius)", padding: "32px",
               display: "flex", gap: 20, alignItems: "flex-start",
             }}>
-              <div style={{ fontSize: 32, flexShrink: 0, lineHeight: 1 }}>{w.icon}</div>
+              <div style={{ width: 44, height: 44, borderRadius: 10, background: "var(--accent-soft)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><w.icon size={22} color="var(--accent)" /></div>
               <div>
                 <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 8 }}>{w.title}</div>
                 <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.75, fontWeight: 300, margin: 0 }}>{w.body}</p>
@@ -398,7 +400,7 @@ export default function WorkplacePolicy() {
                   This policy is a living document.
                 </h2>
                 <p style={{ fontSize: 15, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.8, marginBottom: 16 }}>
-                  Our norms evolve as our community grows. Any contributor can propose a change — open a discussion, make the case, and we'll review it. The version you're reading reflects the community's current best thinking.
+                  Our norms evolve as our community grows. Any contributor can propose a change - open a discussion, make the case, and we'll review it. The version you're reading reflects the community's current best thinking.
                 </p>
                 <p style={{ fontSize: 15, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.8, margin: 0 }}>
                   Last meaningfully updated: January 2025. Questions or suggestions:{" "}
@@ -407,10 +409,10 @@ export default function WorkplacePolicy() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {[
-                  ["Version", "2.1 — Public"],
+                  ["Version", "2.1 - Public"],
                   ["Scope", "All myojam contributors, spaces, and events"],
-                  ["Enforcement", "Core team — conduct@myojam.com"],
-                  ["License", "CC BY 4.0 — adapt it for your project"],
+                  ["Enforcement", "Core team - conduct@myojam.com"],
+                  ["License", "CC BY 4.0 - adapt it for your project"],
                 ].map(([key, val]) => (
                   <div key={key} style={{
                     display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -443,7 +445,7 @@ export default function WorkplacePolicy() {
                   Want to contribute?
                 </div>
                 <p style={{ fontSize: 15, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, margin: 0, maxWidth: 460 }}>
-                  myojam is fully open source and remote. If these values resonate, we'd love to have you — whether you're an engineer, researcher, educator, or writer.
+                  myojam is fully open source and remote. If these values resonate, we'd love to have you - whether you're an engineer, researcher, educator, or writer.
                 </p>
               </div>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap", flexShrink: 0 }}>

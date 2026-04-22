@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
+import NeuralNoise from "./components/NeuralNoise"
 
 // Same feature math as the Python backend
 function computeFeatures(signal) {
@@ -39,10 +40,10 @@ function classifyGesture(features) {
 }
 
 const FEATURE_INFO = {
-  mav: { label: "MAV", full: "Mean Absolute Value", desc: "Average signal energy  -  how active the muscle is overall.", color: "#FF2D78" },
-  rms: { label: "RMS", full: "Root Mean Square", desc: "Signal power  -  similar to MAV but emphasises peaks.", color: "#3B82F6" },
-  zc:  { label: "ZC",  full: "Zero Crossing Rate", desc: "How often the signal crosses zero  -  a proxy for frequency content.", color: "#8B5CF6" },
-  wl:  { label: "WL",  full: "Waveform Length", desc: "Total variation of the signal  -  captures complexity and speed.", color: "#10B981" },
+  mav: { label: "MAV", full: "Mean Absolute Value", desc: "Average signal energy - how active the muscle is overall.", color: "#FF2D78" },
+  rms: { label: "RMS", full: "Root Mean Square", desc: "Signal power - similar to MAV but emphasises peaks.", color: "#3B82F6" },
+  zc:  { label: "ZC",  full: "Zero Crossing Rate", desc: "How often the signal crosses zero - a proxy for frequency content.", color: "#8B5CF6" },
+  wl:  { label: "WL",  full: "Waveform Length", desc: "Total variation of the signal - captures complexity and speed.", color: "#10B981" },
 }
 
 export default function SignalPlayground() {
@@ -132,18 +133,17 @@ export default function SignalPlayground() {
       <Navbar />
 
       {/* Header */}
-      <div style={{
-        background: "linear-gradient(135deg, #fff0f5 0%, #ffffff 60%)",
-        borderBottom: "1px solid var(--border)",
-        padding: "100px 32px 64px"
-      }}>
-        <div style={{ maxWidth: 860, margin: "0 auto" }}>
+      <div style={{ position: "relative", overflow: "hidden", borderBottom: "1px solid var(--border)", padding: "100px 32px 64px" }}>
+        <NeuralNoise color={[0.90, 0.20, 0.50]} opacity={0.85} speed={0.0006} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
+        <div style={{ maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <Reveal>
             <SectionPill>Interactive · No hardware needed</SectionPill>
 
             <h1 style={{
               fontSize: "clamp(32px, 5vw, 56px)",
               fontWeight: 600,
+              color: "#fff",
               marginBottom: 20
             }}>
               Signal playground.<br />
@@ -152,7 +152,7 @@ export default function SignalPlayground() {
               </span>
             </h1>
 
-            <p style={{ fontSize: 17, color: "var(--text-secondary)", maxWidth: 560 }}>
+            <p style={{ fontSize: 17, color: "rgba(255,255,255,0.72)", maxWidth: 560 }}>
               Sketch an EMG-like signal and watch MAV, RMS, ZC, and WL compute live.
             </p>
           </Reveal>

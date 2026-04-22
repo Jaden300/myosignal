@@ -4,6 +4,7 @@ import axios from "axios"
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts"
 import Navbar from "./Navbar"
 import HandModel from "./HandModel"
+import { IconChat } from "./Icons"
 
 const API = import.meta.env.VITE_API_URL
 
@@ -33,7 +34,7 @@ const GESTURES = [
   { id: 6, name: "fist",        action: "Spacebar",     key: "▬" },
 ]
 
-// Confusion matrix from model training  -  10 subjects, 3254 test samples
+// Confusion matrix from model training - 10 subjects, 3254 test samples
 const LABELS = ["index flex", "middle flex", "ring flex", "pinky flex", "thumb flex", "fist"]
 
 const GESTURE_RECALL = [
@@ -208,7 +209,7 @@ function AccuracyRings() {
           fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300,
           marginTop: 20, lineHeight: 1.6
         }}>
-          Recall per gesture  -  correct predictions divided by total samples of that gesture in the test set.
+          Recall per gesture - correct predictions divided by total samples of that gesture in the test set.
         </p>
       </div>
     </div>
@@ -253,7 +254,7 @@ export default function App() {
       addLog(result.gesture_name, result.confidence)
       return result
     } catch (e) {
-      setError("Backend unreachable  -  is the server running?")
+      setError("Backend unreachable - is the server running?")
     }
   }, [addLog])
 
@@ -277,12 +278,12 @@ export default function App() {
           return
         }
       }
-      // Fallback  -  just use last result even if mismatch
+      // Fallback - just use last result even if mismatch
       const url = gestureId ? `${API}/sample?gesture_id=${gestureId}` : `${API}/sample`
       const { data: sample } = await axios.get(url)
       await predict(sample.emg_window)
     } catch (e) {
-      setError("Backend unreachable  -  is the server running?")
+      setError("Backend unreachable - is the server running?")
     } finally {
       setLoading(false)
     }
@@ -730,7 +731,7 @@ export default function App() {
           </div>
         )}
 
-        {/* Accuracy rings  -  always visible */}
+        {/* Accuracy rings - always visible */}
         <AccuracyRings />
       </div>
 
@@ -760,7 +761,7 @@ export default function App() {
             e.currentTarget.style.transform = "scale(1)"
           }}
         >
-          <span>💬</span> Give feedback
+          <IconChat size={14} color="var(--text-secondary)" /> Give feedback
         </button>
 
     </div>

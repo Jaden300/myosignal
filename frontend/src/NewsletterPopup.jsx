@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import ContactForm from "./components/ContactForm"
 
 export default function NewsletterPopup() {
   const [show, setShow] = useState(false)
@@ -28,14 +29,14 @@ export default function NewsletterPopup() {
         @keyframes panelOut { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(-50%, -48%) scale(0.96); } }
       `}</style>
 
-      {/* Overlay  -  just the dark bg, no flex, no children */}
+      {/* Overlay - just the dark bg, no flex, no children */}
       <div onClick={close} style={{
         position: "fixed", inset: 0, zIndex: 500,
         background: "rgba(0,0,0,0.5)", backdropFilter: "blur(6px)",
         animation: `${closing ? "overlayOut" : "overlayIn"} 0.3s ease forwards`
       }} />
 
-      {/* Panel  -  sibling, not child, centered with transform */}
+      {/* Panel - sibling, not child, centered with transform */}
       <div onClick={e => e.stopPropagation()} style={{
         position: "fixed",
         top: "50%", left: "50%",
@@ -96,15 +97,14 @@ export default function NewsletterPopup() {
           </p>
         </div>
 
-        {/* Tally embed */}
         <div style={{ overflowY: "auto" }}>
-          <iframe
-            src="https://tally.so/embed/rjL4pR?hideTitle=1&transparentBackground=1&dynamicHeight=1"
-            width="100%"
-            height="280"
-            frameBorder="0"
-            title="Newsletter signup"
-            style={{ display: "block" }}
+          <ContactForm
+            source="newsletter"
+            namePlaceholder="Your name"
+            emailPlaceholder="your@email.com"
+            showMessage={false}
+            submitLabel="Subscribe"
+            padding="0 0 8px"
           />
         </div>
       </div>

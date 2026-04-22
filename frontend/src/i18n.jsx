@@ -1,10 +1,9 @@
 const EN = {
   // Navbar
-  nav_demos:          "Demos",
+  nav_demos:          "Tools",
   nav_learn:          "Learn",
-  nav_company:        "Company",
+  nav_company:        "About",
   nav_contact:        "Contact",
-  nav_elevate:        "ELEVATE",
   nav_howItWorks:     "How it works",
   nav_education:      "Education hub",
   nav_educators:      "For educators",
@@ -17,39 +16,38 @@ const EN = {
   nav_download:       "Download for Mac",
 
   // Landing – hero
-  landing_badge:      "Open source · Assistive technology · Education platform",
-  landing_hero:       "Control your computer",
-  landing_sub:        "myojam reads surface EMG signals from your forearm and classifies hand gestures in real time. An open-source platform for assistive technology, machine learning education, and human-computer interaction research.",
-  landing_try:        "Try the demos",
-  landing_science:    "Read the science →",
-  landing_elevate:    "ELEVATE competition ✦",
+  landing_badge:      "Open education platform · EMG science · Open source",
+  landing_hero:       "Explore the science of",
+  landing_sub:        "myojam is an open educational platform for learning EMG signal processing, gesture classification, and assistive technology - through real data, working code, and free lesson plans.",
+  landing_try:        "Explore the education hub",
+  landing_science:    "For educators →",
 
   // Landing – stats
   stat_accuracy:      "Cross-subject accuracy",
   stat_accuracy_sub:  "Tested on unseen individuals",
   stat_articles:      "Published articles",
   stat_articles_sub:  "From neuroscience to hardware",
-  stat_demos:         "Interactive demos",
-  stat_demos_sub:     "No hardware required",
+  stat_demos:         "Lesson plans",
+  stat_demos_sub:     "Middle school to university",
   stat_license:       "Open source license",
   stat_license_sub:   "Free to use, fork, and build on",
 
   // Landing – how it works
-  how_label:          "How it works",
-  how_title:          "From muscle to action in under 5ms.",
+  how_label:          "The EMG pipeline",
+  how_title:          "From electrode to classification.",
   how_step1_title:    "Signal capture",
-  how_step1_body:     "Surface EMG electrodes on the forearm read electrical activity at 200 Hz across 16 channels. No needles — adhesive stickers on skin.",
+  how_step1_body:     "Surface EMG electrodes on the forearm read electrical activity at 200 Hz across 16 channels. No needles - adhesive stickers on skin.",
   how_step2_title:    "Feature extraction",
-  how_step2_body:     "Each 200-sample window is compressed into 64 features — MAV, RMS, ZC, WL per channel — capturing muscle activation patterns.",
+  how_step2_body:     "Each 200-sample window is compressed into 64 features - MAV, RMS, ZC, WL per channel - capturing muscle activation patterns.",
   how_step3_title:    "Classification",
   how_step3_body:     "A Random Forest trained on 16,269 windows from 10 Ninapro subjects classifies the gesture in under 5ms with 84.85% cross-subject accuracy.",
-  how_step4_title:    "Assistive output",
-  how_step4_body:     "Detected gestures map to computer actions — cursor movement, clicks, keypresses — hands-free, in real time.",
+  how_step4_title:    "Real-world applications",
+  how_step4_body:     "Classified gestures can drive cursor movement, clicks, keypresses, or any custom action - opening the door to hands-free and assistive computer control.",
 
   // Landing – pillars
-  pillars_label:      "What myojam is",
-  pillars_title:      "Four things in one platform.",
-  pillars_sub:        "myojam started as a gesture classifier. It's grown into an education and research platform — with demos, articles, lesson plans, and an international competition.",
+  pillars_label:      "What myojam offers",
+  pillars_title:      "One platform. Every learning path.",
+  pillars_sub:        "Whether you're a student, a teacher, or a researcher - myojam has a path for you. Articles, lesson plans, interactive tools, and a fully documented open-source codebase.",
 
   // Landing – articles
   articles_label:     "Education hub",
@@ -57,24 +55,24 @@ const EN = {
   articles_all:       "All articles →",
 
   // Landing – CTA
-  cta_title:          "Start exploring.",
-  cta_sub:            "No hardware required for any of the demos, articles, or tools. Everything runs in your browser.",
-  cta_demos:          "Try the demos",
+  cta_title:          "Start learning.",
+  cta_sub:            "No hardware required. Every article, tool, and lesson plan is free and open access.",
+  cta_demos:          "Explore the education hub",
   cta_articles:       "Browse articles",
-  cta_myocode:        "Try myocode",
+  cta_educators:      "For educators",
 
   // About
-  about_pill:         "Open source · Assistive technology",
-  about_hero:         "We believe muscle signals shouldn't be a barrier.",
-  about_sub:          "myojam is an open-source project that lets people control a computer using surface EMG signals from their forearm — and an education platform teaching the science behind it. No keyboard, no mouse, no hands required.",
+  about_pill:         "Education platform · Open source",
+  about_hero:         "Open education for the next generation of biotech.",
+  about_sub:          "myojam is an open educational platform teaching the science of EMG - from the biology of muscle contraction to the machine learning behind gesture classification. Everything is free, open source, and curriculum-aligned.",
 
   // How it works
-  howitworks_label:   "Technical overview",
-  howitworks_title:   "From muscle signal to action in 50ms.",
-  howitworks_sub:     "How myojam turns a forearm twitch into a cursor move, click, or keypress — from raw electrode data to system-level control.",
+  howitworks_label:   "Technical deep dive",
+  howitworks_title:   "How EMG gesture classification works.",
+  howitworks_sub:     "A walkthrough of the full signal processing pipeline - from raw electrode data to gesture classification. Every stage is documented, reproducible, and openly published.",
 
   // Footer
-  footer_tagline:     "Open-source assistive technology.",
+  footer_tagline:     "Open education for EMG science.",
   footer_rights:      "MIT licensed. Built in public.",
 }
 

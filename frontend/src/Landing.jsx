@@ -7,46 +7,47 @@ import Threads from "./Threads"
 import SplitText from "./components/SplitText"
 import SignalModel3D from "./components/SignalModel3D"
 import { t } from "./i18n"
+import { IconBook, IconGraduate, IconBolt, IconMicroscope } from "./Icons"
 
 const STATS = [
   { val:"84.85%", label:"Cross-subject accuracy",  sub:"Tested on unseen individuals" },
   { val:"11",     label:"Published articles",       sub:"From neuroscience to hardware" },
-  { val:"5",      label:"Interactive demos",        sub:"No hardware required" },
+  { val:"3",      label:"Lesson plans",             sub:"Middle school to university" },
   { val:"MIT",    label:"Open source license",      sub:"Free to use, fork, and build on" },
 ]
 
 const PILLARS = [
   {
-    slug:"/demos",
-    icon:"⚡",
-    color:"#FF2D78",
-    title:"Live demos",
-    sub:"Try it in your browser",
-    desc:"Five interactive tools  -  from a live gesture classifier to a block coding environment powered by simulated EMG.",
-  },
-  {
     slug:"/education",
-    icon:"📚",
+    icon:IconBook,
     color:"#3B82F6",
     title:"Education hub",
     sub:"11 in-depth articles",
-    desc:"From the biology of muscle contraction to the ethics of biometric data  -  rigorously written, openly published.",
+    desc:"From the biology of muscle contraction to the ethics of biometric data - rigorously written, openly published, free forever.",
   },
   {
     slug:"/educators",
-    icon:"🎓",
+    icon:IconGraduate,
     color:"#8B5CF6",
     title:"For educators",
     sub:"Ready-to-teach lesson plans",
-    desc:"Full lesson plans with activities, rubrics, and curriculum alignment. From middle school to university.",
+    desc:"Full lesson plans with datasets, worksheets, and curriculum alignment. From middle school to university, no hardware required.",
   },
   {
-    slug:"/myocode",
-    icon:"🧩",
+    slug:"/demos",
+    icon:IconBolt,
+    color:"#FF2D78",
+    title:"Interactive tools",
+    sub:"4 hands-on tools",
+    desc:"Signal playground, frequency analyzer, confusion matrix explorer, and a gesture reaction game - all in your browser.",
+  },
+  {
+    slug:"/research",
+    icon:IconMicroscope,
     color:"#10B981",
-    title:"myocode",
-    sub:"Block coding with EMG",
-    desc:"A Scratch-like environment where gestures are first-class events. Build programs that respond to muscle signals.",
+    title:"Open research",
+    sub:"Fully documented pipeline",
+    desc:"The complete signal processing pipeline, trained model weights, and training data - published, reproducible, MIT licensed.",
   },
 ]
 
@@ -57,83 +58,17 @@ const ARTICLES = [
   { slug:"/education/build-your-own",   tag:"Hardware",      title:"Build your own EMG sensor for under $60",       time:"8 min" },
 ]
 
-function AnimatedEMGLine() {
-  const canvasRef = useRef(null)
-  const frameRef  = useRef(0)
-  const phaseRef  = useRef(0)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext("2d")
-    let raf
-
-    function draw() {
-      const W = canvas.width, H = canvas.height
-      ctx.clearRect(0, 0, W, H)
-      phaseRef.current += 0.03
-
-      const pts = []
-      for (let x = 0; x < W; x++) {
-        const t = x / W
-        const burst = Math.exp(-Math.pow((t - 0.5) * 4, 2)) * 0.85
-        const base  = Math.sin(t * 40 + phaseRef.current) * 0.08
-        const noise = (Math.random() - 0.5) * 0.04
-        const y = H/2 - (burst * Math.sin(t * 120 + phaseRef.current * 3) + base + noise) * H * 0.38
-        pts.push({ x, y })
-      }
-
-      // Fill
-      const grad = ctx.createLinearGradient(0, 0, 0, H)
-      grad.addColorStop(0, "rgba(255,45,120,0.15)")
-      grad.addColorStop(1, "rgba(255,45,120,0)")
-      ctx.beginPath()
-      ctx.moveTo(0, H)
-      pts.forEach(p => ctx.lineTo(p.x, p.y))
-      ctx.lineTo(W, H)
-      ctx.closePath()
-      ctx.fillStyle = grad
-      ctx.fill()
-
-      // Line
-      ctx.beginPath()
-      pts.forEach((p,i) => i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y))
-      ctx.strokeStyle = "rgba(255,45,120,0.7)"
-      ctx.lineWidth = 1.5
-      ctx.stroke()
-
-      raf = requestAnimationFrame(draw)
-    }
-
-    function resize() {
-      canvas.width  = canvas.offsetWidth
-      canvas.height = canvas.offsetHeight
-    }
-
-    resize()
-    draw()
-    window.addEventListener("resize", resize)
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize) }
-  }, [])
-
-  return (
-    <canvas ref={canvasRef} style={{ position:"absolute", inset:0, width:"100%", height:"100%", pointerEvents:"none" }}/>
-  )
-}
-
 const ROTATING_TEXTS = [
-  "with your muscles.",
-  "without a keyboard.",
-  "using surface EMG.",
-  "through gesture.",
-  "hands-free.",
-  "with bioelectric signals.",
-  "using open-source AI.",
-  "without touching anything.",
-  "with a forearm sensor.",
-  "for everyone.",
-  "the way your body does.",
-  "differently.",
+  "surface EMG.",
+  "gesture recognition.",
+  "muscle-computer interfaces.",
+  "open neuroscience.",
+  "bioelectric signals.",
+  "signal processing.",
+  "machine learning.",
+  "assistive technology.",
+  "real EMG data.",
+  "the neuromuscular system.",
 ]
 
 function HeroHeading() {
@@ -142,12 +77,10 @@ function HeroHeading() {
   const [visible, setVisible] = useState(true)
 
   useEffect(() => {
-    // After each phrase finishes animating in, wait, then fade out and switch
-    const holdTime = 1500  // ms to hold the phrase after it finishes
-    const fadeOut  = 300   // ms for fade out
+    const holdTime = 1500
+    const fadeOut  = 300
 
     const cycle = () => {
-      // Fade out
       setVisible(false)
       setTimeout(() => {
         setIndex(i => (i + 1) % ROTATING_TEXTS.length)
@@ -156,13 +89,12 @@ function HeroHeading() {
       }, fadeOut)
     }
 
-    // Each phrase takes (chars * delay) + hold time
     const charCount  = ROTATING_TEXTS[index].length
-    const animTime   = charCount * 38 + 700  // roughly when last char finishes
+    const animTime   = charCount * 38 + 700
     const totalCycle = animTime + holdTime
 
-    const t = setTimeout(cycle, totalCycle)
-    return () => clearTimeout(t)
+    const timer = setTimeout(cycle, totalCycle)
+    return () => clearTimeout(timer)
   }, [index])
 
   return (
@@ -174,7 +106,7 @@ function HeroHeading() {
       color: "var(--text)",
       marginBottom: 28,
     }}>
-      Control your computer<br/>
+      Explore the science of<br/>
       <span style={{
         display: "inline-block",
         opacity: visible ? 1 : 0,
@@ -189,9 +121,7 @@ function HeroHeading() {
           from={{ opacity: 0, y: 32 }}
           to={{ opacity: 1, y: 0 }}
           tag="span"
-          style={{
-            color: "#FF2D78",
-          }}
+          style={{ color: "#FF2D78" }}
         />
       </span>
     </h1>
@@ -200,28 +130,17 @@ function HeroHeading() {
 
 export default function Landing() {
   const navigate = useNavigate()
-  const [scrollY, setScrollY] = useState(0)
-
-  useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY)
-    window.addEventListener("scroll", onScroll, { passive:true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
 
   return (
     <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
       <style>{`
         @keyframes fadeUp   { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes orbFloat { from{transform:translateY(0) scale(1)} to{transform:translateY(-40px) scale(1.06)} }
         @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:0.4} }
-        @keyframes shimmer  { 0%{background-position:200% center} 100%{background-position:-200% center} }
       `}</style>
       <Navbar />
 
       {/* ── HERO */}
       <section style={{ position:"relative", minHeight:"100vh", display:"flex", alignItems:"center", background:"linear-gradient(160deg, #ffffff 0%, #fff0f5 50%, #f5f0ff 100%)" }}>
-
-        {/* Threads background */}
         <div style={{ position:"absolute", inset:0, zIndex:0, opacity:0.6 }}>
           <Threads
             color={[1, 0.18, 0.47]}
@@ -230,12 +149,9 @@ export default function Landing() {
             enableMouseInteraction={false}
           />
         </div>
-
-        {/* Soft white fade at the bottom so content below doesn't clash */}
         <div style={{ position:"absolute", bottom:0, left:0, right:0, height:180, background:"linear-gradient(160deg, rgba(255,255,255,0.85) 0%, rgba(255,240,245,0.85) 50%, rgba(245,240,255,0.85) 100%)", zIndex:1, pointerEvents:"none" }}/>
 
         <div style={{ maxWidth:920, margin:"0 auto", padding:"140px 32px 120px", position:"relative", zIndex:1, width:"100%" }}>
-          {/* Badge */}
           <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,255,255,0.85)", backdropFilter:"blur(8px)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:100, padding:"6px 18px", fontSize:13, color:"var(--accent)", fontWeight:500, marginBottom:36, animation:"fadeUp 0.6s ease", boxShadow:"0 2px 12px rgba(255,45,120,0.1)" }}>
             <span style={{ width:7,height:7,borderRadius:"50%",background:"var(--accent)",display:"inline-block",animation:"pulse 2s infinite" }}/>
             {t("landing_badge")}
@@ -248,18 +164,14 @@ export default function Landing() {
           </p>
 
           <div style={{ display:"flex", gap:12, flexWrap:"wrap", animation:"fadeUp 0.6s 0.3s ease both" }}>
-            <button onClick={()=>navigate("/demos")} style={{ background:"var(--accent)", color:"#fff", border:"none", borderRadius:100, padding:"15px 40px", fontSize:16, fontFamily:"var(--font)", fontWeight:600, cursor:"pointer", boxShadow:"0 4px 24px rgba(255,45,120,0.35)", transition:"transform 0.2s, box-shadow 0.2s" }}
+            <button onClick={()=>navigate("/education")} style={{ background:"var(--accent)", color:"#fff", border:"none", borderRadius:100, padding:"15px 40px", fontSize:16, fontFamily:"var(--font)", fontWeight:600, cursor:"pointer", boxShadow:"0 4px 24px rgba(255,45,120,0.35)", transition:"transform 0.2s, box-shadow 0.2s" }}
               onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.04)";e.currentTarget.style.boxShadow="0 8px 32px rgba(255,45,120,0.5)"}}
               onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 4px 24px rgba(255,45,120,0.35)"}}
             >{t("landing_try")}</button>
-            <button onClick={()=>navigate("/education")} style={{ background:"rgba(255,255,255,0.85)", backdropFilter:"blur(8px)", color:"var(--text)", border:"1px solid var(--border-mid)", borderRadius:100, padding:"15px 32px", fontSize:16, fontFamily:"var(--font)", fontWeight:400, cursor:"pointer", transition:"border-color 0.2s" }}
+            <button onClick={()=>navigate("/educators")} style={{ background:"rgba(255,255,255,0.85)", backdropFilter:"blur(8px)", color:"var(--text)", border:"1px solid var(--border-mid)", borderRadius:100, padding:"15px 32px", fontSize:16, fontFamily:"var(--font)", fontWeight:400, cursor:"pointer", transition:"border-color 0.2s" }}
               onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,45,120,0.3)"}
               onMouseLeave={e=>e.currentTarget.style.borderColor="var(--border-mid)"}
             >{t("landing_science")}</button>
-            <button onClick={()=>navigate("/elevate")} style={{ background:"linear-gradient(135deg, rgba(255,45,120,0.1) 0%, rgba(192,38,211,0.1) 100%)", color:"var(--accent)", border:"1px solid rgba(255,45,120,0.25)", borderRadius:100, padding:"15px 28px", fontSize:16, fontFamily:"var(--font)", fontWeight:500, cursor:"pointer", transition:"all 0.2s" }}
-              onMouseEnter={e=>{e.currentTarget.style.background="linear-gradient(135deg, rgba(255,45,120,0.18) 0%, rgba(192,38,211,0.18) 100%)";e.currentTarget.style.borderColor="var(--accent)"}}
-              onMouseLeave={e=>{e.currentTarget.style.background="linear-gradient(135deg, rgba(255,45,120,0.1) 0%, rgba(192,38,211,0.1) 100%)";e.currentTarget.style.borderColor="rgba(255,45,120,0.25)"}}
-            >{t("landing_elevate")}</button>
           </div>
         </div>
       </section>
@@ -280,64 +192,22 @@ export default function Landing() {
       {/* ── 3D SIGNAL MODEL */}
       <SignalModel3D />
 
-      {/* ── ELEVATE FEATURE */}
-      <section style={{ padding:"80px 32px", background:"linear-gradient(160deg, #0a0010 0%, #1a0030 100%)", position:"relative", overflow:"hidden" }}>
-        {[["500px","-80px","-60px","rgba(255,45,120,0.3)"],["350px","70%","40px","rgba(139,92,246,0.2)"],].map(([size,x,y,color],i)=>(
-          <div key={i} style={{ position:"absolute",width:size,height:size,borderRadius:"50%",background:color,left:x,top:y,filter:"blur(80px)",pointerEvents:"none" }}/>
-        ))}
-        <div style={{ maxWidth:920, margin:"0 auto", position:"relative", zIndex:1 }}>
-          <Reveal>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:40, flexWrap:"wrap" }}>
-              <div style={{ flex:1, minWidth:300 }}>
-                <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,45,120,0.15)", border:"1px solid rgba(255,45,120,0.3)", borderRadius:100, padding:"5px 14px", fontSize:12, color:"rgba(255,180,200,0.9)", fontWeight:500, marginBottom:24 }}>
-                  <span style={{ width:6,height:6,borderRadius:"50%",background:"#FF2D78",display:"inline-block",animation:"pulse 1.5s infinite" }}/>
-                  Registrations open · Deadline April 30
-                </div>
-                <h2 style={{ fontSize:"clamp(36px,6vw,64px)", fontWeight:800, letterSpacing:"-2.5px", lineHeight:1.0, marginBottom:16, background:"linear-gradient(135deg, #ffffff 0%, #ff9ec4 50%, #c084fc 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
-                  ELEVATE
-                </h2>
-                <p style={{ fontSize:16, color:"rgba(255,255,255,0.6)", fontWeight:300, lineHeight:1.75, maxWidth:480, marginBottom:32 }}>
-                  myojam's international competition for students, researchers, and innovators building the future of EMG-based human-computer interaction. Four tracks, open to the world, free to enter.
-                </p>
-                <button onClick={()=>navigate("/elevate")} style={{ background:"linear-gradient(135deg, #FF2D78 0%, #c026d3 100%)", color:"#fff", border:"none", borderRadius:100, padding:"14px 36px", fontSize:15, fontFamily:"var(--font)", fontWeight:600, cursor:"pointer", boxShadow:"0 8px 32px rgba(255,45,120,0.45)", transition:"transform 0.2s, box-shadow 0.2s" }}
-                  onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.05)";e.currentTarget.style.boxShadow="0 12px 40px rgba(255,45,120,0.6)"}}
-                  onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 8px 32px rgba(255,45,120,0.45)"}}
-                >Learn more & register →</button>
-              </div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, minWidth:280 }}>
-                {[
-                  ["4 tracks","Engineering, Research, Design, Education"],
-                  ["∞ countries","International  -  open to everyone"],
-                  ["Apr 30","Submission deadline"],
-                  ["Free","Zero entry fee"],
-                ].map(([val,label])=>(
-                  <div key={val} style={{ background:"rgba(255,255,255,0.06)", backdropFilter:"blur(12px)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:12, padding:"18px 16px", textAlign:"center" }}>
-                    <div style={{ fontSize:20, fontWeight:700, color:"#FF2D78", letterSpacing:"-0.5px", marginBottom:4 }}>{val}</div>
-                    <div style={{ fontSize:11, color:"rgba(255,255,255,0.45)", fontWeight:300, lineHeight:1.5 }}>{label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
       {/* ── PILLARS */}
       <section style={{ padding:"80px 32px" }}>
         <div style={{ maxWidth:920, margin:"0 auto" }}>
           <Reveal>
-            <SectionPill>What myojam is</SectionPill>
+            <SectionPill>{t("pillars_label")}</SectionPill>
             <h2 style={{ fontSize:"clamp(28px,4vw,44px)", fontWeight:600, letterSpacing:"-1.5px", color:"var(--text)", marginBottom:12 }}>
-              Four things in one platform.
+              {t("pillars_title")}
             </h2>
             <p style={{ fontSize:16, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, maxWidth:520, marginBottom:48 }}>
-              myojam started as a gesture classifier. It's grown into an education and research platform  -  with demos, articles, lesson plans, and an international competition.
+              {t("pillars_sub")}
             </p>
           </Reveal>
           <StaggerList items={PILLARS} columns={2} gap={16} renderItem={p=>(
             <HoverCard color={p.color+"20"} onClick={()=>navigate(p.slug)} style={{ background:"var(--bg-secondary)", borderRadius:"var(--radius)", border:"1px solid var(--border)", overflow:"hidden", cursor:"pointer" }}>
               <div style={{ background:`linear-gradient(135deg, ${p.color}10 0%, transparent 100%)`, borderBottom:"1px solid var(--border)", padding:"28px 28px 24px" }}>
-                <div style={{ width:52, height:52, borderRadius:14, background:p.color+"18", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, marginBottom:16 }}>{p.icon}</div>
+                <div style={{ width:52, height:52, borderRadius:14, background:p.color+"18", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:16 }}><p.icon size={24} color={p.color} /></div>
                 <div style={{ fontSize:11, fontWeight:500, color:p.color, textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:6 }}>{p.sub}</div>
                 <h3 style={{ fontSize:20, fontWeight:600, color:"var(--text)", letterSpacing:"-0.4px", marginBottom:10 }}>{p.title}</h3>
                 <p style={{ fontSize:14, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, margin:0 }}>{p.desc}</p>
@@ -356,15 +226,15 @@ export default function Landing() {
           <Reveal>
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", marginBottom:40, gap:16, flexWrap:"wrap" }}>
               <div>
-                <SectionPill>Education hub</SectionPill>
+                <SectionPill>{t("articles_label")}</SectionPill>
                 <h2 style={{ fontSize:"clamp(28px,4vw,44px)", fontWeight:600, letterSpacing:"-1.5px", color:"var(--text)", marginBottom:0 }}>
-                  Recent articles.
+                  {t("articles_title")}
                 </h2>
               </div>
               <button onClick={()=>navigate("/education")} style={{ background:"none", border:"1px solid var(--border-mid)", borderRadius:100, padding:"10px 24px", fontSize:14, color:"var(--text-secondary)", fontFamily:"var(--font)", cursor:"pointer", transition:"border-color 0.15s, color 0.15s", flexShrink:0 }}
                 onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)"}}
                 onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--border-mid)";e.currentTarget.style.color="var(--text-secondary)"}}
-              >All articles →</button>
+              >{t("articles_all")}</button>
             </div>
           </Reveal>
           <StaggerList items={ARTICLES} columns={2} gap={12} renderItem={a=>(
@@ -382,20 +252,20 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── HOW IT WORKS */}
+      {/* ── THE EMG PIPELINE */}
       <section style={{ padding:"80px 32px" }}>
         <div style={{ maxWidth:920, margin:"0 auto" }}>
           <Reveal>
-            <SectionPill>How it works</SectionPill>
+            <SectionPill>{t("how_label")}</SectionPill>
             <h2 style={{ fontSize:"clamp(28px,4vw,44px)", fontWeight:600, letterSpacing:"-1.5px", color:"var(--text)", marginBottom:48 }}>
-              From muscle to action in under 5ms.
+              {t("how_title")}
             </h2>
           </Reveal>
           <StaggerList items={[
-            ["Signal capture","Surface EMG electrodes on the forearm read electrical activity at 200 Hz across 16 channels. No needles  -  adhesive stickers on skin."],
-            ["Feature extraction","Each 200-sample window is compressed into 64 features  -  MAV, RMS, ZC, WL per channel  -  capturing muscle activation patterns."],
-            ["Classification","A Random Forest trained on 16,269 windows from 10 Ninapro subjects classifies the gesture in under 5ms with 84.85% cross-subject accuracy."],
-            ["Assistive output","Detected gestures map to computer actions  -  cursor movement, clicks, keypresses  -  hands-free, in real time."],
+            [t("how_step1_title"), t("how_step1_body")],
+            [t("how_step2_title"), t("how_step2_body")],
+            [t("how_step3_title"), t("how_step3_body")],
+            [t("how_step4_title"), t("how_step4_body")],
           ]} columns={2} gap={16} renderItem={([title,body],i)=>(
             <HoverCard style={{ background:"var(--bg-secondary)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"28px 32px" }}>
               <div style={{ width:36, height:36, borderRadius:"50%", background:"var(--accent-soft)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, fontWeight:700, color:"var(--accent)", marginBottom:16 }}>
@@ -405,6 +275,14 @@ export default function Landing() {
               <p style={{ fontSize:14, color:"var(--text-secondary)", lineHeight:1.75, fontWeight:300, margin:0 }}>{body}</p>
             </HoverCard>
           )}/>
+          <Reveal>
+            <div style={{ marginTop:24, textAlign:"center" }}>
+              <button onClick={()=>navigate("/how-it-works")} style={{ background:"none", border:"1px solid var(--border-mid)", borderRadius:100, padding:"10px 28px", fontSize:14, color:"var(--text-secondary)", fontFamily:"var(--font)", cursor:"pointer", transition:"border-color 0.15s, color 0.15s" }}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)"}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--border-mid)";e.currentTarget.style.color="var(--text-secondary)"}}
+              >Full technical walkthrough →</button>
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -449,24 +327,24 @@ export default function Landing() {
           <Reveal>
             <div style={{ background:"linear-gradient(135deg, rgba(255,45,120,0.06) 0%, rgba(139,92,246,0.06) 100%)", border:"1px solid rgba(255,45,120,0.15)", borderRadius:"var(--radius)", padding:"56px 48px", textAlign:"center" }}>
               <h2 style={{ fontSize:"clamp(28px,4vw,44px)", fontWeight:600, letterSpacing:"-1.5px", color:"var(--text)", marginBottom:16 }}>
-                Start exploring.
+                {t("cta_title")}
               </h2>
               <p style={{ fontSize:16, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:480, margin:"0 auto 36px" }}>
-                No hardware required for any of the demos, articles, or tools. Everything runs in your browser.
+                {t("cta_sub")}
               </p>
               <div style={{ display:"flex", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
-                <button onClick={()=>navigate("/demos")} style={{ background:"var(--accent)", color:"#fff", border:"none", borderRadius:100, padding:"14px 36px", fontSize:15, fontFamily:"var(--font)", fontWeight:600, cursor:"pointer", boxShadow:"0 4px 24px rgba(255,45,120,0.3)", transition:"transform 0.15s, box-shadow 0.15s" }}
+                <button onClick={()=>navigate("/education")} style={{ background:"var(--accent)", color:"#fff", border:"none", borderRadius:100, padding:"14px 36px", fontSize:15, fontFamily:"var(--font)", fontWeight:600, cursor:"pointer", boxShadow:"0 4px 24px rgba(255,45,120,0.3)", transition:"transform 0.15s, box-shadow 0.15s" }}
                   onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.04)";e.currentTarget.style.boxShadow="0 8px 32px rgba(255,45,120,0.45)"}}
                   onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 4px 24px rgba(255,45,120,0.3)"}}
-                >Try the demos</button>
+                >{t("cta_demos")}</button>
                 <button onClick={()=>navigate("/education")} style={{ background:"none", color:"var(--text)", border:"1px solid var(--border-mid)", borderRadius:100, padding:"14px 28px", fontSize:15, fontFamily:"var(--font)", fontWeight:400, cursor:"pointer", transition:"border-color 0.15s" }}
                   onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,45,120,0.3)"}
                   onMouseLeave={e=>e.currentTarget.style.borderColor="var(--border-mid)"}
-                >Browse articles</button>
-                <button onClick={()=>navigate("/myocode")} style={{ background:"none", color:"#8B5CF6", border:"1px solid rgba(139,92,246,0.3)", borderRadius:100, padding:"14px 28px", fontSize:15, fontFamily:"var(--font)", fontWeight:400, cursor:"pointer", transition:"border-color 0.15s" }}
+                >{t("cta_articles")}</button>
+                <button onClick={()=>navigate("/educators")} style={{ background:"none", color:"#8B5CF6", border:"1px solid rgba(139,92,246,0.3)", borderRadius:100, padding:"14px 28px", fontSize:15, fontFamily:"var(--font)", fontWeight:400, cursor:"pointer", transition:"border-color 0.15s" }}
                   onMouseEnter={e=>e.currentTarget.style.borderColor="#8B5CF6"}
                   onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(139,92,246,0.3)"}
-                >Try myocode</button>
+                >{t("cta_educators")}</button>
               </div>
             </div>
           </Reveal>

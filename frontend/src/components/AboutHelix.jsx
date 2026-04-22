@@ -9,7 +9,7 @@ const TIMELINE = [
   { when: 'Jan 2025',  what: 'macOS desktop app launched. Gesture predictions control real mouse cursor and keyboard for the first time end-to-end.' },
   { when: 'Feb 2025',  what: 'Web demo launched at myojam.com. FastAPI backend on Render, React frontend on Vercel. No hardware required.' },
   { when: 'Mar 2025',  what: 'Full site redesign. Education hub, signal playground, AI chatbot, block coding environment (myocode) launched.' },
-  { when: 'Apr 2025',  what: 'ELEVATE international competition launched. Educators hub with lesson plans, quizzes, and curriculum materials.' },
+  { when: 'Apr 2025',  what: 'Educators hub launched with full lesson plans, quizzes, and curriculum materials for classroom use.' },
 ]
 
 const N = TIMELINE.length
@@ -299,15 +299,6 @@ export default function AboutHelix() {
               </p>
             </div>
 
-            {/* Scroll hint */}
-            <div style={{
-              position: 'absolute', bottom: 36, right: 56,
-              fontSize: 11, letterSpacing: '0.07em', textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.22)', fontWeight: 500,
-              pointerEvents: 'none',
-            }}>
-              {activeIdx < N - 1 ? 'Scroll to continue ↓' : 'End of timeline'}
-            </div>
           </div>
         </div>
       </div>

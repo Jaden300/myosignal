@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, SectionPill } from "./Animate"
+import NeuralNoise from "./components/NeuralNoise"
 
 const API = import.meta.env.VITE_API_URL
 
@@ -175,17 +176,16 @@ export default function FrequencyAnalyzer() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
-      <div style={{
-        background: "linear-gradient(135deg, #f5f0ff 0%, #ffffff 60%)",
-        borderBottom: "1px solid var(--border)", padding: "100px 32px 48px"
-      }}>
-        <div style={{ maxWidth: 820, margin: "0 auto" }}>
+      <div style={{ position: "relative", overflow: "hidden", borderBottom: "1px solid var(--border)", padding: "100px 32px 48px" }}>
+        <NeuralNoise color={[0.15, 0.55, 0.85]} opacity={0.85} speed={0.0006} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
+        <div style={{ maxWidth: 820, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <Reveal>
             <SectionPill>Signal processing · Academic</SectionPill>
-            <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 600, letterSpacing: "-1.5px", color: "var(--text)", marginBottom: 16, lineHeight: 1.1 }}>
+            <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 600, letterSpacing: "-1.5px", color: "#fff", marginBottom: 16, lineHeight: 1.1 }}>
               EMG Frequency Analyzer.
             </h1>
-            <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, maxWidth: 520 }}>
+            <p style={{ fontSize: 16, color: "rgba(255,255,255,0.72)", fontWeight: 300, lineHeight: 1.7, maxWidth: 520 }}>
               Load a real Ninapro DB5 EMG window and inspect its frequency spectrum.
               See how the 20–90Hz bandpass filter isolates gesture-relevant signal from noise.
             </p>
@@ -278,7 +278,7 @@ export default function FrequencyAnalyzer() {
             Useful EMG signal lives between 20Hz and 90Hz for surface recordings at this depth and sensor quality.
             Below 20Hz you get DC drift and movement artefacts from the electrode shifting.
             Above 90Hz you get amplifier noise and aliasing. The 4th-order Butterworth filter removes both
-            without introducing phase distortion that would shift the waveform in time  -  which matters when
+            without introducing phase distortion that would shift the waveform in time - which matters when
             you're correlating signal shape to gesture timing.
           </p>
         </div>

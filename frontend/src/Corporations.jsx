@@ -2,8 +2,9 @@ import { useNavigate } from "react-router-dom"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
-import { IconAccessibility, IconHeart, IconBrain, IconRobot } from "./Icons"
+import { IconAccessibility, IconHeart, IconBrain, IconRobot, IconWrench, IconDocument, IconAntenna } from "./Icons"
 import NeuralNoise from "./components/NeuralNoise"
+import ContactForm from "./components/ContactForm"
 
 const USE_CASES = [
   {
@@ -19,7 +20,7 @@ const USE_CASES = [
   {
     Icon: IconBrain,
     title: "Human-computer interaction research",
-    body: "Academic labs and R&D teams can use myojam as a baseline for EMG gesture classification experiments  -  saving months of pipeline development."
+    body: "Academic labs and R&D teams can use myojam as a baseline for EMG gesture classification experiments - saving months of pipeline development."
   },
   {
     Icon: IconRobot,
@@ -79,7 +80,7 @@ export default function Corporations() {
             lineHeight: 1.75, maxWidth: 560, marginBottom: 44,
             animation: "fadeUp 0.6s 0.2s ease both"
           }}>
-            myojam is a production-ready EMG gesture classification pipeline  -  MIT licensed,
+            myojam is a production-ready EMG gesture classification pipeline - MIT licensed,
             fully documented, and trained on a clinical-grade public dataset.
             Whether you're building assistive technology, conducting HCI research, or
             exploring gesture interfaces, we're open to collaboration.
@@ -184,26 +185,26 @@ export default function Corporations() {
               fontSize: 16, color: "var(--text-secondary)", fontWeight: 300,
               lineHeight: 1.7, maxWidth: 560, marginBottom: 48
             }}>
-              myojam is MIT licensed  -  you can use it freely. What we offer beyond the code
+              myojam is MIT licensed - you can use it freely. What we offer beyond the code
               is direct collaboration: integration support, custom model training, and joint research.
             </p>
           </Reveal>
           <StaggerList
             items={[
-              ["🔧", "Integration support", "Help adapting the pipeline to your hardware configuration, sample rate, or electrode setup."],
-              ["🧠", "Custom model training", "Retrain the classifier on your own dataset or gesture set with our established pipeline."],
-              ["📄", "Research collaboration", "Joint authorship on papers, shared datasets, and co-development of novel gesture classification approaches."],
-              ["📡", "Hardware consulting", "Advice on electrode placement, sensor selection, and signal acquisition for your specific application."],
+              { icon: IconWrench,   title: "Integration support",     body: "Help adapting the pipeline to your hardware configuration, sample rate, or electrode setup." },
+              { icon: IconBrain,    title: "Custom model training",    body: "Retrain the classifier on your own dataset or gesture set with our established pipeline." },
+              { icon: IconDocument, title: "Research collaboration",   body: "Joint authorship on papers, shared datasets, and co-development of novel gesture classification approaches." },
+              { icon: IconAntenna,  title: "Hardware consulting",      body: "Advice on electrode placement, sensor selection, and signal acquisition for your specific application." },
             ]}
             columns={2}
             gap={12}
-            renderItem={([icon, title, body]) => (
+            renderItem={({ icon: SvcIcon, title, body }) => (
               <HoverCard style={{
                 background: "var(--bg)", borderRadius: "var(--radius-sm)",
                 border: "1px solid var(--border)", padding: "24px 28px",
                 display: "flex", gap: 16, alignItems: "flex-start"
               }}>
-                <span style={{ fontSize: 22 }}>{icon}</span>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: "var(--accent-soft)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><SvcIcon size={20} color="var(--accent)" /></div>
                 <div>
                   <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>{title}</div>
                   <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.65, fontWeight: 300, margin: 0 }}>{body}</p>
@@ -235,13 +236,10 @@ export default function Corporations() {
             background: "var(--bg-secondary)", borderRadius: "var(--radius)",
             border: "1px solid var(--border)", overflow: "hidden", padding: "0 24px"
           }}>
-            <iframe
-              src="https://tally.so/embed/A7qdM0?hideTitle=1&transparentBackground=1&dynamicHeight=1"
-              width="100%"
-              height="600"
-              frameBorder="0"
-              title="Corporate inquiry"
-              style={{ display: "block" }}
+            <ContactForm
+              source="corporations"
+              messagePlaceholder="Tell us about your project, your organisation, and what you're hoping to build."
+              submitLabel="Send inquiry"
             />
           </div>
         </div>

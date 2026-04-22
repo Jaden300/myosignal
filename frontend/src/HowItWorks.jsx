@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import Footer from "./Footer"
 import { Reveal } from "./Animate"
 import { IconGear, IconChart, IconBrain, IconBolt } from "./Icons"
-import NeuralBackground from "./components/NeuralBackground"
+import NeuralNoise from "./components/NeuralNoise"
 
 const STEPS = [
   {
@@ -14,7 +14,7 @@ const STEPS = [
     title: "Signal capture",
     subtitle: "Hardware layer",
     color: "#FF2D78",
-    body: "Surface EMG electrodes  -  adhesive stickers, no needles  -  pick up the electrical activity of your forearm muscles as you move. The MyoWare 2.0 sensor amplifies and conditions this signal across 16 channels at 200 Hz, fed into an Arduino Uno over USB.",
+    body: "Surface EMG electrodes - adhesive stickers, no needles - pick up the electrical activity of your forearm muscles as you move. The MyoWare 2.0 sensor amplifies and conditions this signal across 16 channels at 200 Hz, fed into an Arduino Uno over USB.",
     tags: ["MyoWare 2.0 sensor", "16 EMG channels", "200 Hz sampling", "Arduino Uno R3"],
   },
   {
@@ -23,7 +23,7 @@ const STEPS = [
     title: "Filtering & windowing",
     subtitle: "Signal processing",
     color: "#f472b6",
-    body: "Raw EMG is noisy  -  powerline hum, motion artifacts, baseline drift. A 4th-order Butterworth bandpass filter (20–90 Hz) strips it down to the biologically meaningful band. The cleaned signal is then sliced into 200-sample windows with 50-sample steps, ready for feature extraction.",
+    body: "Raw EMG is noisy - powerline hum, motion artifacts, baseline drift. A 4th-order Butterworth bandpass filter (20–90 Hz) strips it down to the biologically meaningful band. The cleaned signal is then sliced into 200-sample windows with 50-sample steps, ready for feature extraction.",
     tags: ["Butterworth 20–90 Hz", "200-sample windows", "50-sample step", "75% overlap"],
   },
   {
@@ -32,7 +32,7 @@ const STEPS = [
     title: "Feature extraction",
     subtitle: "From waveform to numbers",
     color: "#a855f7",
-    body: "Each window is compressed into a 64-number vector  -  four time-domain features computed across all 16 channels. These capture activation level (MAV), signal power (RMS), frequency content (ZC), and complexity (WL). Together they form a compact fingerprint of the gesture.",
+    body: "Each window is compressed into a 64-number vector - four time-domain features computed across all 16 channels. These capture activation level (MAV), signal power (RMS), frequency content (ZC), and complexity (WL). Together they form a compact fingerprint of the gesture.",
     tags: ["MAV · RMS · ZC · WL", "64-dimensional vector", "16 channels × 4 features"],
   },
   {
@@ -41,17 +41,17 @@ const STEPS = [
     title: "Gesture classification",
     subtitle: "Machine learning",
     color: "#818cf8",
-    body: "A Random Forest classifier (500 trees, hyperparameter-tuned via 100-configuration RandomizedSearchCV) maps the 64-feature vector to one of 6 gesture classes. Trained on 16,269 labeled windows from 10 subjects in the public Ninapro DB5 dataset  -  achieving 84.85% cross-subject accuracy.",
+    body: "A Random Forest classifier (500 trees, hyperparameter-tuned via 100-configuration RandomizedSearchCV) maps the 64-feature vector to one of 6 gesture classes. Trained on 16,269 labeled windows from 10 subjects in the public Ninapro DB5 dataset - achieving 84.85% cross-subject accuracy.",
     tags: ["Random Forest · 500 trees", "16,269 training windows", "10 subjects · Ninapro DB5", "84.85% accuracy"],
   },
   {
     num: "05",
     icon: <IconBolt />,
-    title: "Assistive action",
-    subtitle: "Gesture to computer control",
+    title: "Output & applications",
+    subtitle: "Real-world application",
     color: "#38bdf8",
-    body: "The predicted gesture maps to a real computer action in under 50ms end-to-end. Cursor movement uses the macOS CoreGraphics API for hardware-level repositioning. Clicks fire via cliclick. Keypresses are injected through osascript. No accessibility overlays  -  direct system-level control.",
-    tags: ["< 50ms latency", "CoreGraphics cursor", "osascript keypresses", "6 mapped actions"],
+    body: "Once classified, a gesture can map to any computer action - cursor movement, clicks, or keypresses - in under 50ms end-to-end. This is the layer where signal science meets real-world assistive technology: hands-free control for people who need it, and a platform others can build on.",
+    tags: ["< 50ms end-to-end", "6 gesture classes", "Cursor · Click · Keypress", "Open source output layer"],
   },
 ]
 
@@ -461,8 +461,8 @@ export default function HowItWorks() {
         borderBottom: "1px solid var(--border)",
         padding: "120px 32px 80px",
       }}>
-        <NeuralBackground color="#FF2D78" trailOpacity={0.1} particleCount={500} speed={0.8} />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.62)", zIndex: 1 }} />
+        <NeuralNoise color={[0.18, 0.45, 0.90]} opacity={0.85} speed={0.0006} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
 
         <div style={{ maxWidth: 720, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <Reveal>
@@ -470,7 +470,7 @@ export default function HowItWorks() {
               fontSize: 13, fontWeight: 500, color: "var(--accent)",
               letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: 16,
             }}>
-              Technical overview
+              Technical deep dive
             </p>
           </Reveal>
 
@@ -480,7 +480,7 @@ export default function HowItWorks() {
               letterSpacing: "-2px", lineHeight: 1.05, marginBottom: 28,
               color: "#fff", textShadow: "0 2px 28px rgba(0,0,0,0.55)",
             }}>
-              From muscle signal<br />to action in 50ms.
+              How EMG gesture<br />classification works.
             </h1>
           </Reveal>
 
@@ -489,8 +489,8 @@ export default function HowItWorks() {
               fontSize: 17, color: "rgba(255,255,255,0.72)",
               lineHeight: 1.75, fontWeight: 300, marginBottom: 48,
             }}>
-              How myojam turns a forearm twitch into a cursor move, click, or keypress  -
-              from raw electrode data to system-level control.
+              A walkthrough of the full signal processing pipeline - from raw electrode data
+              to gesture classification. Every stage is documented, reproducible, and openly published.
             </p>
           </Reveal>
 
@@ -549,20 +549,20 @@ export default function HowItWorks() {
 
         <Reveal>
           <div style={{ marginTop: 48, display: "flex", gap: 12 }}>
-            <button onClick={() => navigate("/demo")} style={{
+            <button onClick={() => navigate("/demos")} style={{
               background: "var(--accent)", color: "#fff", border: "none",
               borderRadius: 100, padding: "13px 32px", fontSize: 15,
-              fontWeight: 500, cursor: "pointer",
+              fontWeight: 500, cursor: "pointer", fontFamily: "var(--font)",
               boxShadow: "0 4px 24px rgba(255,45,120,0.3)",
             }}>
-              Try the demo
+              Try the interactive tools
             </button>
-            <button onClick={() => navigate("/about")} style={{
-              background: "transparent", color: "var(--text)",
+            <button onClick={() => navigate("/education")} style={{
+              background: "transparent", color: "var(--text)", fontFamily: "var(--font)",
               border: "1px solid var(--border-mid)", borderRadius: 100,
               padding: "13px 28px", fontSize: 15, cursor: "pointer",
             }}>
-              About the project
+              Read the articles
             </button>
           </div>
         </Reveal>

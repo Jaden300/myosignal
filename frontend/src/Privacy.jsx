@@ -1,32 +1,28 @@
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal } from "./Animate"
+import NeuralNoise from "./components/NeuralNoise"
 
 export default function Privacy() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
 
-      <Reveal>
-        <div style={{ maxWidth: 720, margin: "0 auto", padding: "120px 32px 80px" }}>
-          <h1 style={{
-            fontSize: 36,
-            fontWeight: 600,
-            letterSpacing: "-1px",
-            color: "var(--text)",
-            marginBottom: 8
-          }}>
+      <div style={{ position: "relative", overflow: "hidden", borderBottom: "1px solid var(--border)", padding: "100px 32px 64px" }}>
+        <NeuralNoise color={[0.25, 0.45, 0.80]} opacity={0.85} speed={0.0006} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
+        <div style={{ maxWidth: 720, margin: "0 auto", position: "relative", zIndex: 2 }}>
+          <h1 style={{ fontSize: "clamp(32px, 5vw, 52px)", fontWeight: 600, letterSpacing: "-1.5px", color: "#fff", marginBottom: 8, lineHeight: 1.1 }}>
             Privacy Policy
           </h1>
-
-          <p style={{
-            fontSize: 13,
-            color: "var(--text-tertiary)",
-            fontWeight: 300,
-            marginBottom: 48
-          }}>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", fontWeight: 300, marginBottom: 0 }}>
             Last updated: March 2025
           </p>
+        </div>
+      </div>
+
+      <Reveal>
+        <div style={{ maxWidth: 720, margin: "0 auto", padding: "64px 32px 80px" }}>
 
           {[
             {
@@ -39,7 +35,7 @@ export default function Privacy() {
             },
             {
               title: "3. Demo API Requests",
-              body: "When using the web demo in Dataset mode, your browser sends HTTP requests to our classification API (hosted on Render). These requests contain only anonymous EMG signal windows from the Ninapro DB5 dataset  -  not your personal EMG data. We do not log or store these requests beyond standard server access logs."
+              body: "When using the web demo in Dataset mode, your browser sends HTTP requests to our classification API (hosted on Render). These requests contain only anonymous EMG signal windows from the Ninapro DB5 dataset - not your personal EMG data. We do not log or store these requests beyond standard server access logs."
             },
             {
               title: "4. Sensor Mode",

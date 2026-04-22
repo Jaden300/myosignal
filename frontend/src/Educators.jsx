@@ -2,7 +2,10 @@ import { useNavigate } from "react-router-dom"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
+import NeuralNoise from "./components/NeuralNoise"
 import Quiz from "./educators/Quiz"
+import ContactForm from "./components/ContactForm"
+import { IconBolt, IconBrain, IconPuzzle, IconBook, IconMicroscope, IconGear, IconLaptop, IconBarChart, IconHandshake, IconMedical } from "./Icons"
 
 const LESSONS = [
   {
@@ -14,7 +17,7 @@ const LESSONS = [
     summary: "Students discover how surface electromyography works, explore real EMG waveforms from the Ninapro dataset, and connect the biology of motor neurons to measurable electrical signals.",
     objectives: ["Understand the electrochemical basis of muscle contraction", "Interpret EMG waveform features", "Connect neuroscience to engineering applications"],
     color: "#FF2D78",
-    icon: "⚡",
+    icon: IconBolt,
   },
   {
     slug: "/educators/lesson-gesture-classifier",
@@ -25,18 +28,18 @@ const LESSONS = [
     summary: "A hands-on introduction to supervised machine learning using EMG gesture data. Students extract features, visualise decision boundaries, and understand why cross-subject generalisation is hard.",
     objectives: ["Understand supervised classification", "Extract time-domain features from signals", "Evaluate model performance using confusion matrices"],
     color: "#3B82F6",
-    icon: "🧠",
+    icon: IconBrain,
   },
   {
-    slug: "/educators/lesson-myocode",
-    grade: "Grades 6–10",
-    subject: "Computer Science / STEM",
+    slug: "/educators/lesson-applications-ethics",
+    grade: "Grades 7–11",
+    subject: "Technology / Ethics / Biology",
     duration: "60 min",
-    title: "Code with your muscles using myocode",
-    summary: "Students use myocode  -  myojam's block coding environment  -  to write programs that respond to simulated EMG gestures. Introduces event-driven programming concepts through physical interaction.",
-    objectives: ["Understand event-driven programming", "Build block-coded programs", "Connect physical gesture to computational output"],
+    title: "EMG in the real world: applications and bioethics",
+    summary: "Students explore where EMG technology is deployed today, evaluate what 84% accuracy means in different contexts, and debate who benefits - and who doesn't - when technology listens to your body.",
+    objectives: ["Identify real-world EMG applications", "Evaluate accuracy in terms of error consequences", "Reason about access, privacy, and bias in biometric technology"],
     color: "#8B5CF6",
-    icon: "🧩",
+    icon: IconPuzzle,
   },
   {
     slug: "/educators/resources",
@@ -47,17 +50,17 @@ const LESSONS = [
     summary: "Printable handouts, slide deck templates, assessment rubrics, dataset downloads, and links to curriculum standards. Everything you need to run myojam lessons without starting from scratch.",
     objectives: ["Ready-to-print materials", "Curriculum alignment guides", "Assessment frameworks"],
     color: "#10B981",
-    icon: "📚",
+    icon: IconBook,
   },
 ]
 
 const SUBJECTS = [
-  { icon:"🔬", label:"Biology", desc:"Motor neurons, muscle contraction, the neuromuscular junction  -  EMG makes the invisible visible." },
-  { icon:"⚙️", label:"Physics", desc:"Signal amplitude, frequency, noise filtering  -  real physics in a biological context." },
-  { icon:"💻", label:"Computer Science", desc:"Classification, feature extraction, event-driven programming, machine learning fundamentals." },
-  { icon:"📊", label:"Data Science", desc:"Real 16-channel, 200Hz datasets. Students clean, visualise, and model genuine research data." },
-  { icon:"🤝", label:"Ethics", desc:"Biometric data, accessibility, who benefits from technology  -  rich ethical discussion material." },
-  { icon:"🏥", label:"Health & Technology", desc:"Assistive technology, motor impairment, and the engineering of prosthetics and interfaces." },
+  { icon: IconMicroscope, label:"Biology", desc:"Motor neurons, muscle contraction, the neuromuscular junction - EMG makes the invisible visible." },
+  { icon: IconGear, label:"Physics", desc:"Signal amplitude, frequency, noise filtering - real physics in a biological context." },
+  { icon: IconLaptop, label:"Computer Science", desc:"Classification, feature extraction, event-driven programming, machine learning fundamentals." },
+  { icon: IconBarChart, label:"Data Science", desc:"Real 16-channel, 200Hz datasets. Students clean, visualise, and model genuine research data." },
+  { icon: IconHandshake, label:"Ethics", desc:"Biometric data, accessibility, who benefits from technology - rich ethical discussion material." },
+  { icon: IconMedical, label:"Health & Technology", desc:"Assistive technology, motor impairment, and the engineering of prosthetics and interfaces." },
 ]
 
 const TEASER_QUESTIONS = [
@@ -65,7 +68,7 @@ const TEASER_QUESTIONS = [
     question: "Surface EMG electrodes measure electrical activity in:",
     options: ["The brain","Muscle fibres beneath the skin","Blood vessels","The peripheral nerves directly"],
     correct: 1,
-    explanation: "Surface electrodes pick up the summed electrical activity of muscle fibre action potentials through the skin. They don't directly record brain or nerve signals  -  those require more invasive approaches."
+    explanation: "Surface electrodes pick up the summed electrical activity of muscle fibre action potentials through the skin. They don't directly record brain or nerve signals - those require more invasive approaches."
   },
   {
     question: "myojam achieves what cross-subject classification accuracy?",
@@ -74,10 +77,10 @@ const TEASER_QUESTIONS = [
     explanation: "myojam's Random Forest classifier achieves 84.85% accuracy on subjects it has never seen before, trained on the Ninapro DB5 dataset across 10 subjects and 6 gesture classes."
   },
   {
-    question: "Which myojam tool is best suited for introducing event-driven programming to younger students?",
-    options: ["The live EMG demo","The signal playground","myocode","The confusion matrix explorer"],
-    correct: 2,
-    explanation: "myocode is myojam's Scratch-like block coding environment where EMG gestures trigger program events. It introduces event-driven programming concepts through physical interaction, making it ideal for younger or non-technical students."
+    question: "Which myojam tool lets you see exactly which gestures the classifier confuses - and why?",
+    options: ["The signal playground","The gesture reaction game","The EMG frequency analyzer","The confusion matrix explorer"],
+    correct: 3,
+    explanation: "The confusion matrix explorer shows an interactive heatmap of cross-subject accuracy. Clicking any cell reveals how often one gesture is mistaken for another, along with the biomechanical reason - making it a powerful tool for understanding classifier limitations."
   },
 ]
 
@@ -93,34 +96,29 @@ export default function Educators() {
       <Navbar />
 
       {/* Hero */}
-      <section style={{ position:"relative", padding:"120px 32px 80px", overflow:"hidden" }}>
-        {[
-          ["360px","−80px","−40px",0,"rgba(255,45,120,0.15)"],
-          ["240px","65%","60px",2,"rgba(16,185,129,0.12)"],
-          ["200px","80%","180px",4,"rgba(59,130,246,0.12)"],
-        ].map(([size,x,y,delay,color],i)=>(
-          <div key={i} style={{ position:"absolute",width:size,height:size,borderRadius:"50%",background:color,left:x,top:y,filter:"blur(64px)",pointerEvents:"none",animation:`orbFloat 8s ${delay}s ease-in-out infinite alternate` }}/>
-        ))}
-        <div style={{ maxWidth:860, margin:"0 auto", position:"relative", zIndex:1 }}>
-          <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,255,255,0.88)", backdropFilter:"blur(8px)", border:"1px solid rgba(16,185,129,0.25)", borderRadius:100, padding:"6px 16px", fontSize:13, color:"#10B981", fontWeight:500, marginBottom:32, animation:"fadeUp 0.6s ease" }}>
+      <section style={{ position:"relative", padding:"120px 32px 80px", overflow:"hidden", borderBottom:"1px solid var(--border)" }}>
+        <NeuralNoise color={[0.06, 0.72, 0.40]} opacity={0.85} speed={0.0006} />
+        <div style={{ position:"absolute", inset:0, background:"rgba(3,0,18,0.65)", zIndex:1 }} />
+        <div style={{ maxWidth:860, margin:"0 auto", position:"relative", zIndex:2 }}>
+          <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,255,255,0.08)", backdropFilter:"blur(8px)", border:"1px solid rgba(16,185,129,0.35)", borderRadius:100, padding:"6px 16px", fontSize:13, color:"#10B981", fontWeight:500, marginBottom:32, animation:"fadeUp 0.6s ease" }}>
             <span style={{ width:7,height:7,borderRadius:"50%",background:"#10B981",display:"inline-block" }}/>
             Free · Open access · Curriculum-aligned
           </div>
-          <h1 style={{ fontSize:"clamp(40px,6vw,72px)", fontWeight:600, letterSpacing:"-2.5px", lineHeight:1.04, color:"var(--text)", marginBottom:24, animation:"fadeUp 0.6s 0.1s ease both" }}>
+          <h1 style={{ fontSize:"clamp(40px,6vw,72px)", fontWeight:600, letterSpacing:"-2.5px", lineHeight:1.04, color:"#fff", marginBottom:24, animation:"fadeUp 0.6s 0.1s ease both" }}>
             Bring EMG science<br/>into your<br/><span style={{ color:"#10B981" }}>classroom.</span>
           </h1>
-          <p style={{ fontSize:18, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:560, marginBottom:44, animation:"fadeUp 0.6s 0.2s ease both" }}>
+          <p style={{ fontSize:18, color:"rgba(255,255,255,0.72)", fontWeight:300, lineHeight:1.75, maxWidth:560, marginBottom:44, animation:"fadeUp 0.6s 0.2s ease both" }}>
             Ready-to-run lesson plans, real datasets, and interactive tools for teaching
-            neuroscience, machine learning, and assistive technology  -  from middle school to university.
+            neuroscience, machine learning, and assistive technology - from middle school to university.
           </p>
           <div style={{ display:"flex", gap:12, flexWrap:"wrap", animation:"fadeUp 0.6s 0.3s ease both" }}>
             <a href="#lessons" style={{ background:"#10B981", color:"#fff", borderRadius:100, padding:"14px 36px", fontSize:15, fontWeight:500, textDecoration:"none", boxShadow:"0 4px 24px rgba(16,185,129,0.35)", transition:"transform 0.2s, box-shadow 0.2s" }}
               onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.04)";e.currentTarget.style.boxShadow="0 8px 32px rgba(16,185,129,0.45)"}}
               onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 4px 24px rgba(16,185,129,0.35)"}}
             >Browse lesson plans ↓</a>
-            <button onClick={()=>navigate("/educators/resources")} style={{ background:"rgba(255,255,255,0.88)", backdropFilter:"blur(8px)", color:"var(--text)", border:"1px solid var(--border-mid)", borderRadius:100, padding:"14px 28px", fontSize:15, fontWeight:400, cursor:"pointer", fontFamily:"var(--font)", transition:"border-color 0.2s" }}
-              onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(16,185,129,0.4)"}
-              onMouseLeave={e=>e.currentTarget.style.borderColor="var(--border-mid)"}
+            <button onClick={()=>navigate("/educators/resources")} style={{ background:"rgba(255,255,255,0.08)", backdropFilter:"blur(8px)", color:"#fff", border:"1px solid rgba(255,255,255,0.2)", borderRadius:100, padding:"14px 28px", fontSize:15, fontWeight:400, cursor:"pointer", fontFamily:"var(--font)", transition:"border-color 0.2s" }}
+              onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(16,185,129,0.5)"}
+              onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.2)"}
             >Resource library →</button>
           </div>
         </div>
@@ -137,7 +135,7 @@ export default function Educators() {
           </Reveal>
           <StaggerList items={SUBJECTS} columns={3} gap={12} renderItem={s=>(
             <HoverCard style={{ background:"var(--bg)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"24px" }}>
-              <div style={{ fontSize:28, marginBottom:12 }}>{s.icon}</div>
+              <div style={{ width:44, height:44, borderRadius:10, background:"var(--accent-soft)", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:12 }}><s.icon size={22} color="var(--accent)" /></div>
               <div style={{ fontSize:15, fontWeight:600, color:"var(--text)", marginBottom:6 }}>{s.label}</div>
               <p style={{ fontSize:13, color:"var(--text-secondary)", lineHeight:1.65, fontWeight:300, margin:0 }}>{s.desc}</p>
             </HoverCard>
@@ -157,7 +155,7 @@ export default function Educators() {
           <StaggerList items={LESSONS} columns={1} gap={16} renderItem={lesson=>(
             <HoverCard color={lesson.color+"20"} onClick={()=>navigate(lesson.slug)} style={{ background:"var(--bg-secondary)", borderRadius:"var(--radius)", border:"1px solid var(--border)", overflow:"hidden", cursor:"pointer" }}>
               <div style={{ background:`linear-gradient(135deg, ${lesson.color}10 0%, transparent 100%)`, borderBottom:"1px solid var(--border)", padding:"28px 32px", display:"flex", gap:20, alignItems:"flex-start" }}>
-                <div style={{ width:52, height:52, borderRadius:14, background:lesson.color+"18", display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0 }}>{lesson.icon}</div>
+                <div style={{ width:52, height:52, borderRadius:14, background:lesson.color+"18", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}><lesson.icon size={24} color={lesson.color} /></div>
                 <div style={{ flex:1 }}>
                   <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:10 }}>
                     <span style={{ fontSize:11, fontWeight:500, color:lesson.color, background:lesson.color+"15", border:`1px solid ${lesson.color}30`, borderRadius:100, padding:"3px 10px" }}>{lesson.grade}</span>
@@ -191,7 +189,7 @@ export default function Educators() {
               A 3-question preview. Full quizzes are inside each lesson.
             </p>
           </Reveal>
-          <Quiz title="EMG & myojam  -  quick preview" questions={TEASER_QUESTIONS} accentColor="#10B981" />
+          <Quiz title="EMG & myojam - quick preview" questions={TEASER_QUESTIONS} accentColor="#10B981" />
         </div>
       </section>
 
@@ -204,9 +202,14 @@ export default function Educators() {
               <p style={{ fontSize:15, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, maxWidth:440, margin:"0 auto 28px" }}>
                 We're actively developing new lesson plans. If you've used myojam in a classroom and want to share what worked, we'd love to hear from you.
               </p>
-              <a href="https://tally.so/embed/EkJXRN?transparentBackground=1&dynamicHeight=1" target="_blank" rel="noreferrer" style={{ background:"#10B981", color:"#fff", borderRadius:100, padding:"12px 28px", fontSize:14, fontWeight:500, textDecoration:"none", display:"inline-block" }}>
-                Share your experience →
-              </a>
+              <ContactForm
+                source="educators"
+                namePlaceholder="Your name"
+                emailPlaceholder="your@email.com"
+                messagePlaceholder="Tell us how you used myojam in your classroom and what worked."
+                submitLabel="Share your experience"
+                padding="20px 0 0"
+              />
             </div>
           </Reveal>
         </div>

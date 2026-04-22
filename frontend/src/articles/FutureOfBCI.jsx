@@ -2,6 +2,7 @@ import Navbar from "../Navbar"
 import { useNavigate } from "react-router-dom"
 import Footer from "../Footer"
 import ArticleBar from "../ArticleUtils"
+import NeuralNoise from "../components/NeuralNoise"
 
 function FaceAvatar({ seed, size = 48 }) {
   const skinTones = ["#f5dce4","#e8c9a0","#c8956c","#8d5524","#f5dce4"]
@@ -33,13 +34,13 @@ const ABSTRACT = "Surface EMG represents one point on a spectrum of human-machin
 const SECTIONS = [
   {
     num:"01", tag:"The spectrum", title:"From skin to neuron",
-    body:"Human-computer interfaces can be ordered by where in the nervous system they tap the signal. At one end, surface EMG sits at the muscle  -  the furthest downstream from the brain, the least invasive, the most accessible. Moving upstream: needle EMG records from within individual muscle fibres. Peripheral nerve interfaces record from nerve fascicles. Electrocorticography records from the cortical surface. Intracortical arrays record from individual neurons. Each step upstream means more information, less noise, but dramatically more invasive procedures.",
+    body:"Human-computer interfaces can be ordered by where in the nervous system they tap the signal. At one end, surface EMG sits at the muscle - the furthest downstream from the brain, the least invasive, the most accessible. Moving upstream: needle EMG records from within individual muscle fibres. Peripheral nerve interfaces record from nerve fascicles. Electrocorticography records from the cortical surface. Intracortical arrays record from individual neurons. Each step upstream means more information, less noise, but dramatically more invasive procedures.",
     callout:null
   },
   {
     num:"02", tag:"High-density EMG", title:"The near-term upgrade",
-    body:"The most actionable near-term improvement to consumer EMG doesn't require any surgery. High-density surface EMG uses arrays of 64–256 electrodes over the muscle surface. The dense spatial sampling allows decomposition of the signal into individual motor unit action potentials  -  identifying which motor neurons are firing rather than averaging them. This increases information content and improves fine-grained gesture resolution.",
-    callout:"Several research groups have demonstrated individual finger classification accuracy above 95% using HD-sEMG with minimal calibration. The primary constraint is hardware cost  -  not algorithmic capability."
+    body:"The most actionable near-term improvement to consumer EMG doesn't require any surgery. High-density surface EMG uses arrays of 64–256 electrodes over the muscle surface. The dense spatial sampling allows decomposition of the signal into individual motor unit action potentials - identifying which motor neurons are firing rather than averaging them. This increases information content and improves fine-grained gesture resolution.",
+    callout:"Several research groups have demonstrated individual finger classification accuracy above 95% using HD-sEMG with minimal calibration. The primary constraint is hardware cost - not algorithmic capability."
   },
   {
     num:"03", tag:"Peripheral nerve", title:"Recording closer to the source",
@@ -53,7 +54,7 @@ const SECTIONS = [
   },
   {
     num:"05", tag:"For myojam", title:"The platform angle",
-    body:"myojam operates at the accessible end of this spectrum  -  consumer hardware and non-invasive sensing. However, the signal processing pipeline is architecture-agnostic. The same feature extraction and classification approach can scale from 16-channel EMG to high-density arrays or even neural recordings by modifying the input layer. Building robust infrastructure at the low end creates a foundation that scales upward with hardware improvements.",
+    body:"myojam operates at the accessible end of this spectrum - consumer hardware and non-invasive sensing. However, the signal processing pipeline is architecture-agnostic. The same feature extraction and classification approach can scale from 16-channel EMG to high-density arrays or even neural recordings by modifying the input layer. Building robust infrastructure at the low end creates a foundation that scales upward with hardware improvements.",
     callout:null
   },
 ]
@@ -64,32 +65,34 @@ export default function FutureBCI() {
     <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
       <Navbar />
 
-      <div style={{ background:"linear-gradient(135deg, #f5f0ff 0%, #fafafa 70%)", borderBottom:"1px solid var(--border)", padding:"100px 32px 56px" }}>
-        <div style={{ maxWidth:720, margin:"0 auto" }}>
+      <div style={{ position:"relative", overflow:"hidden", borderBottom:"1px solid var(--border)", padding:"100px 32px 56px" }}>
+        <NeuralNoise color={[0.30, 0.20, 0.85]} opacity={0.85} speed={0.0006} />
+        <div style={{ position:"absolute", inset:0, background:"rgba(3,0,18,0.65)", zIndex:1 }} />
+        <div style={{ maxWidth:720, margin:"0 auto", position:"relative", zIndex:2 }}>
           <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:28 }}>
             <span onClick={()=>navigate("/education")} style={{ fontSize:13, color:"var(--accent)", cursor:"pointer" }}>Education</span>
-            <span style={{ fontSize:13, color:"var(--text-tertiary)" }}>→</span>
-            <span style={{ fontSize:13, color:"var(--text-tertiary)", fontWeight:300 }}>Future of BCI</span>
+            <span style={{ fontSize:13, color:"rgba(255,255,255,0.5)" }}>→</span>
+            <span style={{ fontSize:13, color:"rgba(255,255,255,0.5)", fontWeight:300 }}>Future of BCI</span>
           </div>
 
-          <div style={{ display:"inline-flex", alignItems:"center", gap:6, background:"var(--accent-soft)", border:"1px solid rgba(255,45,120,0.15)", borderRadius:100, padding:"5px 16px", fontSize:13, color:"var(--accent)", fontWeight:500, marginBottom:24 }}>
+          <div style={{ display:"inline-flex", alignItems:"center", gap:6, background:"rgba(255,255,255,0.08)", backdropFilter:"blur(8px)", border:"1px solid rgba(255,45,120,0.3)", borderRadius:100, padding:"5px 16px", fontSize:13, color:"var(--accent)", fontWeight:500, marginBottom:24 }}>
             Future · 6 min read
           </div>
 
-          <h1 style={{ fontSize:"clamp(28px, 5vw, 52px)", fontWeight:600, letterSpacing:"-1.5px", color:"var(--text)", lineHeight:1.08, marginBottom:24 }}>
+          <h1 style={{ fontSize:"clamp(28px, 5vw, 52px)", fontWeight:600, letterSpacing:"-1.5px", color:"#fff", lineHeight:1.08, marginBottom:24 }}>
             After EMG: what comes next.<br/>
             <span style={{ color:"var(--accent)" }}>From surface signals to brain-computer interfaces.</span>
           </h1>
 
-          <p style={{ fontSize:17, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, marginBottom:36, maxWidth:580 }}>
+          <p style={{ fontSize:17, color:"rgba(255,255,255,0.72)", fontWeight:300, lineHeight:1.75, marginBottom:36, maxWidth:580 }}>
             Surface EMG is powerful but limited. Neural implants, high-density arrays, and AI-driven decoding are converging on something much more ambitious.
           </p>
 
           <div style={{ display:"flex", alignItems:"center", gap:12 }}>
             <FaceAvatar seed={4} size={40} />
             <div>
-              <div style={{ fontSize:14, fontWeight:500, color:"var(--text)" }}>Jaden Wong</div>
-              <div style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300 }}>Founder & Lead Engineer · September 22, 2025</div>
+              <div style={{ fontSize:14, fontWeight:500, color:"#fff" }}>myojam team</div>
+              <div style={{ fontSize:12, color:"rgba(255,255,255,0.5)", fontWeight:300 }}>Founder & Lead Engineer · September 22, 2025</div>
             </div>
           </div>
         </div>

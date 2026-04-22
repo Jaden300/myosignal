@@ -1,27 +1,34 @@
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
+import ContactForm from "./components/ContactForm"
+import NeuralNoise from "./components/NeuralNoise"
+import { IconBarChart } from "./Icons"
 
 export default function Contact() {
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
 
-      <div style={{ maxWidth: 600, margin: "0 auto", padding: "120px 32px 80px" }}>
+      <div style={{ position: "relative", overflow: "hidden", borderBottom: "1px solid var(--border)", padding: "100px 32px 64px" }}>
+        <NeuralNoise color={[0.90, 0.18, 0.47]} opacity={0.85} speed={0.0006} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
+        <div style={{ maxWidth: 600, margin: "0 auto", position: "relative", zIndex: 2 }}>
+          <Reveal>
+            <SectionPill>Get in touch</SectionPill>
+          </Reveal>
+          <h1 style={{
+            fontSize: "clamp(36px, 6vw, 60px)", fontWeight: 600,
+            letterSpacing: "-2px", lineHeight: 1.05, marginBottom: 24, color: "#fff"
+          }}>Get in touch.</h1>
+          <p style={{
+            fontSize: 16, color: "rgba(255,255,255,0.72)", lineHeight: 1.7,
+            fontWeight: 300, marginBottom: 0
+          }}>Questions about the project, research collaboration, or building on top of myojam? Reach out.</p>
+        </div>
+      </div>
 
-        <Reveal>
-          <SectionPill>Get in touch</SectionPill>
-        </Reveal>
-
-        <h1 style={{
-          fontSize: "clamp(36px, 6vw, 60px)", fontWeight: 600,
-          letterSpacing: "-2px", lineHeight: 1.05, marginBottom: 24
-        }}>Get in touch.</h1>
-
-        <p style={{
-          fontSize: 16, color: "var(--text-secondary)", lineHeight: 1.7,
-          fontWeight: 300, marginBottom: 56
-        }}>Questions about the project, research collaboration, or building on top of myojam? Reach out.</p>
+      <div style={{ maxWidth: 600, margin: "0 auto", padding: "56px 32px 80px" }}>
 
         {/* Social links */}
           <Reveal delay={0.1}>
@@ -62,11 +69,11 @@ export default function Contact() {
         {/* Links */}
         <StaggerList
           items={[
-            ["Ninapro dataset", "Source data for the model", "https://ninapro.hevs.ch", "📊"],
+            ["Ninapro dataset", "Source data for the model", "https://ninapro.hevs.ch"],
           ]}
           columns={1}
           gap={12}
-          renderItem={([label, desc, href, icon], i) => (
+          renderItem={([label, desc, href], i) => (
             <Reveal delay={i * 0.08}>
               <HoverCard
                 color="rgba(255,45,120,0.08)"
@@ -97,10 +104,9 @@ export default function Contact() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        fontSize: 18
                       }}
                     >
-                      {icon}
+                      <IconBarChart size={20} color="var(--accent)" />
                     </div>
 
                     <div>
@@ -141,15 +147,10 @@ export default function Contact() {
           background: "var(--bg-secondary)", borderRadius: "var(--radius)",
           border: "1px solid var(--border)", overflow: "hidden"
         }}>
-          <iframe
-            src="https://tally.so/embed/gDZlkJ?hideTitle=1&transparentBackground=1&dynamicHeight=1"
-            width="100%"
-            height="500"
-            frameBorder="0"
-            marginHeight="0"
-            marginWidth="0"
-            title="Contact form"
-            style={{ display: "block" }}
+          <ContactForm
+            source="contact"
+            messagePlaceholder="What's on your mind?"
+            submitLabel="Send message"
           />
         </div>
 
