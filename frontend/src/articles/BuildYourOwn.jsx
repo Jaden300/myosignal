@@ -1,6 +1,7 @@
 import Navbar from "../Navbar"
 import { useNavigate } from "react-router-dom"
 import Footer from "../Footer"
+import UpNext from "../UpNext"
 import ArticleBar from "../ArticleUtils"
 import NeuralNoise from "../components/NeuralNoise"
 
@@ -151,6 +152,7 @@ export default function BuildYourOwn() {
         </div>
       </div>
 
+      <UpNext current="/education/build-your-own" />
       <Footer />
     </div>
   )

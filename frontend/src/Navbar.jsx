@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react"
 import Logo from "./Logo"
 import { t } from "./i18n"
 import { IconBook, IconGraduate, IconBulb, IconPeople, IconRocket, IconBuilding, IconCode, IconShield, IconPencil, IconBolt, IconMicroscope, IconNote, IconLink } from "./Icons"
+import SearchModal from "./components/SearchModal"
 
 function Dropdown({ label, items, pathname }) {
   const [open, setOpen] = useState(false)
@@ -114,11 +115,39 @@ function NavLink({ label, path, pathname, accent }) {
   )
 }
 
+const ARTICLE_PATHS = ["/education/", "/research/paper", "/research/classifier-analysis", "/research/variability-review", "/research/windowing-analysis"]
+
 export default function Navbar() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [progress, setProgress] = useState(0)
+
+  const isArticle = ARTICLE_PATHS.some(p => pathname.startsWith(p)) && pathname !== "/education"
+
+  useEffect(() => {
+    if (!isArticle) { setProgress(0); return }
+    function onScroll() {
+      const el = document.documentElement
+      const total = el.scrollHeight - el.clientHeight
+      setProgress(total > 0 ? el.scrollTop / total : 0)
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [isArticle, pathname])
+
+  useEffect(() => {
+    function onKey(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") { e.preventDefault(); setSearchOpen(true) }
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [])
 
   return (
+    <>
+    {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
     <nav style={{
       position:"fixed", top:0, left:0, right:0, zIndex:100,
       background:"rgba(255,255,255,0.88)",
@@ -154,7 +183,26 @@ export default function Navbar() {
         ]}/>
 
         <NavLink label={t("nav_contact")} path="/contact" pathname={pathname}/>
+
+        <button
+          onClick={() => setSearchOpen(true)}
+          title="Search (⌘K)"
+          style={{ background:"none", border:"1px solid var(--border)", borderRadius:8, cursor:"pointer", padding:"5px 10px", display:"flex", alignItems:"center", gap:7, color:"var(--text-tertiary)", transition:"border-color 0.15s, color 0.15s" }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.color = "var(--accent)" }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-tertiary)" }}
+        >
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+            <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.5"/>
+            <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+          <kbd style={{ fontSize:10, fontFamily:"monospace", opacity:0.6 }}>⌘K</kbd>
+        </button>
       </div>
+
+      {isArticle && (
+        <div style={{ position:"absolute", bottom:0, left:0, height:2, background:"var(--accent)", width:`${progress * 100}%`, transition:"width 0.1s linear", zIndex:1 }}/>
+      )}
     </nav>
+    </>
   )
 }

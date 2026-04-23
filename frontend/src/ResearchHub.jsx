@@ -91,7 +91,7 @@ export default function ResearchHub() {
           {/* Stats */}
           <div style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
             {[
-              ["1", "Technical report"],
+              ["4", "Technical reports"],
               ["84.85%", "Cross-subject accuracy"],
               ["Open", "Access"],
               ["MIT", "License"],
@@ -195,6 +195,180 @@ export default function ResearchHub() {
               <a href="https://github.com/Jaden300/myojam" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300, textDecoration: "none", transition: "color 0.15s" }}
                 onMouseEnter={e => e.currentTarget.style.color = "var(--accent)"}
                 onMouseLeave={e => e.currentTarget.style.color = "var(--text-tertiary)"}
+              >View source code ↗</a>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Second paper card */}
+        <Reveal delay={0.05}>
+          <div style={{ borderRadius:"var(--radius)", border:"1px solid var(--border)", overflow:"hidden", marginBottom:48, background:"var(--bg-secondary)" }}>
+            <div style={{ background:"linear-gradient(135deg, rgba(139,92,246,0.10) 0%, transparent 100%)", borderBottom:"1px solid var(--border)", padding:"32px 40px 28px" }}>
+              <div style={{ display:"flex", gap:8, marginBottom:20, flexWrap:"wrap" }}>
+                <span style={{ fontSize:11, fontWeight:500, color:"#8B5CF6", background:"rgba(139,92,246,0.12)", border:"1px solid rgba(139,92,246,0.25)", borderRadius:100, padding:"3px 12px" }}>Technical Report</span>
+                <span style={{ fontSize:11, fontWeight:500, color:"#10B981", background:"rgba(16,185,129,0.10)", border:"1px solid rgba(16,185,129,0.2)", borderRadius:100, padding:"3px 12px" }}>Open Access</span>
+                <span style={{ fontSize:11, fontWeight:500, color:"var(--accent)", background:"var(--accent-soft)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:100, padding:"3px 12px" }}>MIT Licence</span>
+                <span style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, alignSelf:"center" }}>April 2026</span>
+              </div>
+              <h2 style={{ fontSize:"clamp(16px,2.4vw,22px)", fontWeight:700, color:"var(--text)", lineHeight:1.3, letterSpacing:"-0.4px", marginBottom:16, fontFamily:"Georgia, 'Times New Roman', serif", maxWidth:680 }}>
+                Cross-Subject sEMG Gesture Classification: Feature Engineering and Classifier Comparison on the Ninapro DB5 Benchmark
+              </h2>
+              <div style={{ fontSize:14, color:"var(--text-secondary)", fontWeight:400, marginBottom:4 }}>myojam Research Team</div>
+              <div style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300, fontStyle:"italic" }}>myojam Project, Independent Research, Toronto, Ontario, Canada</div>
+            </div>
+
+            <div style={{ padding:"28px 40px", borderBottom:"1px solid var(--border)" }}>
+              <div style={{ fontSize:11, fontWeight:700, color:"var(--text)", textTransform:"uppercase", letterSpacing:"0.10em", marginBottom:12, fontFamily:"Georgia, serif" }}>Abstract</div>
+              <p style={{ fontSize:14, color:"var(--text-secondary)", lineHeight:1.85, fontWeight:300, fontFamily:"Georgia, 'Times New Roman', serif", margin:0 }}>
+                A systematic evaluation of four classical machine learning classifiers - Random Forest, SVM (RBF), k-NN, and LDA - for cross-subject sEMG gesture recognition on Ninapro DB5. All classifiers operate on a 64-dimensional time-domain feature vector across 16 channels under leave-one-subject-out evaluation. Random Forest achieves 84.85% mean cross-subject accuracy, outperforming SVM by 2.55 pp, k-NN by 8.45 pp, and LDA by 13.05 pp. Per-fold analysis identifies inter-subject physiological variability as the dominant performance bottleneck. Feature importance analysis via MDI highlights MAV and RMS as the primary discriminative features and localises the most informative electrode positions.
+              </p>
+            </div>
+
+            <div style={{ padding:"20px 40px", borderBottom:"1px solid var(--border)" }}>
+              <span style={{ fontSize:11, fontWeight:600, color:"var(--text)", marginRight:10 }}>Keywords</span>
+              <span style={{ fontSize:12, color:"var(--text-secondary)", fontWeight:300, fontStyle:"italic" }}>
+                Cross-subject generalisation  ·  Random Forest  ·  SVM  ·  Feature importance  ·  LOSO evaluation  ·  Ninapro DB5
+              </span>
+            </div>
+
+            <div style={{ padding:"20px 40px", borderBottom:"1px solid var(--border)", display:"flex", gap:32, flexWrap:"wrap" }}>
+              {[
+                ["8 sections", "Full paper"],
+                ["4 figures", "Interactive charts"],
+                ["12 references", "Cited literature"],
+                ["4 classifiers", "Systematically compared"],
+              ].map(([val, sub]) => (
+                <div key={val}>
+                  <div style={{ fontSize:14, fontWeight:600, color:"var(--text)", letterSpacing:"-0.3px" }}>{val}</div>
+                  <div style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, marginTop:2 }}>{sub}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ padding:"24px 40px", display:"flex", gap:12, flexWrap:"wrap", alignItems:"center" }}>
+              <button onClick={()=>navigate("/research/classifier-analysis")} style={{ background:"#8B5CF6", color:"#fff", border:"none", borderRadius:100, padding:"12px 28px", fontSize:14, fontWeight:500, cursor:"pointer", fontFamily:"var(--font)", boxShadow:"0 4px 16px rgba(139,92,246,0.3)", transition:"transform 0.15s, box-shadow 0.15s" }}
+                onMouseEnter={e=>{ e.currentTarget.style.transform="scale(1.04)"; e.currentTarget.style.boxShadow="0 8px 24px rgba(139,92,246,0.4)" }}
+                onMouseLeave={e=>{ e.currentTarget.style.transform="scale(1)"; e.currentTarget.style.boxShadow="0 4px 16px rgba(139,92,246,0.3)" }}
+              >Read full paper →</button>
+              <a href="https://github.com/Jaden300/myojam" target="_blank" rel="noreferrer" style={{ fontSize:13, color:"var(--text-tertiary)", fontWeight:300, textDecoration:"none", transition:"color 0.15s" }}
+                onMouseEnter={e=>e.currentTarget.style.color="var(--accent)"}
+                onMouseLeave={e=>e.currentTarget.style.color="var(--text-tertiary)"}
+              >View source code ↗</a>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Third paper card */}
+        <Reveal delay={0.10}>
+          <div style={{ borderRadius:"var(--radius)", border:"1px solid var(--border)", overflow:"hidden", marginBottom:48, background:"var(--bg-secondary)" }}>
+            <div style={{ background:"linear-gradient(135deg, rgba(16,185,129,0.10) 0%, transparent 100%)", borderBottom:"1px solid var(--border)", padding:"32px 40px 28px" }}>
+              <div style={{ display:"flex", gap:8, marginBottom:20, flexWrap:"wrap" }}>
+                <span style={{ fontSize:11, fontWeight:500, color:"#10B981", background:"rgba(16,185,129,0.12)", border:"1px solid rgba(16,185,129,0.25)", borderRadius:100, padding:"3px 12px" }}>Structured Review</span>
+                <span style={{ fontSize:11, fontWeight:500, color:"#10B981", background:"rgba(16,185,129,0.10)", border:"1px solid rgba(16,185,129,0.2)", borderRadius:100, padding:"3px 12px" }}>Open Access</span>
+                <span style={{ fontSize:11, fontWeight:500, color:"var(--accent)", background:"var(--accent-soft)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:100, padding:"3px 12px" }}>MIT Licence</span>
+                <span style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, alignSelf:"center" }}>April 2026</span>
+              </div>
+              <h2 style={{ fontSize:"clamp(16px,2.4vw,22px)", fontWeight:700, color:"var(--text)", lineHeight:1.3, letterSpacing:"-0.4px", marginBottom:16, fontFamily:"Georgia, 'Times New Roman', serif", maxWidth:680 }}>
+                Origins and Mitigation of Inter-Subject and Inter-Session Variability in Surface Electromyographic Gesture Classification: A Structured Review
+              </h2>
+              <div style={{ fontSize:14, color:"var(--text-secondary)", fontWeight:400, marginBottom:4 }}>myojam Research Team</div>
+              <div style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300, fontStyle:"italic" }}>myojam Project, Independent Research, Toronto, Ontario, Canada</div>
+            </div>
+
+            <div style={{ padding:"28px 40px", borderBottom:"1px solid var(--border)" }}>
+              <div style={{ fontSize:11, fontWeight:700, color:"var(--text)", textTransform:"uppercase", letterSpacing:"0.10em", marginBottom:12, fontFamily:"Georgia, serif" }}>Abstract</div>
+              <p style={{ fontSize:14, color:"var(--text-secondary)", lineHeight:1.85, fontWeight:300, fontFamily:"Georgia, 'Times New Roman', serif", margin:0 }}>
+                Variability in surface electromyographic (sEMG) signals across subjects and sessions remains the principal obstacle preventing laboratory-grade gesture classifiers from achieving reliable real-world deployment. This structured review synthesises evidence from 15 peer-reviewed publications to characterise the physiological, mechanical, and temporal origins of this variability, quantify its impact on classification accuracy, and evaluate signal-level, feature-level, and model-level mitigation strategies. Under within-subject evaluation, state-of-the-art classifiers report accuracies approaching 95%; under cross-subject, cross-session, cross-limb-position evaluation the same classifiers decline to 63%, a gap of 32 percentage points attributable in roughly equal measure to motor unit anatomy, electrode placement mechanics, and session-specific recording conditions. The present review finds that no single mitigation strategy closes this gap in isolation; cumulative application of standardised placement, whitening normalisation, session-adaptive calibration, and domain-adversarial training is estimated to recover 10.3 percentage points under realistic deployment conditions.
+              </p>
+            </div>
+
+            <div style={{ padding:"20px 40px", borderBottom:"1px solid var(--border)" }}>
+              <span style={{ fontSize:11, fontWeight:600, color:"var(--text)", marginRight:10 }}>Keywords</span>
+              <span style={{ fontSize:12, color:"var(--text-secondary)", fontWeight:300, fontStyle:"italic" }}>
+                Inter-subject variability  ·  sEMG  ·  Gesture classification  ·  Domain adaptation  ·  Motor unit anatomy  ·  Transfer learning
+              </span>
+            </div>
+
+            <div style={{ padding:"20px 40px", borderBottom:"1px solid var(--border)", display:"flex", gap:32, flexWrap:"wrap" }}>
+              {[
+                ["9 sections", "Full review"],
+                ["3 figures", "Interactive taxonomy & charts"],
+                ["15 references", "Peer-reviewed sources"],
+                ["32 pp gap", "Documented accuracy loss"],
+              ].map(([val, sub]) => (
+                <div key={val}>
+                  <div style={{ fontSize:14, fontWeight:600, color:"var(--text)", letterSpacing:"-0.3px" }}>{val}</div>
+                  <div style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, marginTop:2 }}>{sub}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ padding:"24px 40px", display:"flex", gap:12, flexWrap:"wrap", alignItems:"center" }}>
+              <button onClick={()=>navigate("/research/variability-review")} style={{ background:"#10B981", color:"#fff", border:"none", borderRadius:100, padding:"12px 28px", fontSize:14, fontWeight:500, cursor:"pointer", fontFamily:"var(--font)", boxShadow:"0 4px 16px rgba(16,185,129,0.3)", transition:"transform 0.15s, box-shadow 0.15s" }}
+                onMouseEnter={e=>{ e.currentTarget.style.transform="scale(1.04)"; e.currentTarget.style.boxShadow="0 8px 24px rgba(16,185,129,0.4)" }}
+                onMouseLeave={e=>{ e.currentTarget.style.transform="scale(1)"; e.currentTarget.style.boxShadow="0 4px 16px rgba(16,185,129,0.3)" }}
+              >Read full review →</button>
+              <a href="https://github.com/Jaden300/myojam" target="_blank" rel="noreferrer" style={{ fontSize:13, color:"var(--text-tertiary)", fontWeight:300, textDecoration:"none", transition:"color 0.15s" }}
+                onMouseEnter={e=>e.currentTarget.style.color="var(--accent)"}
+                onMouseLeave={e=>e.currentTarget.style.color="var(--text-tertiary)"}
+              >View source code ↗</a>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Fourth paper card */}
+        <Reveal delay={0.15}>
+          <div style={{ borderRadius:"var(--radius)", border:"1px solid var(--border)", overflow:"hidden", marginBottom:48, background:"var(--bg-secondary)" }}>
+            <div style={{ background:"linear-gradient(135deg, rgba(6,182,212,0.10) 0%, transparent 100%)", borderBottom:"1px solid var(--border)", padding:"32px 40px 28px" }}>
+              <div style={{ display:"flex", gap:8, marginBottom:20, flexWrap:"wrap" }}>
+                <span style={{ fontSize:11, fontWeight:500, color:"#06B6D4", background:"rgba(6,182,212,0.12)", border:"1px solid rgba(6,182,212,0.25)", borderRadius:100, padding:"3px 12px" }}>Empirical Study</span>
+                <span style={{ fontSize:11, fontWeight:500, color:"#10B981", background:"rgba(16,185,129,0.10)", border:"1px solid rgba(16,185,129,0.2)", borderRadius:100, padding:"3px 12px" }}>Open Access</span>
+                <span style={{ fontSize:11, fontWeight:500, color:"var(--accent)", background:"var(--accent-soft)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:100, padding:"3px 12px" }}>MIT Licence</span>
+                <span style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, alignSelf:"center" }}>April 2026</span>
+              </div>
+              <h2 style={{ fontSize:"clamp(16px,2.4vw,22px)", fontWeight:700, color:"var(--text)", lineHeight:1.3, letterSpacing:"-0.4px", marginBottom:16, fontFamily:"Georgia, 'Times New Roman', serif", maxWidth:680 }}>
+                Temporal Segmentation Parameters in Surface Electromyographic Gesture Classification: A Systematic Empirical Analysis of Window Duration, Overlap Ratio, and Increment Selection
+              </h2>
+              <div style={{ fontSize:14, color:"var(--text-secondary)", fontWeight:400, marginBottom:4 }}>myojam Research Team</div>
+              <div style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300, fontStyle:"italic" }}>myojam Project, Independent Research, Toronto, Ontario, Canada</div>
+            </div>
+
+            <div style={{ padding:"28px 40px", borderBottom:"1px solid var(--border)" }}>
+              <div style={{ fontSize:11, fontWeight:700, color:"var(--text)", textTransform:"uppercase", letterSpacing:"0.10em", marginBottom:12, fontFamily:"Georgia, serif" }}>Abstract</div>
+              <p style={{ fontSize:14, color:"var(--text-secondary)", lineHeight:1.85, fontWeight:300, fontFamily:"Georgia, 'Times New Roman', serif", margin:0 }}>
+                A systematic ablation of window duration (100 ms to 2000 ms) for cross-subject sEMG classification on Ninapro DB5 under LOSO evaluation. Accuracy increases from 62.4% at 100 ms to a peak of 85.3% at 1250 ms before declining at 2000 ms due to stationarity violation. A formal latency-accuracy analysis identifies a prosthetic feasibility gap: no window duration simultaneously satisfies the ≤300 ms clinical latency threshold and ≥80% accuracy requirement for 200 Hz hardware. Overlap ratio does not affect per-window accuracy; 75% overlap is recommended for decision rate. Five-window majority voting recovers 1.8 pp at the cost of 1000 ms additional latency.
+              </p>
+            </div>
+
+            <div style={{ padding:"20px 40px", borderBottom:"1px solid var(--border)" }}>
+              <span style={{ fontSize:11, fontWeight:600, color:"var(--text)", marginRight:10 }}>Keywords</span>
+              <span style={{ fontSize:12, color:"var(--text-secondary)", fontWeight:300, fontStyle:"italic" }}>
+                Window duration  ·  Overlap ratio  ·  EMG latency  ·  Prosthetic feasibility gap  ·  Majority voting  ·  Real-time control
+              </span>
+            </div>
+
+            <div style={{ padding:"20px 40px", borderBottom:"1px solid var(--border)", display:"flex", gap:32, flexWrap:"wrap" }}>
+              {[
+                ["9 sections", "Full paper"],
+                ["3 figures", "Charts & SVG diagrams"],
+                ["15 references", "Cited literature"],
+                ["8 conditions", "Window durations tested"],
+              ].map(([val, sub]) => (
+                <div key={val}>
+                  <div style={{ fontSize:14, fontWeight:600, color:"var(--text)", letterSpacing:"-0.3px" }}>{val}</div>
+                  <div style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, marginTop:2 }}>{sub}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ padding:"24px 40px", display:"flex", gap:12, flexWrap:"wrap", alignItems:"center" }}>
+              <button onClick={()=>navigate("/research/windowing-analysis")} style={{ background:"#06B6D4", color:"#fff", border:"none", borderRadius:100, padding:"12px 28px", fontSize:14, fontWeight:500, cursor:"pointer", fontFamily:"var(--font)", boxShadow:"0 4px 16px rgba(6,182,212,0.3)", transition:"transform 0.15s, box-shadow 0.15s" }}
+                onMouseEnter={e=>{ e.currentTarget.style.transform="scale(1.04)"; e.currentTarget.style.boxShadow="0 8px 24px rgba(6,182,212,0.4)" }}
+                onMouseLeave={e=>{ e.currentTarget.style.transform="scale(1)"; e.currentTarget.style.boxShadow="0 4px 16px rgba(6,182,212,0.3)" }}
+              >Read full paper →</button>
+              <a href="https://github.com/Jaden300/myojam" target="_blank" rel="noreferrer" style={{ fontSize:13, color:"var(--text-tertiary)", fontWeight:300, textDecoration:"none", transition:"color 0.15s" }}
+                onMouseEnter={e=>e.currentTarget.style.color="var(--accent)"}
+                onMouseLeave={e=>e.currentTarget.style.color="var(--text-tertiary)"}
               >View source code ↗</a>
             </div>
           </div>

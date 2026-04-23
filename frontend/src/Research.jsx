@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
+import UpNext from "./UpNext"
 import { Reveal } from "./Animate"
 import { useState } from "react"
 
@@ -405,6 +406,7 @@ export default function Research() {
           </button>
         </div>
       </div>
+      <UpNext current="/research/paper" />
       <Footer />
     </div>
   )

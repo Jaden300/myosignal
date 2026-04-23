@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
@@ -8,6 +8,23 @@ import SplitText from "./components/SplitText"
 import SignalModel3D from "./components/SignalModel3D"
 import { t } from "./i18n"
 import { IconBook, IconGraduate, IconBolt, IconMicroscope } from "./Icons"
+
+const ALL_READS = [
+  { slug:"/education/emg-explainer",       tag:"Foundations",  title:"The science of muscle-computer interfaces",       time:"8 min",  desc:"How motor neurons, muscle fibres, and surface electrodes turn movement into electrical data." },
+  { slug:"/education/why-emg-is-hard",     tag:"Signal proc.", title:"Why EMG is harder than it looks",                 time:"7 min",  desc:"Noise, placement variability, and individual anatomy - the three problems that make EMG genuinely hard." },
+  { slug:"/education/future-of-bci",       tag:"Future",       title:"After EMG: what comes next in BCI",               time:"6 min",  desc:"From implanted electrodes to non-invasive ultrasound - what the next decade of neural interfaces looks like." },
+  { slug:"/education/build-your-own",      tag:"Hardware",     title:"Build your own EMG sensor for under $60",         time:"8 min",  desc:"MyoWare 2.0, an Arduino, and a breadboard: everything you need for a working surface EMG sensor." },
+  { slug:"/education/muscle-memory",       tag:"Neuroscience", title:"What actually is muscle memory?",                 time:"5 min",  desc:"Motor cortex plasticity, cerebellar loops, and why 'muscle memory' is stored in your brain, not your muscles." },
+  { slug:"/education/phantom-limb",        tag:"Neuroscience", title:"The neuroscience of phantom limb sensation",      time:"6 min",  desc:"What amputees' phantom sensations reveal about how the brain constructs and maintains a body image." },
+  { slug:"/education/ethics-of-emg",       tag:"Ethics",       title:"Who owns your muscle data?",                     time:"7 min",  desc:"Consent, ownership, and corporate control of neuromuscular data - the questions the field rarely asks." },
+  { slug:"/education/windowing-explained", tag:"Signal proc.", title:"Windowing: how raw EMG becomes ML features",      time:"5 min",  desc:"Sliding windows, overlap ratios, and why this single preprocessing decision shapes everything downstream." },
+  { slug:"/education/random-forest-emg",   tag:"ML",           title:"Why Random Forest works so well for EMG",         time:"7 min",  desc:"Ensemble learning, feature subspace randomisation, and why RF consistently beats deep nets on tabular EMG data." },
+  { slug:"/education/open-source-emg",     tag:"Open source",  title:"The state of open-source EMG",                   time:"6 min",  desc:"Ninapro, OpenBCI, and the researchers building the infrastructure for reproducible biosignal science." },
+  { slug:"/research/paper",                tag:"Research",     title:"myojam: the full technical report",               time:"15 min", desc:"84.85% cross-subject accuracy from a 64-feature Random Forest on Ninapro DB5 - every decision documented." },
+  { slug:"/research/classifier-analysis",  tag:"Research",     title:"Feature engineering and classifier comparison",   time:"20 min", desc:"RF vs SVM vs k-NN vs LDA under rigorous LOSO cross-validation, with feature importance analysis." },
+  { slug:"/research/variability-review",   tag:"Research",     title:"Origins of inter-subject sEMG variability",       time:"25 min", desc:"A structured review of electrode displacement, fatigue, session effects, and the mitigation strategies that work." },
+  { slug:"/research/windowing-analysis",   tag:"Research",     title:"Window duration, overlap, and the prosthetic feasibility gap", time:"22 min", desc:"Why no window size simultaneously satisfies both the latency and accuracy requirements for 200 Hz prosthetic control." },
+]
 
 const STATS = [
   { val:"84.85%", label:"Cross-subject accuracy",  sub:"Tested on unseen individuals" },
@@ -130,6 +147,10 @@ function HeroHeading() {
 
 export default function Landing() {
   const navigate = useNavigate()
+  const todaysRead = useMemo(() => {
+    const day = Math.floor(Date.now() / 86400000)
+    return ALL_READS[day % ALL_READS.length]
+  }, [])
 
   return (
     <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
@@ -186,6 +207,34 @@ export default function Landing() {
               <div style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, letterSpacing:"0.04em", textTransform:"uppercase" }}>{s.sub}</div>
             </div>
           )}/>
+        </div>
+      </section>
+
+      {/* ── TODAY'S READ */}
+      <section style={{ padding:"0 32px" }}>
+        <div style={{ maxWidth:920, margin:"0 auto", padding:"28px 0" }}>
+          <Reveal>
+            <div
+              onClick={()=>navigate(todaysRead.slug)}
+              style={{ display:"flex", alignItems:"center", gap:0, background:"var(--bg-secondary)", border:"1px solid var(--border)", borderLeft:"3px solid var(--accent)", borderRadius:"var(--radius)", overflow:"hidden", cursor:"pointer", transition:"box-shadow 0.15s" }}
+              onMouseEnter={e=>e.currentTarget.style.boxShadow="0 4px 20px rgba(255,45,120,0.08)"}
+              onMouseLeave={e=>e.currentTarget.style.boxShadow="none"}
+            >
+              <div style={{ padding:"18px 22px", borderRight:"1px solid var(--border)", flexShrink:0 }}>
+                <div style={{ fontSize:10, fontWeight:700, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.15em", whiteSpace:"nowrap" }}>Today's Read</div>
+                <div style={{ fontSize:10, color:"var(--text-tertiary)", fontWeight:300, marginTop:2, whiteSpace:"nowrap" }}>Updated daily</div>
+              </div>
+              <div style={{ flex:1, padding:"18px 22px", minWidth:0 }}>
+                <div style={{ display:"flex", gap:8, marginBottom:5, alignItems:"center" }}>
+                  <span style={{ fontSize:11, fontWeight:500, color:"var(--accent)", background:"var(--accent-soft)", border:"1px solid rgba(255,45,120,0.15)", borderRadius:100, padding:"2px 10px", flexShrink:0 }}>{todaysRead.tag}</span>
+                  <span style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>{todaysRead.time} read</span>
+                </div>
+                <div style={{ fontSize:15, fontWeight:600, color:"var(--text)", marginBottom:2, lineHeight:1.3 }}>{todaysRead.title}</div>
+                <div style={{ fontSize:13, color:"var(--text-tertiary)", fontWeight:300, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{todaysRead.desc}</div>
+              </div>
+              <div style={{ padding:"18px 22px", flexShrink:0, fontSize:18, color:"var(--accent)", opacity:0.7 }}>→</div>
+            </div>
+          </Reveal>
         </div>
       </section>
 

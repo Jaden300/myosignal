@@ -1,6 +1,7 @@
 import Navbar from "../Navbar"
 import { useNavigate } from "react-router-dom"
 import Footer from "../Footer"
+import UpNext from "../UpNext"
 import ArticleBar from "../ArticleUtils"
 import NeuralNoise from "../components/NeuralNoise"
 
@@ -120,6 +121,7 @@ export default function PhantomLimb() {
           <button onClick={()=>navigate("/education")} style={{ background:"transparent", color:"var(--text-secondary)", border:"1px solid var(--border-mid)", borderRadius:100, padding:"10px 24px", fontSize:13, fontFamily:"var(--font)", fontWeight:400, cursor:"pointer" }}>← Back to Education</button>
         </div>
       </div>
+      <UpNext current="/education/phantom-limb" />
       <Footer />
     </div>
   )

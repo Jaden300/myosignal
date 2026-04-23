@@ -1,6 +1,7 @@
 import Navbar from "../Navbar"
 import { useNavigate } from "react-router-dom"
 import Footer from "../Footer"
+import UpNext from "../UpNext"
 import ArticleBar from "../ArticleUtils"
 import NeuralNoise from "../components/NeuralNoise"
 
@@ -153,6 +154,7 @@ export default function WindowingExplained() {
         </div>
       </div>
 
+      <UpNext current="/education/windowing-explained" />
       <Footer />
     </div>
   )

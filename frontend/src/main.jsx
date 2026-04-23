@@ -41,6 +41,9 @@ import ResearchHub from "./ResearchHub"
 import ResourcesPage from "./ResourcesPage"
 import Changelog from "./Changelog"
 import Research from "./Research"
+import ResearchClassifier from "./ResearchClassifier"
+import ResearchVariability from "./ResearchVariability"
+import ResearchWindowing from "./ResearchWindowing"
 import WorkplacePolicy from "./WorkplacePolicy"
 import SubmitArticle from "./SubmitArticle"
 
@@ -89,6 +92,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/changelog" element={<Changelog />} />
         <Route path="/research" element={<ResearchHub />} />
         <Route path="/research/paper" element={<Research />} />
+        <Route path="/research/classifier-analysis" element={<ResearchClassifier />} />
+        <Route path="/research/variability-review" element={<ResearchVariability />} />
+        <Route path="/research/windowing-analysis" element={<ResearchWindowing />} />
         <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/workplace-policy" element={<WorkplacePolicy />} />
         <Route path="/submit-article" element={<SubmitArticle />} />
