@@ -400,6 +400,41 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Desktop app download */}
+      <section style={{ borderTop:"1px solid var(--border)", background:"var(--bg-secondary)", padding:"64px 32px" }}>
+        <div style={{ maxWidth:860, margin:"0 auto", display:"flex", justifyContent:"space-between", alignItems:"center", gap:40, flexWrap:"wrap" }}>
+          <div>
+            <div style={{ fontSize:11, fontWeight:600, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.1em", marginBottom:12 }}>macOS Desktop App</div>
+            <h2 style={{ fontSize:"clamp(22px,3.5vw,36px)", fontWeight:600, letterSpacing:"-1px", color:"var(--text)", lineHeight:1.1, marginBottom:16 }}>
+              Run myojam<br/>on your machine.
+            </h2>
+            <p style={{ fontSize:15, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:440, marginBottom:0 }}>
+              The full desktop app — real-time EMG waveform visualisation, gesture predictions that control your mouse and keyboard, and a personal model trainer. Requires macOS 12+, Python 3.13, and a MyoWare sensor or Arduino setup.
+            </p>
+          </div>
+          <div style={{ display:"flex", flexDirection:"column", gap:12, flexShrink:0 }}>
+            <a
+              href="https://github.com/Jaden300/myojam/releases/download/v1.0.0-macos/myojam-mac.zip"
+              style={{ background:"var(--accent)", color:"#fff", borderRadius:100, padding:"14px 32px", fontSize:15, fontWeight:500, textDecoration:"none", display:"flex", alignItems:"center", gap:8, justifyContent:"center", transition:"opacity 0.15s, transform 0.15s", boxShadow:"0 4px 20px rgba(255,45,120,0.3)" }}
+              onMouseEnter={e => { e.currentTarget.style.opacity="0.88"; e.currentTarget.style.transform="scale(1.03)" }}
+              onMouseLeave={e => { e.currentTarget.style.opacity="1"; e.currentTarget.style.transform="scale(1)" }}
+            >
+              <svg width="15" height="15" viewBox="0 0 12 12" fill="none">
+                <path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Download for Mac — free
+            </a>
+            <div style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, textAlign:"center" }}>
+              v1.0.0 · ~295 MB · macOS 12+ · MIT licence
+            </div>
+            <a href="https://github.com/Jaden300/myojam/releases/tag/v1.0.0-macos" target="_blank" rel="noreferrer" style={{ fontSize:12, color:"var(--text-tertiary)", textAlign:"center", textDecoration:"none", transition:"color 0.15s" }}
+              onMouseEnter={e => e.currentTarget.style.color = "var(--accent)"}
+              onMouseLeave={e => e.currentTarget.style.color = "var(--text-tertiary)"}
+            >View release notes on GitHub ↗</a>
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   )
