@@ -46,6 +46,7 @@ import ResearchVariability from "./ResearchVariability"
 import ResearchWindowing from "./ResearchWindowing"
 import WorkplacePolicy from "./WorkplacePolicy"
 import SubmitArticle from "./SubmitArticle"
+import DesktopApp from "./DesktopApp"
 
 import { initTheme } from "./theme"
 initTheme()
@@ -99,6 +100,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/workplace-policy" element={<WorkplacePolicy />} />
         <Route path="/submit-article" element={<SubmitArticle />} />
         <Route path="/blog" element={<Blog />} />
+        <Route path="/download" element={<DesktopApp />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

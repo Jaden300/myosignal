@@ -8,11 +8,11 @@ _HTML = """<!DOCTYPE html>
 <meta charset="utf-8">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #EBEBED; overflow: hidden; }
+  body { background: #08081A; overflow: hidden; }
   canvas { display: block; }
   #toggle {
     position: fixed; bottom: 10px; right: 10px;
-    background: #e8f5e9; border: 1px solid #2e7d32; color: #1b5e20;
+    background: rgba(255,45,120,0.12); border: 1px solid rgba(255,45,120,0.35); color: #FF2D78;
     border-radius: 100px; padding: 4px 12px;
     font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 500;
     cursor: pointer; display: flex; align-items: center; gap: 5px;
@@ -20,7 +20,7 @@ _HTML = """<!DOCTYPE html>
     white-space: nowrap;
   }
   #toggle.paused {
-    background: #fce4ec; border-color: #c62828; color: #b71c1c;
+    background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.18); color: rgba(255,255,255,0.45);
   }
 </style>
 </head>
@@ -35,7 +35,7 @@ const PRIMARY_FINGER = {
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setClearColor(0xEBEBED, 1);
+renderer.setClearColor(0x08081A, 1);
 document.body.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();

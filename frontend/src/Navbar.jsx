@@ -184,9 +184,9 @@ export default function Navbar() {
 
         <NavLink label={t("nav_contact")} path="/contact" pathname={pathname}/>
 
-        <a
-          href="https://github.com/Jaden300/myojam/releases/download/v1.0.0-macos/myojam-mac.zip"
-          style={{ background:"var(--accent)", color:"#fff", border:"none", borderRadius:100, padding:"7px 16px", fontSize:13, fontWeight:500, textDecoration:"none", display:"flex", alignItems:"center", gap:6, transition:"opacity 0.15s, transform 0.15s", flexShrink:0 }}
+        <span
+          onClick={() => navigate("/download")}
+          style={{ background:"var(--accent)", color:"#fff", border:"none", borderRadius:100, padding:"7px 16px", fontSize:13, fontWeight:500, cursor:"pointer", display:"flex", alignItems:"center", gap:6, transition:"opacity 0.15s, transform 0.15s", flexShrink:0 }}
           onMouseEnter={e => { e.currentTarget.style.opacity="0.88"; e.currentTarget.style.transform="scale(1.03)" }}
           onMouseLeave={e => { e.currentTarget.style.opacity="1"; e.currentTarget.style.transform="scale(1)" }}
         >
@@ -194,7 +194,7 @@ export default function Navbar() {
             <path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
           {t("nav_download")}
-        </a>
+        </span>
 
         <button
           onClick={() => setSearchOpen(true)}

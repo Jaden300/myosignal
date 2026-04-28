@@ -8,6 +8,49 @@ import NeuralNoise from "./components/NeuralNoise"
 const POSTS = [
   // ── EMG Fact posts ─────────────────────────────────────────────────────────
   {
+    id: "f5",
+    tag: "EMG Facts",
+    tagColor: "#06B6D4",
+    title: "The 300ms wall: real-time EMG has a latency problem",
+    date: "April 2025",
+    cover: {
+      bg: "linear-gradient(135deg, #0c2233 0%, #050d1a 100%)",
+      accent: "#06B6D4",
+      label: "300ms",
+      sublabel: "the prosthetic threshold",
+    },
+    slides: [
+      {
+        bg: "linear-gradient(135deg, #0c2233 0%, #050d1a 100%)",
+        accent: "#06B6D4",
+        heading: "Real-time EMG control has a hard deadline",
+        body: "For a prosthetic limb to feel like part of your body, the system has to complete the full loop — detect the signal, classify the gesture, and move the motor — in under 300ms. Longer than that, and the delay becomes perceptible. The hand stops feeling like yours.",
+        stat: null,
+      },
+      {
+        bg: "linear-gradient(135deg, #082030 0%, #030b18 100%)",
+        accent: "#22D3EE",
+        heading: "But longer windows mean better accuracy",
+        body: "A 100ms analysis window captures 20 raw samples at 200Hz — barely enough signal to extract reliable features. A 1000ms window captures 200 samples across a full gesture. Our ablation study shows the tradeoff clearly: 100ms gives 62.4% accuracy. 1000ms gives 84.85%.",
+        stat: "100 ms → 62.4%\n1000 ms → 84.85%\nnearly 23 percentage\npoints of difference",
+      },
+      {
+        bg: "linear-gradient(135deg, #061a28 0%, #020810 100%)",
+        accent: "#67E8F9",
+        heading: "The problem: you can't have both",
+        body: "A 1000ms window takes at least 1000ms to fill, plus processing time. That already blows the 300ms deadline by 3×. But every window shorter than ~600ms fails to cross the 80% accuracy threshold that prosthetics research treats as clinically meaningful. There's a gap — and no simple engineering fix closes it.",
+        stat: null,
+      },
+      {
+        bg: "linear-gradient(135deg, #0c2233 0%, #050d1a 100%)",
+        accent: "#06B6D4",
+        heading: "Majority voting buys time, not accuracy",
+        body: "One common approach is majority voting: run a short window every 50ms and vote across the last N predictions. It smooths noise and increases effective window size without added latency. But the accuracy ceiling is set by the underlying window quality — and 200ms windows don't contain enough information to vote your way past 75%.",
+        stat: null,
+      },
+    ],
+  },
+  {
     id: "f4",
     tag: "EMG Facts",
     tagColor: "#3B82F6",
@@ -181,6 +224,35 @@ const POSTS = [
   },
 
   // ── News posts ──────────────────────────────────────────────────────────────
+  {
+    id: "n9",
+    tag: "Launch",
+    tagColor: "#FF2D78",
+    title: "The desktop app is back — and it's been completely rebuilt",
+    date: "April 27, 2025",
+    cover: {
+      bg: "linear-gradient(135deg, #3d0017 0%, #1a0009 100%)",
+      accent: "#FF2D78",
+      label: "v1.0",
+      sublabel: "macOS desktop app",
+    },
+    slides: [
+      {
+        bg: "linear-gradient(135deg, #3d0017 0%, #1a0009 100%)",
+        accent: "#FF2D78",
+        heading: "The myojam desktop app is back",
+        body: "The macOS desktop app — real hardware, real MyoWare sensor, real-time gesture classification at 84.85% — is available again as a free download. It's been completely rebuilt from scratch with a dark theme, live waveform display, 3D hand model, and session tracking.",
+        stat: "v1.0 · macOS 12+\n~295 MB\nMIT licence\nfree download",
+      },
+      {
+        bg: "linear-gradient(135deg, #2d0012 0%, #12000a 100%)",
+        accent: "#FF6B9D",
+        heading: "What's different in the rebuilt version",
+        body: "The original was functional but rough. The new version has a proper dark UI matching the website's aesthetic: a live EMG waveform with glow effect, animated confidence bars, a rotating 3D hand that reflects your gesture in real time, and a session stats bar that tracks gesture count and average confidence.",
+        stat: null,
+      },
+    ],
+  },
   {
     id: "n8",
     tag: "Content",
