@@ -44,7 +44,8 @@ export function StaggerList({ items, renderItem, gap = 16, columns = 1 }) {
         <div key={i} style={{
           opacity: visible ? 1 : 0,
           transform: visible ? "translateY(0)" : "translateY(28px)",
-          transition: `opacity 0.5s ${i * 0.09}s ease, transform 0.5s ${i * 0.09}s ease`
+          transition: `opacity 0.5s ${i * 0.09}s ease, transform 0.5s ${i * 0.09}s ease`,
+          display: "flex", flexDirection: "column",
         }}>
           {renderItem(item, i)}
         </div>
@@ -66,6 +67,7 @@ export function HoverCard({ children, color = "rgba(255,45,120,0.2)", style = {}
         transform: hovered ? "translateY(-4px)" : "translateY(0)",
         boxShadow: hovered ? `0 16px 48px ${color}` : "none",
         cursor: onClick ? "pointer" : "default",
+        height: "100%",
         ...style
       }}
     >

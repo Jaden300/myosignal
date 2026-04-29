@@ -1,5 +1,6 @@
 import sys
 import os
+import math
 import threading
 import random
 import pickle
@@ -213,37 +214,45 @@ SENSOR_CURLS = {
 }
 
 
-# ── Waveform widget (dark, with glow)
+# ── Waveform widget — dark, multi-channel overlay
 class WaveformWidget(QWidget):
+    _CH_INDICES = [0, 4, 8, 12]
+    _CH_ALPHAS  = [1.0, 0.46, 0.28, 0.16]
+
     def __init__(self):
         super().__init__()
         self.setMinimumHeight(140)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-        self._data     = [0.0] * 200
-        self._prev     = [0.0] * 200
+        self._data     = [[0.0] * 200 for _ in range(4)]
+        self._prev     = [[0.0] * 200 for _ in range(4)]
         self._progress = 1.0
         self._idle     = True
-        self._r, self._g, self._b        = 255, 45, 120
-        self._tr, self._tg, self._tb     = 255, 45, 120
+        self._r, self._g, self._b    = 255, 45, 120
+        self._tr, self._tg, self._tb = 255, 45, 120
         self._dot_phase = 0.0
         t = QTimer(self)
         t.timeout.connect(self._tick)
         t.start(10)
 
     def update_data(self, emg_window, color=None):
-        ch1 = [row[0] for row in emg_window]
-        mn, mx = min(ch1), max(ch1)
-        rng = max(mx - mn, 0.0001)
-        self._prev     = list(self._data)
-        self._data     = [(v - mn) / rng for v in ch1]
+        self._prev = [list(ch) for ch in self._data]
+        self._data = []
+        for ch_idx in self._CH_INDICES:
+            try:
+                vals = [row[ch_idx] for row in emg_window]
+            except (IndexError, TypeError):
+                vals = [0.0] * 200
+            mn, mx = min(vals), max(vals)
+            rng = max(mx - mn, 0.0001)
+            self._data.append([(v - mn) / rng for v in vals])
         self._progress = 0.0
         self._idle     = False
         if color:
             self._tr, self._tg, self._tb = color.red(), color.green(), color.blue()
 
     def update_voltage(self, voltage, color=None):
-        self._prev     = list(self._data)
-        self._data     = self._data[1:] + [min(voltage / 2.0, 1.0)]
+        self._prev    = [list(ch) for ch in self._data]
+        self._data[0] = self._data[0][1:] + [min(voltage / 2.0, 1.0)]
         self._progress = 1.0
         self._idle     = False
         if color:
@@ -251,8 +260,8 @@ class WaveformWidget(QWidget):
         self.update()
 
     def reset(self):
-        self._data     = [0.0] * 200
-        self._prev     = [0.0] * 200
+        self._data     = [[0.0] * 200 for _ in range(4)]
+        self._prev     = [[0.0] * 200 for _ in range(4)]
         self._progress = 1.0
         self._idle     = True
         self.update()
@@ -269,7 +278,7 @@ class WaveformWidget(QWidget):
                 setattr(self, attr, nv)
                 changed = True
         if self._idle:
-            self._dot_phase = (self._dot_phase + 0.04) % (2 * 3.14159)
+            self._dot_phase = (self._dot_phase + 0.038) % (2 * math.pi)
             changed = True
         if changed:
             self.update()
@@ -279,7 +288,6 @@ class WaveformWidget(QWidget):
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         w, h = self.width(), self.height()
 
-        # Background
         p.fillRect(0, 0, w, h, BG)
 
         # Subtle grid
@@ -287,132 +295,157 @@ class WaveformWidget(QWidget):
         gp.setWidth(1)
         p.setPen(gp)
         for i in range(1, 4):
-            y = h * i // 4
-            p.drawLine(0, y, w, y)
+            p.drawLine(0, h * i // 4, w, h * i // 4)
         for i in range(1, 8):
-            x = w * i // 8
-            p.drawLine(x, 0, x, h)
+            p.drawLine(w * i // 8, 0, w * i // 8, h)
 
         color = QColor(self._r, self._g, self._b)
 
         if self._idle:
-            import math
-            alpha = int(80 + 50 * math.sin(self._dot_phase))
-            idle_c = QColor(self._r, self._g, self._b, alpha)
-            p.setPen(QPen(idle_c))
-            p.setFont(QFont("-apple-system", 12, QFont.Weight.Light))
-            p.drawText(0, 0, w, h, Qt.AlignmentFlag.AlignCenter, "ready  ·  waiting for signal")
+            t = self._dot_phase
+            pad    = 16
+            draw_w = w - pad * 2
+            draw_h = h - pad * 2
+            n      = max(draw_w, 2)
+            idle_path = QPainterPath()
+            for i in range(n):
+                x_n = i / n
+                y   = (math.sin(x_n * 8.0  + t * 1.8) * 0.13
+                     + math.sin(x_n * 19.3 + t * 1.1) * 0.065
+                     + math.sin(x_n * 4.1  - t * 0.85) * 0.09)
+                y_px = pad + draw_h * 0.5 - y * draw_h * 0.55
+                if i == 0:
+                    idle_path.moveTo(pad, y_px)
+                else:
+                    idle_path.lineTo(pad + i, y_px)
+            alpha = 42 + int(18 * math.sin(t * 1.4))
+            idle_pen = QPen(QColor(255, 45, 120, alpha), 1.3)
+            idle_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            p.setPen(idle_pen)
+            p.drawPath(idle_path)
+            p.setPen(QPen(QColor(255, 255, 255, 28)))
+            p.setFont(QFont("-apple-system", 10, QFont.Weight.Light))
+            p.drawText(0, 0, w, h, Qt.AlignmentFlag.AlignCenter, "waiting for signal")
             return
 
         pad    = 16
         draw_w = w - pad * 2
         draw_h = h - pad * 2
         prog   = self._progress
-        disp   = [self._prev[i] + (self._data[i] - self._prev[i]) * prog
-                  for i in range(len(self._data))]
 
-        step = draw_w / (len(disp) - 1)
+        for ch_idx in range(len(self._data)):
+            data   = self._data[ch_idx]
+            prev   = self._prev[ch_idx]
+            alpha  = self._CH_ALPHAS[ch_idx]
+            disp   = [prev[i] + (data[i] - prev[i]) * prog for i in range(len(data))]
+            step   = draw_w / max(len(disp) - 1, 1)
 
-        # Fill under curve
-        fill_path = QPainterPath()
-        fill_path.moveTo(pad, h - pad)
-        fill_path.lineTo(pad, pad + draw_h - disp[0] * draw_h)
-        for i, val in enumerate(disp[1:], 1):
-            fill_path.lineTo(pad + i * step, pad + draw_h - val * draw_h)
-        fill_path.lineTo(pad + draw_w, h - pad)
-        fill_path.closeSubpath()
-        fc = QColor(color)
-        fc.setAlpha(18)
-        p.fillPath(fill_path, QBrush(fc))
+            line_path = QPainterPath()
+            line_path.moveTo(pad, pad + draw_h - disp[0] * draw_h)
+            for i, val in enumerate(disp[1:], 1):
+                line_path.lineTo(pad + i * step, pad + draw_h - val * draw_h)
 
-        # Build line path
-        line_path = QPainterPath()
-        line_path.moveTo(pad, pad + draw_h - disp[0] * draw_h)
-        for i, val in enumerate(disp[1:], 1):
-            line_path.lineTo(pad + i * step, pad + draw_h - val * draw_h)
+            if ch_idx == 0:
+                # Fill under primary channel
+                fill_path = QPainterPath()
+                fill_path.moveTo(pad, h - pad)
+                fill_path.lineTo(pad, pad + draw_h - disp[0] * draw_h)
+                for i, val in enumerate(disp[1:], 1):
+                    fill_path.lineTo(pad + i * step, pad + draw_h - val * draw_h)
+                fill_path.lineTo(pad + draw_w, h - pad)
+                fill_path.closeSubpath()
+                fc = QColor(color); fc.setAlpha(18)
+                p.fillPath(fill_path, QBrush(fc))
+                # Glow
+                glow_pen = QPen(QColor(color.red(), color.green(), color.blue(), 28), 5)
+                glow_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+                p.setPen(glow_pen)
+                p.drawPath(line_path)
+                # Core
+                core_pen = QPen(color, 1.8)
+                core_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+                p.setPen(core_pen)
+                p.drawPath(line_path)
+            else:
+                # Secondary channels — thin, dimmed
+                sec_pen = QPen(
+                    QColor(color.red(), color.green(), color.blue(), int(55 * alpha)), 1.1)
+                sec_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+                p.setPen(sec_pen)
+                p.drawPath(line_path)
 
-        # Outer glow
-        glow_pen = QPen(QColor(color.red(), color.green(), color.blue(), 28), 5)
-        glow_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
-        glow_pen.setJoinStyle(Qt.PenJoinStyle.RoundJoin)
-        p.setPen(glow_pen)
-        p.drawPath(line_path)
 
-        # Core line
-        core_pen = QPen(color, 1.8)
-        core_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
-        core_pen.setJoinStyle(Qt.PenJoinStyle.RoundJoin)
-        p.setPen(core_pen)
-        p.drawPath(line_path)
-
-
-# ── Animated bar
-class AnimBar(QWidget):
-    def __init__(self, height=8):
+# ── Circular arc confidence widget
+class ConfArcWidget(QWidget):
+    def __init__(self):
         super().__init__()
-        self.setFixedHeight(height)
-        self._val, self._tgt     = 0.0, 0.0
-        self._r, self._g, self._b   = 255, 45, 120
+        self.setFixedSize(88, 88)
+        self._val = 0.0
+        self._tgt = 0.0
+        self._r, self._g, self._b    = 255, 45, 120
         self._tr, self._tg, self._tb = 255, 45, 120
         t = QTimer(self); t.timeout.connect(self._tick); t.start(10)
 
     def set_value(self, v, color):
-        self._tgt = v
+        self._tgt = max(0.0, min(1.0, v))
         self._tr, self._tg, self._tb = color.red(), color.green(), color.blue()
+
+    def reset(self):
+        self._tgt = 0.0
+        self._tr, self._tg, self._tb = 255, 45, 120
 
     def _tick(self):
         changed = False
         d = self._tgt - self._val
-        if abs(d) > 0.002:
-            self._val += d * 0.3; changed = True
+        if abs(d) > 0.001:
+            self._val += d * 0.12; changed = True
         for a, b in [('_r','_tr'),('_g','_tg'),('_b','_tb')]:
             c, t = getattr(self, a), getattr(self, b)
-            n = int(c + (t - c) * 0.3)
+            n = int(c + (t - c) * 0.15)
             if n != c:
                 setattr(self, a, n); changed = True
-        if changed: self.update()
+        if changed:
+            self.update()
 
     def paintEvent(self, event):
         p = QPainter(self)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         w, h = self.width(), self.height()
-        p.setBrush(QColor(255, 255, 255, 14))
-        p.setPen(Qt.PenStyle.NoPen)
-        p.drawRoundedRect(0, 0, w, h, h/2, h/2)
-        fw = int(w * self._val)
-        if fw > 0:
-            c = QColor(self._r, self._g, self._b)
-            p.setBrush(c)
-            p.drawRoundedRect(0, 0, fw, h, h/2, h/2)
-            # small glow at tip
-            if fw > h:
-                gc = QColor(c); gc.setAlpha(60)
-                p.setBrush(gc)
-                p.drawRoundedRect(fw - h, 0, h * 2, h, h/2, h/2)
+        cx, cy = w / 2, h / 2
+        r = min(w, h) / 2 - 8
 
+        color = QColor(self._r, self._g, self._b)
+        p.setBrush(Qt.BrushStyle.NoBrush)
 
-# ── Animated counter label (rolls number up/down)
-class CountLabel(QLabel):
-    def __init__(self, text="—", *args, **kwargs):
-        super().__init__(text, *args, **kwargs)
-        self._cur, self._tgt = 0, 0
-        self._showing_dash = True
-        t = QTimer(self); t.timeout.connect(self._tick); t.start(16)
+        # Track arc
+        track_pen = QPen(QColor(255, 255, 255, 15), 5)
+        track_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+        p.setPen(track_pen)
+        p.drawArc(int(cx - r), int(cy - r), int(r * 2), int(r * 2),
+                  225 * 16, -270 * 16)
 
-    def set_value(self, v):
-        self._tgt = v
-        self._showing_dash = False
+        # Value arc
+        if self._val > 0.005:
+            glow_pen = QPen(QColor(self._r, self._g, self._b, 38), 9)
+            glow_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            p.setPen(glow_pen)
+            span = int(-270 * 16 * self._val)
+            p.drawArc(int(cx - r), int(cy - r), int(r * 2), int(r * 2), 225 * 16, span)
+            arc_pen = QPen(color, 5)
+            arc_pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+            p.setPen(arc_pen)
+            p.drawArc(int(cx - r), int(cy - r), int(r * 2), int(r * 2), 225 * 16, span)
 
-    def reset(self):
-        self._cur = self._tgt = 0
-        self._showing_dash = True
-        self.setText("—")
-
-    def _tick(self):
-        if self._showing_dash: return
-        if self._cur != self._tgt:
-            self._cur += 1 if self._tgt > self._cur else -1
-            self.setText(f"{self._cur}%")
+        # Center text
+        val_int = int(round(self._val * 100))
+        if val_int > 0:
+            p.setPen(QPen(color))
+            p.setFont(QFont("-apple-system", 16, QFont.Weight.Bold))
+            p.drawText(QRect(0, 0, w, h - 4), Qt.AlignmentFlag.AlignCenter, f"{val_int}%")
+        else:
+            p.setPen(QPen(QColor(255, 255, 255, 35)))
+            p.setFont(QFont("-apple-system", 15, QFont.Weight.Light))
+            p.drawText(QRect(0, 0, w, h), Qt.AlignmentFlag.AlignCenter, "—")
 
 
 # ── Gesture button (dark theme)
@@ -665,8 +698,8 @@ class MyojamWindow(QMainWindow):
         self._session_timer = None
 
         self.setWindowTitle("myojam")
-        self.resize(880, 720)
-        self.setMinimumSize(760, 640)
+        self.resize(960, 760)
+        self.setMinimumSize(840, 680)
         self.setUnifiedTitleAndToolBarOnMac(True)
         QTimer.singleShot(100, self._setup_titlebar)
 
@@ -775,7 +808,7 @@ class MyojamWindow(QMainWindow):
         wh_lay.setContentsMargins(14, 0, 14, 0)
         wh_lay.addWidget(_label("EMG Signal", 11, color="rgba(255,255,255,0.4)"))
         wh_lay.addStretch()
-        self.ch_label = _label("ch 1  ·  200 Hz", 10, color="rgba(255,255,255,0.25)")
+        self.ch_label = _label("16ch  ·  200 Hz", 10, color="rgba(255,255,255,0.25)")
         wh_lay.addWidget(self.ch_label)
         wave_inner.addWidget(wave_header)
 
@@ -802,31 +835,16 @@ class MyojamWindow(QMainWindow):
         pred_left.addWidget(self.action_label)
         pred_inner.addLayout(pred_left, 1)
 
-        # Right: confidence
-        pred_right = QVBoxLayout()
-        pred_right.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
-        pred_right.setSpacing(2)
-        conf_title = _label("confidence", 10, color="rgba(255,255,255,0.3)",
-                             align=Qt.AlignmentFlag.AlignRight)
-        self.conf_label = CountLabel("—")
-        self.conf_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-        self.conf_label.setStyleSheet(
-            "color: #FF2D78; font-size: 38px; font-weight: 700;"
-            " letter-spacing: -1px; background: transparent; border: none;")
-        pred_right.addWidget(conf_title)
-        pred_right.addWidget(self.conf_label)
-        pred_inner.addLayout(pred_right)
+        # Right: arc confidence
+        self.conf_arc = ConfArcWidget()
+        pred_inner.addWidget(self.conf_arc)
         left.addWidget(pred_card)
-
-        # Confidence bar
-        self.conf_bar = AnimBar(8)
-        left.addWidget(self.conf_bar)
 
         content_lay.addLayout(left, 1)
 
         # Right column — 3D hand
         hand_card = _card_frame()
-        hand_card.setFixedWidth(208)
+        hand_card.setFixedWidth(270)
         hand_inner = QVBoxLayout(hand_card)
         hand_inner.setContentsMargins(0, 0, 0, 0)
         hand_inner.setSpacing(0)
@@ -1052,11 +1070,7 @@ class MyojamWindow(QMainWindow):
             f"color: {hex_c}; font-size: 26px; font-weight: 600;"
             f" letter-spacing: -0.5px; background: transparent; border: none;")
         self.action_label.setText(action_label)
-        self.conf_label.set_value(int(confidence * 100))
-        self.conf_label.setStyleSheet(
-            f"color: {hex_c}; font-size: 38px; font-weight: 700;"
-            f" letter-spacing: -1px; background: transparent; border: none;")
-        self.conf_bar.set_value(confidence, color)
+        self.conf_arc.set_value(confidence, color)
 
     # ── Start / Stop
     def toggle_active(self):
@@ -1075,8 +1089,7 @@ class MyojamWindow(QMainWindow):
                 "color: #FF2D78; font-size: 26px; font-weight: 600;"
                 " letter-spacing: -0.5px; background: transparent; border: none;")
             self.action_label.setText("Waiting for input")
-            self.conf_label.reset()
-            self.conf_bar.set_value(0, ACCENT)
+            self.conf_arc.reset()
             self.hand3d.reset()
             for btn in self.gesture_buttons.values():
                 btn.set_active(False)
