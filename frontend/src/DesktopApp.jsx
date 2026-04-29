@@ -8,6 +8,11 @@ import { LiquidChrome } from "./components/LiquidChrome"
 const MAC_URL = "https://github.com/Jaden300/myojam/releases/download/v1.0.0-macos/myojam-mac.zip"
 const WIN_URL = "https://github.com/Jaden300/myojam/releases/download/v1.0.0-windows/myojam-windows.zip"
 
+// Stable references — defined at module level so LiquidChrome's useEffect dep
+// comparison never sees a "new" array and won't tear down/rebuild the canvas.
+const HERO_CHROME   = { baseColor: [0.07, 0.0, 0.18], speed: 0.12, amplitude: 0.28, frequencyX: 2.8, frequencyY: 2.8 }
+const FOOTER_CHROME = { baseColor: [0.07, 0.0, 0.18], speed: 0.08, amplitude: 0.22, frequencyX: 2.5, frequencyY: 2.5 }
+
 // Pre-computed waveform path for Mac banner — 1600 wide (double for seamless loop)
 // Uses harmonics 3, 8, 21 of period=800 so the signal repeats exactly at x=800
 function buildWave(W, centerY, amp, phase = 0) {
@@ -415,13 +420,24 @@ export default function DesktopApp() {
   const [winHovered, setWinHovered] = useState(false)
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+    <div style={{
+      minHeight: "100vh",
+      background: "#07071a",
+      "--bg":           "#07071a",
+      "--bg-secondary": "#0c0c26",
+      "--text":         "#ffffff",
+      "--text-secondary": "rgba(255,255,255,0.60)",
+      "--text-tertiary":  "rgba(255,255,255,0.35)",
+      "--border":       "rgba(255,255,255,0.08)",
+      "--accent":       "#FF2D78",
+      "--accent-soft":  "rgba(255,45,120,0.08)",
+    }}>
       <Navbar />
 
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
-      <div style={{ position: "relative", overflow: "hidden", minHeight: "100vh", display: "flex", alignItems: "center" }}>
+      <div style={{ position: "relative", overflow: "hidden", minHeight: "100vh", display: "flex", alignItems: "center", background: "#07071a" }}>
         <div style={{ position: "absolute", inset: 0 }}>
-          <LiquidChrome baseColor={[0.07, 0.0, 0.18]} speed={0.12} amplitude={0.28} frequencyX={2.8} frequencyY={2.8} interactive={true}/>
+          <LiquidChrome {...HERO_CHROME} interactive={true}/>
         </div>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(3,0,18,0.72) 0%, rgba(3,0,18,0.55) 50%, rgba(3,0,18,0.85) 100%)", zIndex: 1 }}/>
 
@@ -648,7 +664,7 @@ export default function DesktopApp() {
       {/* ── Bottom CTA ───────────────────────────────────────────────────────── */}
       <div style={{ position: "relative", overflow: "hidden", padding: "120px 32px", borderBottom: "1px solid var(--border)" }}>
         <div style={{ position: "absolute", inset: 0 }}>
-          <LiquidChrome baseColor={[0.07, 0.0, 0.18]} speed={0.08} amplitude={0.22} frequencyX={2.5} frequencyY={2.5} interactive={false}/>
+          <LiquidChrome {...FOOTER_CHROME} interactive={false}/>
         </div>
         <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.78)", zIndex: 1 }}/>
         <div style={{ position: "relative", zIndex: 2, maxWidth: 700, margin: "0 auto", textAlign: "center" }}>

@@ -20,7 +20,7 @@ export const LiquidChrome = ({
     const container = containerRef.current;
     const renderer = new Renderer({ antialias: true });
     const gl = renderer.gl;
-    gl.clearColor(1, 1, 1, 1);
+    gl.clearColor(0, 0, 0, 1);
 
     const vertexShader = `
       attribute vec2 position;
