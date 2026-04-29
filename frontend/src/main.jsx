@@ -47,6 +47,8 @@ import ResearchWindowing from "./ResearchWindowing"
 import WorkplacePolicy from "./WorkplacePolicy"
 import SubmitArticle from "./SubmitArticle"
 import DesktopApp from "./DesktopApp"
+import PipelineExplorer from "./PipelineExplorer"
+import ResearchExplorer from "./ResearchExplorer"
 
 import { initTheme } from "./theme"
 initTheme()
@@ -101,6 +103,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/submit-article" element={<SubmitArticle />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/download" element={<DesktopApp />} />
+        <Route path="/pipeline" element={<PipelineExplorer />} />
+        <Route path="/research/explorer" element={<ResearchExplorer />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

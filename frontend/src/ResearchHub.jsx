@@ -105,6 +105,28 @@ export default function ResearchHub() {
         </div>
       </div>
 
+      {/* Explorer CTA banner */}
+      <div style={{ borderBottom: "1px solid var(--border)", background: "var(--bg-secondary)", padding: "20px 32px" }}>
+        <div style={{ maxWidth: 860, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 8, background: "rgba(255,45,120,0.12)", border: "1px solid rgba(255,45,120,0.25)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17 }}>⬡</div>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 1 }}>Interactive Research Explorer</div>
+              <div style={{ fontSize: 12, color: "var(--text-tertiary)", fontWeight: 300 }}>4 animated visualizations — feasibility gap, classifier race, LOSO folds, feature importance</div>
+            </div>
+          </div>
+          <button onClick={() => navigate("/research/explorer")} style={{
+            background: "var(--accent)", color: "#fff", border: "none",
+            borderRadius: 100, padding: "10px 22px", fontSize: 13, fontWeight: 600,
+            cursor: "pointer", fontFamily: "var(--font)", flexShrink: 0,
+            boxShadow: "0 4px 16px rgba(255,45,120,0.25)", transition: "transform 0.15s, box-shadow 0.15s",
+          }}
+            onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.04)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(255,45,120,0.35)" }}
+            onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(255,45,120,0.25)" }}
+          >Explore the data →</button>
+        </div>
+      </div>
+
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "64px 32px 80px" }}>
 
         {/* Reading guide */}

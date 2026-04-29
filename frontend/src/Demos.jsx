@@ -3,11 +3,12 @@ import Navbar from "./Navbar"
 import Footer from "./Footer"
 import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
 import { IconPencil, IconBrain, IconChart, IconDemo } from "./Icons"
-import NeuralNoise from "./components/NeuralNoise"
+import LiquidChrome from "./components/LiquidChrome"
 
 const ICON_MAP = {
   pencil: IconPencil,
   game:   IconBrain,
+  brain:  IconBrain,
   chart:  IconChart,
   matrix: IconDemo,
 }
@@ -53,6 +54,16 @@ const TOOLS = [
     cta: "Explore →",
     accent: "#10B981",
   },
+  {
+    slug: "/pipeline",
+    icon: "brain",
+    tag: "Live ML trace",
+    title: "Pipeline Explorer",
+    desc: "Fetch a real Ninapro DB5 EMG window and watch every step of the prediction pipeline unfold: 16-channel waveform → bandpass filter → 4×16 feature heatmap → Random Forest vote.",
+    features: ["Real EMG data", "4×16 feature heatmap", "Live API prediction", "Step-by-step trace"],
+    cta: "Trace a prediction →",
+    accent: "#FF2D78",
+  },
 ]
 
 export default function Demos() {
@@ -69,8 +80,7 @@ export default function Demos() {
         borderBottom: "1px solid var(--border)",
         padding: "100px 32px 64px"
       }}>
-        <NeuralNoise color={[0.85, 0.10, 0.30]} opacity={0.85} speed={0.0006} />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
+        <LiquidChrome baseColor={[0.07, 0.0, 0.18]} speed={0.15} amplitude={0.25} style={{ position: "absolute", inset: 0, zIndex: 0 }} />
         <div style={{ maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 2 }}>
           <Reveal>
             <SectionPill>Interactive learning tools</SectionPill>
@@ -105,16 +115,17 @@ export default function Demos() {
             <p style={{ fontSize: 14, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, marginBottom: 32, maxWidth: 540 }}>
               Each tool targets a different layer of the EMG pipeline. Follow them in order to build intuition from raw signal all the way to model evaluation.
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 0, border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 0, border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
               {[
-                { step: "01", stage: "Signal", tool: "Signal Playground", idea: "What does raw EMG actually look like? Draw waveforms and watch MAV, RMS, ZC, WL update live.", color: "#3B82F6", slug: "/playground" },
-                { step: "02", stage: "Frequency", tool: "Frequency Analyzer", idea: "Where does gesture signal live in the spectrum? See how the 20–90 Hz bandpass isolates it from noise.", color: "#8B5CF6", slug: "/frequency" },
-                { step: "03", stage: "Classification", tool: "Gesture Reaction Game", idea: "Which gestures are similar? Build intuition for the 6 gesture classes the classifier has to separate.", color: "#F59E0B", slug: "/game" },
-                { step: "04", stage: "Evaluation", tool: "Confusion Matrix", idea: "Where does the model fail and why? Click any cell to see which gestures get confused and the anatomical reason.", color: "#10B981", slug: "/confusion" },
+                { step: "01", stage: "Signal", tool: "Signal Playground", idea: "Draw waveforms and watch MAV, RMS, ZC, WL update live.", color: "#3B82F6", slug: "/playground" },
+                { step: "02", stage: "Frequency", tool: "Frequency Analyzer", idea: "See how the 20–90 Hz bandpass isolates gesture signal from noise.", color: "#8B5CF6", slug: "/frequency" },
+                { step: "03", stage: "Classes", tool: "Gesture Game", idea: "Build intuition for the 6 gesture classes the classifier separates.", color: "#F59E0B", slug: "/game" },
+                { step: "04", stage: "Evaluation", tool: "Confusion Matrix", idea: "Where does the model fail and the anatomical reason why.", color: "#10B981", slug: "/confusion" },
+                { step: "05", stage: "Full trace", tool: "Pipeline Explorer", idea: "Live prediction trace: raw signal → features → RF vote on real data.", color: "#FF2D78", slug: "/pipeline" },
               ].map(({ step, stage, tool, idea, color, slug }, i) => (
                 <div key={step} onClick={() => navigate(slug)} style={{
-                  padding: "24px 20px",
-                  borderRight: i < 3 ? "1px solid var(--border)" : "none",
+                  padding: "20px 16px",
+                  borderRight: i < 4 ? "1px solid var(--border)" : "none",
                   background: "var(--bg)",
                   cursor: "pointer",
                   transition: "background 0.15s",
@@ -129,7 +140,7 @@ export default function Demos() {
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 8, lineHeight: 1.3 }}>{tool}</div>
                   <p style={{ fontSize: 12, color: "var(--text-tertiary)", fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{idea}</p>
-                  {i < 3 && (
+                  {i < 4 && (
                     <div style={{ position: "absolute", top: "50%", right: -10, transform: "translateY(-50%)", fontSize: 14, color: "var(--border)", zIndex: 1 }}>›</div>
                   )}
                 </div>

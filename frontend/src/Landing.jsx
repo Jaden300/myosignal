@@ -497,7 +497,7 @@ export default function Landing() {
                 a:"No. All four browser tools — Signal Playground, Frequency Analyzer, Confusion Matrix Explorer, and Gesture Reaction Game — run entirely in your browser using real Ninapro DB5 data. The desktop app requires a MyoWare 2.0 sensor and Arduino, but the website works without any hardware.",
               },
               {
-                q:"What does "84.85% accuracy" actually mean?",
+                q:'What does "84.85% accuracy" actually mean?',
                 a:"It's cross-subject accuracy: the model was trained on 9 subjects and tested on the 10th, repeated across all 10 subjects (leave-one-subject-out). The 84.85% is the mean across all 10 folds. It reflects how well the classifier works on people it has never seen — the realistic, hard metric.",
               },
               {
