@@ -94,6 +94,51 @@ export default function Demos() {
         </div>
       </div>
 
+      {/* Learning pathway */}
+      <div style={{ background: "var(--bg-secondary)", borderBottom: "1px solid var(--border)", padding: "48px 32px" }}>
+        <div style={{ maxWidth: 860, margin: "0 auto" }}>
+          <Reveal>
+            <SectionPill>Suggested order</SectionPill>
+            <h2 style={{ fontSize: "clamp(20px,2.8vw,28px)", fontWeight: 600, letterSpacing: "-0.7px", color: "var(--text)", marginBottom: 8 }}>
+              A learning path through the tools
+            </h2>
+            <p style={{ fontSize: 14, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, marginBottom: 32, maxWidth: 540 }}>
+              Each tool targets a different layer of the EMG pipeline. Follow them in order to build intuition from raw signal all the way to model evaluation.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 0, border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
+              {[
+                { step: "01", stage: "Signal", tool: "Signal Playground", idea: "What does raw EMG actually look like? Draw waveforms and watch MAV, RMS, ZC, WL update live.", color: "#3B82F6", slug: "/playground" },
+                { step: "02", stage: "Frequency", tool: "Frequency Analyzer", idea: "Where does gesture signal live in the spectrum? See how the 20–90 Hz bandpass isolates it from noise.", color: "#8B5CF6", slug: "/frequency" },
+                { step: "03", stage: "Classification", tool: "Gesture Reaction Game", idea: "Which gestures are similar? Build intuition for the 6 gesture classes the classifier has to separate.", color: "#F59E0B", slug: "/game" },
+                { step: "04", stage: "Evaluation", tool: "Confusion Matrix", idea: "Where does the model fail and why? Click any cell to see which gestures get confused and the anatomical reason.", color: "#10B981", slug: "/confusion" },
+              ].map(({ step, stage, tool, idea, color, slug }, i) => (
+                <div key={step} onClick={() => navigate(slug)} style={{
+                  padding: "24px 20px",
+                  borderRight: i < 3 ? "1px solid var(--border)" : "none",
+                  background: "var(--bg)",
+                  cursor: "pointer",
+                  transition: "background 0.15s",
+                  position: "relative",
+                }}
+                  onMouseEnter={e => e.currentTarget.style.background = `${color}08`}
+                  onMouseLeave={e => e.currentTarget.style.background = "var(--bg)"}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                    <div style={{ width: 24, height: 24, borderRadius: "50%", background: `${color}18`, border: `1px solid ${color}40`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 700, color }}>{step}</div>
+                    <div style={{ fontSize: 10, fontWeight: 600, color, textTransform: "uppercase", letterSpacing: "0.06em" }}>{stage}</div>
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text)", marginBottom: 8, lineHeight: 1.3 }}>{tool}</div>
+                  <p style={{ fontSize: 12, color: "var(--text-tertiary)", fontWeight: 300, lineHeight: 1.6, margin: 0 }}>{idea}</p>
+                  {i < 3 && (
+                    <div style={{ position: "absolute", top: "50%", right: -10, transform: "translateY(-50%)", fontSize: 14, color: "var(--border)", zIndex: 1 }}>›</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+      </div>
+
       {/* Tool cards */}
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "64px 32px 80px" }}>
         <StaggerList

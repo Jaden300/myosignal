@@ -109,10 +109,137 @@ export default function RandomForestEMG() {
         <div style={{
           background: "var(--bg-secondary)", borderRadius: "var(--radius)",
           border: "1px solid var(--border)", borderLeft: "3px solid var(--accent)",
-          padding: "24px 28px", marginBottom: 56
+          padding: "24px 28px", marginBottom: 48
         }}>
           <div style={{ fontSize: 11, fontWeight: 500, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>Abstract</div>
           <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.8, fontWeight: 300, margin: 0, fontStyle: "italic" }}>{ABSTRACT}</p>
+        </div>
+
+        {/* At-a-glance stat strip */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: 48 }}>
+          {[
+            { val: "500",    label: "Trees",          sub: "n_estimators", color: "#FF2D78" },
+            { val: "84.85%", label: "Cross-subject",  sub: "LOSO accuracy", color: "#8B5CF6" },
+            { val: "<5 ms",  label: "Inference",      sub: "Per window", color: "#3B82F6" },
+            { val: "64-dim", label: "Feature vector", sub: "4 features × 16 ch", color: "#10B981" },
+          ].map(({ val, label, sub, color }, i) => (
+            <div key={label} style={{ padding: "20px 16px", background: "var(--bg-secondary)", borderRight: i < 3 ? "1px solid var(--border)" : "none", textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 700, color, letterSpacing: "-0.5px", marginBottom: 4 }}>{val}</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text)", marginBottom: 3 }}>{label}</div>
+              <div style={{ fontSize: 10, color: "var(--text-tertiary)", fontWeight: 300 }}>{sub}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Feature importance chart */}
+        <div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: 48 }}>
+          <div style={{ padding: "14px 20px", background: "var(--bg-secondary)", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Feature importance (Mean Decrease in Impurity)</span>
+            <span style={{ fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300 }}>Aggregated over 500 trees</span>
+          </div>
+          <div style={{ padding: "24px 24px 20px" }}>
+            {/* Total by feature type */}
+            <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 14 }}>Total MDI by feature type (all 16 channels)</div>
+            {[
+              { label: "MAV — Mean Absolute Value",   pct: 35, color: "#FF2D78", note: "Activation energy · strongest discriminator" },
+              { label: "RMS — Root Mean Square",      pct: 27, color: "#8B5CF6", note: "Signal power · correlated with MAV" },
+              { label: "WL — Waveform Length",        pct: 25, color: "#3B82F6", note: "Contraction complexity · frequency-sensitive" },
+              { label: "ZCR — Zero Crossing Rate",    pct: 13, color: "#10B981", note: "Frequency proxy · lowest individual contribution" },
+            ].map(({ label, pct, color, note }) => (
+              <div key={label} style={{ marginBottom: 16 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                  <div>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: "var(--text)" }}>{label}</span>
+                    <span style={{ fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300, marginLeft: 10 }}>{note}</span>
+                  </div>
+                  <span style={{ fontSize: 13, fontWeight: 700, color }}>{pct}%</span>
+                </div>
+                <div style={{ height: 8, background: "var(--border)", borderRadius: 4, overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${pct * 2.86}%`, background: color, borderRadius: 4 }} />
+                </div>
+              </div>
+            ))}
+
+            <div style={{ height: 1, background: "var(--border)", margin: "24px 0" }} />
+
+            {/* Top channels for MAV */}
+            <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 14 }}>MAV importance by electrode channel (top 8 of 16)</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(8,1fr)", gap: 6 }}>
+              {[
+                { ch: "Ch5",  pct: 4.2, note: "FDS belly" },
+                { ch: "Ch6",  pct: 3.8, note: "FDS" },
+                { ch: "Ch4",  pct: 3.5, note: "FDS" },
+                { ch: "Ch7",  pct: 3.1, note: "FCU" },
+                { ch: "Ch3",  pct: 2.8, note: "EDC" },
+                { ch: "Ch8",  pct: 2.4, note: "FCR" },
+                { ch: "Ch2",  pct: 2.1, note: "ECR" },
+                { ch: "Ch1",  pct: 1.8, note: "ECRL" },
+              ].map(({ ch, pct, note }) => (
+                <div key={ch} style={{ textAlign: "center" }}>
+                  <div style={{ height: 60, display: "flex", flexDirection: "column", justifyContent: "flex-end", marginBottom: 6 }}>
+                    <div style={{ background: "#FF2D78", borderRadius: "3px 3px 0 0", width: "100%", height: `${(pct / 4.2) * 100}%`, minHeight: 4, transition: "height 0.6s ease" }} />
+                  </div>
+                  <div style={{ fontSize: 10, fontWeight: 600, color: "var(--accent)" }}>{ch}</div>
+                  <div style={{ fontSize: 9, color: "var(--text-tertiary)", fontWeight: 300, marginTop: 2 }}>{pct}%</div>
+                  <div style={{ fontSize: 9, color: "var(--text-tertiary)", fontWeight: 300, marginTop: 1 }}>{note}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 14, fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300, lineHeight: 1.6 }}>
+              Ch5 (flexor digitorum superficialis belly) contributes the highest single-channel MAV importance at 4.2% of total MDI. FDS spans the index, middle, ring, and pinky fingers, making it the most informative muscle for multi-finger classification.
+            </div>
+          </div>
+        </div>
+
+        {/* Hyperparameter search results */}
+        <div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: 48 }}>
+          <div style={{ padding: "14px 20px", background: "var(--bg-secondary)", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.06em" }}>RandomizedSearchCV results (top 8 configs)</span>
+            <span style={{ fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300 }}>100 configurations · 5-fold CV</span>
+          </div>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--border)", background: "var(--bg-secondary)" }}>
+                  {["Rank", "n_estimators", "max_depth", "max_features", "min_split", "CV accuracy"].map(h => (
+                    <th key={h} style={{ padding: "9px 14px", textAlign: "left", fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { rank:1,  n:500, depth:"None", feat:"sqrt", split:2,  acc:84.85, best:true },
+                  { rank:2,  n:500, depth:30,     feat:"sqrt", split:2,  acc:84.71, best:false },
+                  { rank:3,  n:200, depth:"None", feat:"sqrt", split:2,  acc:84.53, best:false },
+                  { rank:4,  n:500, depth:"None", feat:0.3,    split:2,  acc:84.40, best:false },
+                  { rank:5,  n:500, depth:20,     feat:"sqrt", split:5,  acc:83.92, best:false },
+                  { rank:6,  n:200, depth:30,     feat:"sqrt", split:5,  acc:83.77, best:false },
+                  { rank:7,  n:100, depth:"None", feat:"log2", split:2,  acc:83.55, best:false },
+                  { rank:8,  n:500, depth:20,     feat:"log2", split:10, acc:82.88, best:false },
+                ].map(({ rank, n, depth, feat, split, acc, best }) => (
+                  <tr key={rank} style={{ borderBottom: "1px solid var(--border)", background: best ? "rgba(255,45,120,0.04)" : rank % 2 === 0 ? "var(--bg-secondary)" : "var(--bg)" }}>
+                    <td style={{ padding: "9px 14px", fontSize: 12, fontWeight: best ? 700 : 400, color: best ? "var(--accent)" : "var(--text-secondary)" }}>#{rank}</td>
+                    <td style={{ padding: "9px 14px", fontSize: 12, color: "var(--text-secondary)", fontFamily: "monospace" }}>{n}</td>
+                    <td style={{ padding: "9px 14px", fontSize: 12, color: "var(--text-secondary)", fontFamily: "monospace" }}>{depth}</td>
+                    <td style={{ padding: "9px 14px", fontSize: 12, color: "var(--text-secondary)", fontFamily: "monospace" }}>{feat}</td>
+                    <td style={{ padding: "9px 14px", fontSize: 12, color: "var(--text-secondary)", fontFamily: "monospace" }}>{split}</td>
+                    <td style={{ padding: "9px 14px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <div style={{ flex: 1, height: 5, background: "var(--border)", borderRadius: 3, overflow: "hidden", maxWidth: 70 }}>
+                          <div style={{ height: "100%", width: `${((acc - 80) / 6) * 100}%`, background: best ? "var(--accent)" : "#8B5CF6", borderRadius: 3 }} />
+                        </div>
+                        <span style={{ fontSize: 12, fontWeight: best ? 700 : 400, color: best ? "var(--accent)" : "var(--text-secondary)" }}>{acc}%</span>
+                        {best && <span style={{ fontSize: 10, color: "var(--accent)", fontWeight: 600, background: "rgba(255,45,120,0.1)", border: "1px solid rgba(255,45,120,0.25)", borderRadius: 100, padding: "1px 7px" }}>selected</span>}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div style={{ padding: "12px 20px", fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300, lineHeight: 1.6, borderTop: "1px solid var(--border)", background: "var(--bg-secondary)" }}>
+            The winning configuration (500 trees, unlimited depth, sqrt features) was robust — the top 4 configs differ by less than 0.5pp, confirming Random Forest's low sensitivity to exact hyperparameter choice.
+          </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>

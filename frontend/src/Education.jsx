@@ -2,7 +2,7 @@ import Navbar from "./Navbar"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import Footer from "./Footer"
-import { Reveal, StaggerList, HoverCard, SectionPill } from "./Animate"
+import { Reveal, SectionPill } from "./Animate"
 import NeuralNoise from "./components/NeuralNoise"
 
 const ARTICLES = [
@@ -106,7 +106,7 @@ const ARTICLES = [
     slug: "/education/future-of-bci",
     tag: "Future",
     title: "After EMG: what comes next",
-    summary: "Surface EMG is one point on a spectrum from skin-surface sensing to direct neural recording. Where the field is heading - high-density arrays, peripheral nerve interfaces, and motor cortex decoding.",
+    summary: "Surface EMG is one point on a spectrum from skin-surface sensing to direct neural recording. Where the field is heading — high-density arrays, peripheral nerve interfaces, and motor cortex decoding.",
     readTime: "6 min",
     author: "myojam team",
     date: "2025-09-22",
@@ -130,7 +130,7 @@ const ARTICLES = [
     slug: "/education/windowing-explained",
     tag: "Signal processing",
     title: "The art of cutting a signal into pieces",
-    summary: "Window size, overlap, and step size are the least glamorous choices in EMG classification - and silently the most consequential. Here's what they actually control and why myojam made the choices it did.",
+    summary: "Window size, overlap, and step size are the least glamorous choices in EMG classification — and silently the most consequential. Here's what they actually control and why myojam made the choices it did.",
     readTime: "7 min",
     author: "myojam team",
     date: "2025-07-05",
@@ -140,8 +140,6 @@ const ARTICLES = [
   },
 ]
 
-// Tag colours - distinct per category so scanning works without reading
-// Source: NN/G - use bright colors for important items, muted for less important
 const TAG_COLORS = {
   "Foundations":       { bg:"rgba(255,45,120,0.08)",  border:"rgba(255,45,120,0.18)",  text:"#FF2D78"  },
   "Machine Learning":  { bg:"rgba(59,130,246,0.08)",  border:"rgba(59,130,246,0.18)",  text:"#3B82F6"  },
@@ -155,9 +153,9 @@ const TAG_COLORS = {
 }
 
 const SORT_OPTIONS = [
-  { key: "latest",  label: "Latest"        },
-  { key: "popular", label: "Most popular"  },
-  { key: "helpful", label: "Most helpful"  },
+  { key: "latest",  label: "Latest"       },
+  { key: "popular", label: "Most popular" },
+  { key: "helpful", label: "Most helpful" },
 ]
 
 function sorted(articles, key) {
@@ -171,64 +169,45 @@ function sorted(articles, key) {
 export default function Education() {
   const navigate = useNavigate()
   const [sortKey, setSortKey] = useState("latest")
-  const displayed = sorted(ARTICLES, sortKey)
+  const [tagFilter, setTagFilter] = useState("All")
+
+  const allTags = ["All", ...Object.keys(TAG_COLORS)]
+  const filtered = tagFilter === "All" ? ARTICLES : ARTICLES.filter(a => a.tag === tagFilter)
+  const displayed = sorted(filtered, sortKey)
 
   return (
     <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
+      <style>{`
+        .article-card { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+        .article-card:hover { transform: translateY(-4px) !important; box-shadow: 0 16px 40px rgba(0,0,0,0.1) !important; }
+      `}</style>
       <Navbar />
 
-      {/* ── BANNER
-          Spacing: 120px top, 72px bottom - generous breathing room per NN/G:
-          "An element with more space around it receives more attention."
-          Max-width 68ch on paragraphs - typography guideline, 70-80 chars per line.
-      */}
-      <div style={{ position: "relative", overflow: "hidden", borderBottom: "1px solid var(--border)", padding: "120px 32px 72px" }}>
+      {/* ── Hero ── */}
+      <div style={{ position:"relative", overflow:"hidden", borderBottom:"1px solid var(--border)", padding:"120px 32px 72px" }}>
         <NeuralNoise color={[0.06, 0.72, 0.56]} opacity={0.85} speed={0.0006} />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
-        <div style={{ maxWidth:820, margin:"0 auto", position: "relative", zIndex: 2 }}>
-
+        <div style={{ position:"absolute", inset:0, background:"rgba(3,0,18,0.65)", zIndex:1 }}/>
+        <div style={{ maxWidth:820, margin:"0 auto", position:"relative", zIndex:2 }}>
           <div style={{
             display:"inline-flex", alignItems:"center", gap:6,
-            background:"rgba(255,255,255,0.08)", backdropFilter:"blur(8px)", border:"1px solid rgba(255,45,120,0.3)",
+            background:"rgba(255,255,255,0.08)", backdropFilter:"blur(8px)",
+            border:"1px solid rgba(255,45,120,0.3)",
             borderRadius:100, padding:"5px 16px",
             fontSize:11, fontWeight:600, color:"var(--accent)",
-            letterSpacing:"0.06em", textTransform:"uppercase",
-            marginBottom:32,
+            letterSpacing:"0.06em", textTransform:"uppercase", marginBottom:32,
           }}>
             <span style={{ width:6, height:6, borderRadius:"50%", background:"var(--accent)", display:"inline-block" }}/>
             Education hub
           </div>
-
-          <h1 style={{
-            fontSize:"clamp(36px, 5.5vw, 60px)",
-            fontWeight:700,
-            letterSpacing:"-0.03em",
-            lineHeight:1.05,
-            color:"#fff",
-            marginBottom:24,
-          }}>
+          <h1 style={{ fontSize:"clamp(36px,5.5vw,60px)", fontWeight:700, letterSpacing:"-0.03em", lineHeight:1.05, color:"#fff", marginBottom:24 }}>
             Learn about EMG<br/>
             <span style={{ color:"var(--accent)" }}>and assistive technology.</span>
           </h1>
-
-          <p style={{
-            fontSize:17,
-            lineHeight:1.75,
-            color:"rgba(255,255,255,0.72)",
-            fontWeight:300,
-            maxWidth:"58ch",
-            marginBottom:0,
-          }}>
-            In-depth articles on the science behind myojam - from how muscles generate
-            electrical signals to how machine learning classifies them into computer actions.
+          <p style={{ fontSize:17, lineHeight:1.75, color:"rgba(255,255,255,0.72)", fontWeight:300, maxWidth:"58ch" }}>
+            In-depth articles on the science behind myojam — from how muscles generate electrical signals to how machine learning classifies them into computer actions.
           </p>
-
           <div style={{ display:"flex", gap:32, marginTop:40 }}>
-            {[
-              ["11", "articles"],
-              ["450+", "total reads"],
-              ["5 topics", "covered"],
-            ].map(([val, label]) => (
+            {[["11","articles"],["450+","total reads"],["9 topics","covered"]].map(([val, label]) => (
               <div key={label}>
                 <div style={{ fontSize:22, fontWeight:700, color:"#fff", letterSpacing:"-0.5px" }}>{val}</div>
                 <div style={{ fontSize:11, color:"rgba(255,255,255,0.5)", fontWeight:300, textTransform:"uppercase", letterSpacing:"0.08em", marginTop:2 }}>{label}</div>
@@ -238,212 +217,156 @@ export default function Education() {
         </div>
       </div>
 
-      {/* ── ARTICLE LIST */}
-      <div style={{ maxWidth:820, margin:"0 auto", padding:"48px 32px 80px" }}>
+      {/* ── Article list ── */}
+      <div style={{ maxWidth:860, margin:"0 auto", padding:"48px 32px 80px" }}>
 
-        {/* Sort bar - secondary UI, kept visually quiet per Refactoring UI:
-            Secondary actions should be clear but low contrast */}
-        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:40 }}>
-          <span style={{
-            fontSize:11, color:"var(--text-tertiary)", fontWeight:400,
-            textTransform:"uppercase", letterSpacing:"0.08em", marginRight:4,
-          }}>Sort</span>
-          {SORT_OPTIONS.map(opt => (
-            <button key={opt.key} onClick={() => setSortKey(opt.key)} style={{
-              background: sortKey===opt.key ? "var(--accent-soft)" : "transparent",
-              border: `1px solid ${sortKey===opt.key ? "rgba(255,45,120,0.25)" : "var(--border)"}`,
-              borderRadius:100,
-              padding:"5px 14px",
-              fontSize:12,
-              fontWeight: sortKey===opt.key ? 500 : 300,
-              color: sortKey===opt.key ? "var(--accent)" : "var(--text-tertiary)",
-              cursor:"pointer",
-              fontFamily:"var(--font)",
-              transition:"all 0.15s",
-            }}>{opt.label}</button>
-          ))}
+        {/* Controls */}
+        <div style={{ marginBottom:36 }}>
+          {/* Category filter */}
+          <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:14 }}>
+            {allTags.map(tag => {
+              const active = tagFilter === tag
+              const tc = TAG_COLORS[tag]
+              const count = tag === "All" ? ARTICLES.length : ARTICLES.filter(a => a.tag === tag).length
+              return (
+                <button key={tag} onClick={() => setTagFilter(tag)} style={{
+                  background: active ? (tc ? tc.bg : "var(--accent-soft)") : "transparent",
+                  color: active ? (tc ? tc.text : "var(--accent)") : "var(--text-tertiary)",
+                  border:`1px solid ${active ? (tc ? tc.border : "rgba(255,45,120,0.25)") : "var(--border)"}`,
+                  borderRadius:100, padding:"5px 12px", fontSize:11,
+                  fontWeight: active ? 600 : 300,
+                  cursor:"pointer", fontFamily:"var(--font)", transition:"all 0.15s",
+                  display:"flex", alignItems:"center", gap:5,
+                }}>
+                  {tag}
+                  <span style={{ background:"rgba(127,127,127,0.12)", borderRadius:100, padding:"1px 5px", fontSize:9, opacity:0.75 }}>
+                    {count}
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Sort row */}
+          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+            <span style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, textTransform:"uppercase", letterSpacing:"0.08em", marginRight:4 }}>Sort</span>
+            {SORT_OPTIONS.map(opt => (
+              <button key={opt.key} onClick={() => setSortKey(opt.key)} style={{
+                background: sortKey===opt.key ? "var(--accent-soft)" : "transparent",
+                border:`1px solid ${sortKey===opt.key ? "rgba(255,45,120,0.25)" : "var(--border)"}`,
+                borderRadius:100, padding:"5px 14px", fontSize:12,
+                fontWeight: sortKey===opt.key ? 500 : 300,
+                color: sortKey===opt.key ? "var(--accent)" : "var(--text-tertiary)",
+                cursor:"pointer", fontFamily:"var(--font)", transition:"all 0.15s",
+              }}>{opt.label}</button>
+            ))}
+            <span style={{ marginLeft:"auto", fontSize:12, color:"var(--text-tertiary)", fontWeight:300 }}>
+              {displayed.length} article{displayed.length !== 1 ? "s" : ""}
+            </span>
+          </div>
         </div>
 
-        {/* Article cards */}
-        <div style={{ display:"flex", flexDirection:"column", gap:2 }}>
+        {/* Card grid */}
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(360px, 1fr))", gap:14 }}>
           {displayed.map((a, i) => {
             const tc = TAG_COLORS[a.tag] || TAG_COLORS["Foundations"]
+            const globalIdx = ARTICLES.findIndex(x => x.slug === a.slug)
             return (
               <Reveal key={a.slug} delay={i * 0.04}>
-                {/* Card - border-bottom divider pattern, no card background on most
-                    Source: NN/G Medium example - "thoughtful typography system,
-                    spacing, and consistent left alignment makes it easy to read" */}
                 <div
+                  className="article-card"
                   onClick={() => navigate(a.slug)}
                   style={{
-                    padding:"28px 0",
-                    borderBottom:"1px solid var(--border)",
-                    cursor:"pointer",
-                    display:"flex",
-                    gap:24,
-                    alignItems:"flex-start",
-                    transition:"background 0.15s",
+                    borderRadius:14, border:"1px solid var(--border)",
+                    overflow:"hidden", cursor:"pointer", background:"var(--bg)",
                   }}
-                  onMouseEnter={e => e.currentTarget.style.background = "rgba(255,45,120,0.02)"}
-                  onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                 >
-                  {/* Article number - visual anchor on left, quiet */}
+                  {/* Cover strip */}
                   <div style={{
-                    fontSize:12,
-                    color:"var(--text-tertiary)",
-                    fontWeight:300,
-                    width:24,
-                    flexShrink:0,
-                    paddingTop:3,
-                    fontVariantNumeric:"tabular-nums",
+                    height:88, padding:"16px 20px",
+                    background:`linear-gradient(135deg, ${tc.bg.replace("0.08","0.2")} 0%, var(--bg-secondary) 100%)`,
+                    position:"relative", overflow:"hidden",
+                    display:"flex", alignItems:"flex-end",
+                    borderBottom:"1px solid var(--border)",
                   }}>
-                    {String(i + 1).padStart(2, "0")}
+                    <span style={{
+                      position:"absolute", right:12, top:-6,
+                      fontSize:72, fontWeight:900, lineHeight:1,
+                      color:tc.text, opacity:0.1, fontFamily:"monospace", userSelect:"none",
+                    }}>
+                      {String(globalIdx + 1).padStart(2, "0")}
+                    </span>
+                    <span style={{
+                      position:"absolute", top:14, right:16,
+                      fontSize:10, color:"var(--text-tertiary)", fontWeight:300,
+                    }}>
+                      {a.readTime} read
+                    </span>
+                    <span style={{
+                      fontSize:10, fontWeight:600, color:tc.text,
+                      background:tc.bg, border:`1px solid ${tc.border}`,
+                      borderRadius:100, padding:"2px 10px",
+                      letterSpacing:"0.05em", textTransform:"uppercase",
+                      position:"relative", zIndex:1,
+                    }}>
+                      {a.tag}
+                    </span>
                   </div>
 
-                  {/* Main content */}
-                  <div style={{ flex:1 }}>
-
-                    {/* Metadata row - grouped close together per Gestalt proximity principle
-                        Source: NN/G - "minimal white space between related items makes
-                        their relationship clear" */}
-                    <div style={{
-                      display:"flex",
-                      alignItems:"center",
-                      gap:10,
-                      marginBottom:10,
-                      flexWrap:"wrap",
-                    }}>
-                      <span style={{
-                        fontSize:10,
-                        fontWeight:600,
-                        color: tc.text,
-                        background: tc.bg,
-                        border: `1px solid ${tc.border}`,
-                        borderRadius:100,
-                        padding:"2px 10px",
-                        letterSpacing:"0.05em",
-                        textTransform:"uppercase",
-                      }}>
-                        {a.tag}
-                      </span>
-                      <span style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300 }}>{a.readTime} read</span>
-                      <span style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300 }}>{a.dateLabel}</span>
-                    </div>
-
-                    {/* Title - clear size jump from metadata above
-                        Source: NN/G - "use 2-3 typeface sizes to indicate content importance"
-                        Tight tracking on the heading per Apple HIG */}
-                    <h2 style={{
-                      fontSize:18,
-                      fontWeight:600,
-                      color:"var(--text)",
-                      letterSpacing:"-0.02em",
-                      lineHeight:1.3,
-                      marginBottom:10,
-                    }}>
+                  {/* Body */}
+                  <div style={{ padding:"18px 20px" }}>
+                    <h2 style={{ fontSize:15, fontWeight:600, color:"var(--text)", letterSpacing:"-0.2px", lineHeight:1.35, marginBottom:8 }}>
                       {a.title}
                     </h2>
-
-                    {/* Summary - clearly subordinate: smaller, lighter, more line-height
-                        Source: Refactoring UI - use color to reinforce hierarchy,
-                        not just size alone */}
-                    <p style={{
-                      fontSize:14,
-                      lineHeight:1.7,
-                      color:"var(--text-secondary)",
-                      fontWeight:300,
-                      maxWidth:"62ch",
-                      margin:0,
-                    }}>
+                    <p style={{ fontSize:13, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.65, margin:"0 0 14px" }}>
                       {a.summary}
                     </p>
-
-                    {/* Like count - farthest down the hierarchy, tertiary treatment */}
-                    <div style={{ marginTop:12, display:"flex", alignItems:"center", gap:6 }}>
-                      <span style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>
-                        ♥ {a.likes} likes
-                      </span>
+                    <div style={{ display:"flex", gap:10, alignItems:"center", borderTop:"1px solid var(--border)", paddingTop:12 }}>
+                      <span style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>{a.dateLabel}</span>
+                      <span style={{ marginLeft:"auto", fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>♥ {a.likes}</span>
+                      <span style={{ fontSize:12, color:tc.text, fontWeight:500 }}>Read →</span>
                     </div>
                   </div>
-
-                  {/* Arrow - rightmost, secondary, quiet */}
-                  <span style={{
-                    fontSize:18,
-                    color:"var(--text-tertiary)",
-                    flexShrink:0,
-                    marginTop:4,
-                    transition:"color 0.15s, transform 0.15s",
-                  }}>→</span>
                 </div>
               </Reveal>
             )
           })}
         </div>
 
-        {/* Footer note - tertiary, centered, max width constrained */}
-        <p style={{
-          marginTop:48,
-          fontSize:13,
-          color:"var(--text-tertiary)",
-          fontWeight:300,
-          textAlign:"center",
-          lineHeight:1.7,
-          maxWidth:"50ch",
-          marginLeft:"auto",
-          marginRight:"auto",
-        }}>
-          More articles in progress - signal processing, ML for biosignals, and the future of assistive input.
+        {displayed.length === 0 && (
+          <div style={{ textAlign:"center", padding:"64px 0", color:"var(--text-tertiary)", fontSize:14, fontWeight:300 }}>
+            No articles in this category yet.
+          </div>
+        )}
+
+        <p style={{ marginTop:48, fontSize:13, color:"var(--text-tertiary)", fontWeight:300, textAlign:"center", lineHeight:1.7, maxWidth:"50ch", margin:"48px auto 0" }}>
+          More articles in progress — signal processing, ML for biosignals, and the future of assistive input.
         </p>
       </div>
 
-      {/* ── SUBMIT SECTION
-          Separated from the list with generous top margin - NN/G:
-          "increased space between each chunk creates hierarchical spatial pattern" */}
-      <div style={{
-        borderTop:"1px solid var(--border)",
-        background:"var(--bg-secondary)",
-        padding:"64px 32px",
-      }}>
+      {/* ── Submit section ── */}
+      <div style={{ borderTop:"1px solid var(--border)", background:"var(--bg-secondary)", padding:"64px 32px" }}>
         <div style={{ maxWidth:820, margin:"0 auto" }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", gap:32, flexWrap:"wrap" }}>
             <div>
-              <div style={{
-                fontSize:11, fontWeight:600, color:"var(--accent)",
-                textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:16,
-              }}>Contribute</div>
-              <h2 style={{
-                fontSize:"clamp(22px,3vw,32px)",
-                fontWeight:600,
-                letterSpacing:"-0.025em",
-                color:"var(--text)",
-                marginBottom:12,
-                lineHeight:1.2,
-              }}>Submit your own article.</h2>
-              <p style={{
-                fontSize:15,
-                lineHeight:1.75,
-                color:"var(--text-secondary)",
-                fontWeight:300,
-                maxWidth:"52ch",
-                margin:0,
-              }}>
-                Written something about EMG, assistive technology, or myojam?
-                We publish original work with full author credit.
+              <div style={{ fontSize:11, fontWeight:600, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:16 }}>Contribute</div>
+              <h2 style={{ fontSize:"clamp(22px,3vw,32px)", fontWeight:600, letterSpacing:"-0.025em", color:"var(--text)", marginBottom:12, lineHeight:1.2 }}>
+                Submit your own article.
+              </h2>
+              <p style={{ fontSize:15, lineHeight:1.75, color:"var(--text-secondary)", fontWeight:300, maxWidth:"52ch", margin:0 }}>
+                Written something about EMG, assistive technology, or myojam? We publish original work with full author credit.
               </p>
             </div>
             <button
               onClick={() => navigate("/submit-article")}
               style={{
-                flexShrink:0,
-                background:"var(--accent)", color:"#fff",
-                border:"none", borderRadius:100,
-                padding:"14px 32px", fontSize:15, fontWeight:500,
-                fontFamily:"var(--font)", cursor:"pointer",
-                boxShadow:"0 4px 16px rgba(255,45,120,0.3)",
-                transition:"transform 0.15s, box-shadow 0.15s",
+                flexShrink:0, background:"var(--accent)", color:"#fff",
+                border:"none", borderRadius:100, padding:"14px 32px",
+                fontSize:15, fontWeight:500, fontFamily:"var(--font)", cursor:"pointer",
+                boxShadow:"0 4px 16px rgba(255,45,120,0.3)", transition:"transform 0.15s, box-shadow 0.15s",
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform="scale(1.04)"; e.currentTarget.style.boxShadow="0 8px 24px rgba(255,45,120,0.4)" }}
-              onMouseLeave={e => { e.currentTarget.style.transform="scale(1)"; e.currentTarget.style.boxShadow="0 4px 16px rgba(255,45,120,0.3)" }}
+              onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.04)";e.currentTarget.style.boxShadow="0 8px 24px rgba(255,45,120,0.4)"}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 4px 16px rgba(255,45,120,0.3)"}}
             >
               Submit an article →
             </button>

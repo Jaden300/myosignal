@@ -88,6 +88,26 @@ const ROTATING_TEXTS = [
   "the neuromuscular system.",
 ]
 
+function FAQItem({ q, a }) {
+  const [open, setOpen] = useState(false)
+  return (
+    <div
+      onClick={() => setOpen(o => !o)}
+      style={{ padding:"20px 24px", background:"var(--bg)", cursor:"pointer", borderBottom:"1px solid var(--border)", transition:"background 0.15s", userSelect:"none" }}
+      onMouseEnter={e => e.currentTarget.style.background = "var(--bg-secondary)"}
+      onMouseLeave={e => e.currentTarget.style.background = "var(--bg)"}
+    >
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16 }}>
+        <div style={{ fontSize:14, fontWeight:500, color:"var(--text)", lineHeight:1.5 }}>{q}</div>
+        <div style={{ fontSize:18, color:"var(--accent)", flexShrink:0, lineHeight:1, transition:"transform 0.2s", transform: open ? "rotate(45deg)" : "none" }}>+</div>
+      </div>
+      {open && (
+        <p style={{ fontSize:13, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, margin:"12px 0 0", paddingRight:24 }}>{a}</p>
+      )}
+    </div>
+  )
+}
+
 function HeroHeading() {
   const [index, setIndex]     = useState(0)
   const [key, setKey]         = useState(0)
@@ -335,6 +355,97 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ── KEY FINDINGS */}
+      <section style={{ background:"var(--bg-secondary)", borderTop:"1px solid var(--border)", borderBottom:"1px solid var(--border)", padding:"80px 32px" }}>
+        <div style={{ maxWidth:920, margin:"0 auto" }}>
+          <Reveal>
+            <SectionPill>Results</SectionPill>
+            <h2 style={{ fontSize:"clamp(28px,4vw,44px)", fontWeight:600, letterSpacing:"-1.5px", color:"var(--text)", marginBottom:12 }}>
+              What the data shows.
+            </h2>
+            <p style={{ fontSize:16, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, maxWidth:520, marginBottom:48 }}>
+              Real numbers from a cross-subject evaluation on Ninapro DB5 — tested on people the model has never seen.
+            </p>
+          </Reveal>
+
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
+            {/* Per-gesture accuracy */}
+            <Reveal>
+              <div style={{ background:"var(--bg)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"28px 32px" }}>
+                <div style={{ fontSize:11, fontWeight:600, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:20 }}>Per-gesture recall (cross-subject)</div>
+                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                  {[
+                    { label:"Index flex",  val:88, color:"#FF2D78" },
+                    { label:"Fist",        val:87, color:"#EF4444" },
+                    { label:"Thumb flex",  val:87, color:"#F59E0B" },
+                    { label:"Middle flex", val:83, color:"#3B82F6" },
+                    { label:"Pinky flex",  val:82, color:"#10B981" },
+                    { label:"Ring flex",   val:80, color:"#8B5CF6" },
+                  ].map(r => (
+                    <div key={r.label} style={{ display:"flex", alignItems:"center", gap:12 }}>
+                      <div style={{ width:76, fontSize:12, color:"var(--text-secondary)", fontWeight:300, textAlign:"right", flexShrink:0 }}>{r.label}</div>
+                      <div style={{ flex:1, height:6, background:"var(--border)", borderRadius:100, overflow:"hidden" }}>
+                        <div style={{ height:"100%", width:`${r.val}%`, background:r.color, borderRadius:100 }}/>
+                      </div>
+                      <div style={{ width:36, fontSize:12, fontWeight:600, color:r.color, flexShrink:0 }}>{r.val}%</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop:16, fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>Mean: 84.85%  ·  LOSO evaluation  ·  10 subjects</div>
+              </div>
+            </Reveal>
+
+            {/* Classifier comparison + callouts */}
+            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+              <Reveal>
+                <div style={{ background:"var(--bg)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"24px 28px" }}>
+                  <div style={{ fontSize:11, fontWeight:600, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:14 }}>Classifier comparison</div>
+                  <div style={{ display:"flex", flexDirection:"column", gap:9 }}>
+                    {[
+                      { name:"Random Forest", val:84.85, color:"#FF2D78", best:true },
+                      { name:"SVM (RBF)",     val:82.30, color:"#3B82F6", best:false },
+                      { name:"k-NN",          val:76.40, color:"#F59E0B", best:false },
+                      { name:"LDA",           val:71.80, color:"#AEAEB2", best:false },
+                    ].map(c => (
+                      <div key={c.name} style={{ display:"flex", alignItems:"center", gap:10 }}>
+                        <div style={{ width:100, fontSize:12, color: c.best ? "var(--text)" : "var(--text-secondary)", fontWeight: c.best ? 600 : 300, flexShrink:0 }}>{c.name}</div>
+                        <div style={{ flex:1, height:5, background:"var(--border)", borderRadius:100, overflow:"hidden" }}>
+                          <div style={{ height:"100%", width:`${(c.val/90)*100}%`, background:c.color, borderRadius:100 }}/>
+                        </div>
+                        <div style={{ width:44, fontSize:12, fontWeight: c.best ? 700 : 300, color:c.color, flexShrink:0 }}>{c.val}%</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop:12, fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>All: LOSO · Ninapro DB5 · 10 subjects</div>
+                </div>
+              </Reveal>
+
+              {[
+                { label:"Cross-subject gap", val:"84.85% vs ~96%", sub:"Cross-subject vs. within-subject — the 11 pp reality of real-world deployment", color:"#F59E0B" },
+                { label:"Prosthetic threshold", val:"< 300 ms", sub:"Required latency for natural prosthetic control. Achievable accuracy at that window: ~65%", color:"#EF4444" },
+              ].map((item, i) => (
+                <Reveal key={item.label} delay={i * 0.05}>
+                  <div style={{ background:"var(--bg)", border:"1px solid var(--border)", borderLeft:`3px solid ${item.color}`, borderRadius:"0 var(--radius) var(--radius) 0", padding:"16px 20px" }}>
+                    <div style={{ fontSize:10, fontWeight:600, color:item.color, textTransform:"uppercase", letterSpacing:"0.07em", marginBottom:3 }}>{item.label}</div>
+                    <div style={{ fontSize:20, fontWeight:700, color:"var(--text)", letterSpacing:"-0.5px", marginBottom:3 }}>{item.val}</div>
+                    <div style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300, lineHeight:1.5 }}>{item.sub}</div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+
+          <Reveal>
+            <div style={{ marginTop:24, textAlign:"center" }}>
+              <button onClick={() => navigate("/research")} style={{ background:"none", border:"1px solid var(--border-mid)", borderRadius:100, padding:"10px 28px", fontSize:14, color:"var(--text-secondary)", fontFamily:"var(--font)", cursor:"pointer", transition:"border-color 0.15s, color 0.15s" }}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)"}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--border-mid)";e.currentTarget.style.color="var(--text-secondary)"}}
+              >Read the full research →</button>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ── SOCIAL */}
       <section style={{ padding:"0 32px 0", marginBottom:0 }}>
         <div style={{ maxWidth:920, margin:"0 auto" }}>
@@ -367,6 +478,48 @@ export default function Landing() {
               </div>
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      {/* ── FAQ */}
+      <section style={{ padding:"64px 32px 0" }}>
+        <div style={{ maxWidth:920, margin:"0 auto" }}>
+          <Reveal>
+            <SectionPill>Common questions</SectionPill>
+            <h2 style={{ fontSize:"clamp(24px,3.5vw,36px)", fontWeight:600, letterSpacing:"-1px", color:"var(--text)", marginBottom:40 }}>
+              Frequently asked.
+            </h2>
+          </Reveal>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(400px, 1fr))", gap:2, border:"1px solid var(--border)", borderRadius:"var(--radius)", overflow:"hidden" }}>
+            {[
+              {
+                q:"Do I need EMG hardware to use myojam?",
+                a:"No. All four browser tools — Signal Playground, Frequency Analyzer, Confusion Matrix Explorer, and Gesture Reaction Game — run entirely in your browser using real Ninapro DB5 data. The desktop app requires a MyoWare 2.0 sensor and Arduino, but the website works without any hardware.",
+              },
+              {
+                q:"What does "84.85% accuracy" actually mean?",
+                a:"It's cross-subject accuracy: the model was trained on 9 subjects and tested on the 10th, repeated across all 10 subjects (leave-one-subject-out). The 84.85% is the mean across all 10 folds. It reflects how well the classifier works on people it has never seen — the realistic, hard metric.",
+              },
+              {
+                q:"What gestures does myojam recognize?",
+                a:"Six hand gestures: index finger flex, middle finger flex, ring finger flex, pinky finger flex, thumb flex, and full fist. These were chosen for biomechanical distinctiveness and natural mapping to computer control actions like scroll, click, and navigate.",
+              },
+              {
+                q:"Is myojam free? Can I use it commercially?",
+                a:"Yes. Every part of myojam — the classifier, desktop app, website, research, lesson plans, and datasets — is released under the MIT licence. You can use it, modify it, and build on it commercially with no restrictions beyond attribution.",
+              },
+              {
+                q:"How does the classifier run without an internet connection?",
+                a:"The trained Random Forest model is bundled inside the desktop app as a .pkl file and loaded locally. No API calls, no cloud inference. The entire signal processing pipeline — filter, windowing, feature extraction, prediction — runs on your machine.",
+              },
+              {
+                q:"Why is there a gap between 84.85% and clinical-grade accuracy?",
+                a:"Lab benchmarks assume consistent electrode placement, controlled posture, and deliberate isolated movements. Real-world conditions introduce placement shifts between sessions (−5 to −15pp), limb position changes, co-contraction, and fatigue. Closing this gap is an active open problem — we document it honestly in the research.",
+              },
+            ].map(({ q, a }, i) => (
+              <FAQItem key={i} q={q} a={a} />
+            ))}
+          </div>
         </div>
       </section>
 

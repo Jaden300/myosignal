@@ -143,6 +143,79 @@ export default function Educators() {
         </div>
       </section>
 
+      {/* Curriculum alignment */}
+      <section style={{ borderBottom:"1px solid var(--border)", padding:"64px 32px" }}>
+        <div style={{ maxWidth:860, margin:"0 auto" }}>
+          <Reveal>
+            <SectionPill>Standards alignment</SectionPill>
+            <h2 style={{ fontSize:"clamp(22px,3.5vw,34px)", fontWeight:600, letterSpacing:"-1px", color:"var(--text)", marginBottom:12 }}>
+              Mapped to curriculum standards.
+            </h2>
+            <p style={{ fontSize:14, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, marginBottom:36, maxWidth:520 }}>
+              All three lessons are aligned to major curriculum frameworks. The table below shows which standards each lesson supports — use it when writing your unit plan or seeking administration approval.
+            </p>
+            <div style={{ border:"1px solid var(--border)", borderRadius:"var(--radius)", overflow:"hidden" }}>
+              {/* Header */}
+              <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr 1fr", background:"var(--bg-secondary)", borderBottom:"1px solid var(--border)" }}>
+                {["Standard / Framework", "L1 — EMG Basics", "L2 — Classifier", "L3 — Ethics"].map((h,i) => (
+                  <div key={h} style={{ padding:"12px 18px", fontSize:11, fontWeight:600, color:i===0?"var(--text)":["#FF2D78","#3B82F6","#8B5CF6"][i-1], textTransform:"uppercase", letterSpacing:"0.06em", borderRight: i < 3 ? "1px solid var(--border)" : "none" }}>{h}</div>
+                ))}
+              </div>
+              {[
+                {
+                  framework: "Ontario Science (Gr 9–12)",
+                  sub: "Biology SBI3U · Physics SPH3U",
+                  l1: "SBI3U — E2.1, E2.4 (nerve impulse, muscle contraction)",
+                  l2: "SPH3U — data analysis, signal processing",
+                  l3: "SNC2D — technology and society",
+                },
+                {
+                  framework: "NGSS (US)",
+                  sub: "HS-LS1, HS-PS4, HS-ETS1",
+                  l1: "HS-LS1-2 (cell specialisation, electrical signalling)",
+                  l2: "HS-PS4-5 (data analysis, pattern recognition)",
+                  l3: "HS-ETS1-1 (criteria, constraints, societal impact)",
+                },
+                {
+                  framework: "IB Biology / Computer Science",
+                  sub: "SL/HL Topic 6 · CS Option D",
+                  l1: "Topic 6.5 — neurons and synapses",
+                  l2: "CS Option D — machine learning, pattern recognition",
+                  l3: "Topic 11.4 — bioethics and medical technology",
+                },
+                {
+                  framework: "AP Computer Science Principles",
+                  sub: "Big Ideas 2, 4, 5",
+                  l1: "—",
+                  l2: "BI-4 (algorithms), BI-2 (data representation)",
+                  l3: "BI-5 (societal impacts of computing)",
+                },
+                {
+                  framework: "Cambridge IGCSE / A-Level",
+                  sub: "Biology · Computer Science",
+                  l1: "A-Level Bio — Chapter 15 (coordination)",
+                  l2: "IGCSE CS — Section 2 (data, algorithms)",
+                  l3: "A-Level Bio — Chapter 16 (nervous system + ethics)",
+                },
+              ].map(({ framework, sub, l1, l2, l3 }, ri) => (
+                <div key={framework} style={{ display:"grid", gridTemplateColumns:"2fr 1fr 1fr 1fr", borderBottom: ri < 4 ? "1px solid var(--border)" : "none", background: ri % 2 === 0 ? "var(--bg)" : "var(--bg-secondary)" }}>
+                  <div style={{ padding:"14px 18px", borderRight:"1px solid var(--border)" }}>
+                    <div style={{ fontSize:13, fontWeight:600, color:"var(--text)", marginBottom:3 }}>{framework}</div>
+                    <div style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>{sub}</div>
+                  </div>
+                  {[l1, l2, l3].map((val, ci) => (
+                    <div key={ci} style={{ padding:"14px 18px", fontSize:11, color: val === "—" ? "var(--text-tertiary)" : "var(--text-secondary)", fontWeight: val === "—" ? 300 : 300, lineHeight:1.55, borderRight: ci < 2 ? "1px solid var(--border)" : "none" }}>{val}</div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize:12, color:"var(--text-tertiary)", fontWeight:300, lineHeight:1.6, marginTop:12 }}>
+              Alignment verified against published curriculum documents. Contact us if you'd like a detailed mapping for a framework not listed above.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
       {/* Lesson plans */}
       <section id="lessons" style={{ padding:"64px 32px" }}>
         <div style={{ maxWidth:860, margin:"0 auto" }}>

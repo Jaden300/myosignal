@@ -1,5 +1,6 @@
 import sys
 import os
+import csv
 import math
 import platform as _platform
 import threading
@@ -733,6 +734,7 @@ class MyojamWindow(QMainWindow):
         self._gesture_count = 0
         self._conf_sum      = 0.0
         self._session_timer = None
+        self._session_log   = []  # list of (timestamp_s, gesture, confidence, elapsed_s)
 
         self.setWindowTitle("myojam")
         self.resize(960, 760)
@@ -949,6 +951,31 @@ class MyojamWindow(QMainWindow):
         slay.addStretch()
         hint = _label("Press 1–6 to trigger gestures", 10, color="rgba(255,255,255,0.2)")
         slay.addWidget(hint)
+
+        slay.addSpacing(12)
+        self.export_btn = QPushButton("Export CSV")
+        self.export_btn.setFixedHeight(28)
+        self.export_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.export_btn.setStyleSheet("""
+            QPushButton {
+                background: rgba(255,255,255,0.05);
+                color: rgba(255,255,255,0.4);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 14px;
+                font-size: 11px;
+                font-weight: 500;
+                padding: 0 14px;
+            }
+            QPushButton:hover {
+                background: rgba(255,45,120,0.12);
+                color: #FF2D78;
+                border-color: rgba(255,45,120,0.35);
+            }
+            QPushButton:pressed { background: rgba(255,45,120,0.2); }
+        """)
+        self.export_btn.clicked.connect(self._export_csv)
+        slay.addWidget(self.export_btn)
+
         root.addWidget(session_w)
 
         # ── Signals
@@ -1098,6 +1125,8 @@ class MyojamWindow(QMainWindow):
         self.hand3d.update_gesture(gesture_name, compute_finger_curls(window))
         self._gesture_count += 1
         self._conf_sum += confidence
+        elapsed = round(time.time() - self._session_start, 3) if self._session_start else 0.0
+        self._session_log.append((round(time.time(), 3), gesture_name, round(confidence, 4), elapsed))
         self._update_session_stats()
 
     def _show_prediction(self, gesture_name, action_label, confidence, color):
@@ -1118,6 +1147,7 @@ class MyojamWindow(QMainWindow):
             self._session_start = time.time()
             self._gesture_count = 0
             self._conf_sum      = 0.0
+            self._session_log   = []
         else:
             self._session_start = None
             self.waveform.reset()
@@ -1162,6 +1192,21 @@ class MyojamWindow(QMainWindow):
         if self._gesture_count > 0:
             avg = self._conf_sum / self._gesture_count
             self.stat_conf.setText(f"{avg * 100:.1f}%")
+
+    def _export_csv(self):
+        if not self._session_log:
+            self.export_btn.setText("No data yet")
+            QTimer.singleShot(1800, lambda: self.export_btn.setText("Export CSV"))
+            return
+        desktop = os.path.expanduser("~/Desktop")
+        ts      = time.strftime("%Y%m%d_%H%M%S")
+        path    = os.path.join(desktop, f"myojam_session_{ts}.csv")
+        with open(path, "w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["timestamp_s", "gesture", "confidence", "elapsed_s"])
+            writer.writerows(self._session_log)
+        self.export_btn.setText(f"Saved ({len(self._session_log)} rows)")
+        QTimer.singleShot(2500, lambda: self.export_btn.setText("Export CSV"))
 
     # ── Drag
     def mousePressEvent(self, event):

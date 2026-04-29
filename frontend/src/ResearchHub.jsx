@@ -107,6 +107,111 @@ export default function ResearchHub() {
 
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "64px 32px 80px" }}>
 
+        {/* Reading guide */}
+        <Reveal>
+          <div style={{ marginBottom: 56 }}>
+            <SectionPill>Reading guide</SectionPill>
+            <h2 style={{ fontSize: "clamp(22px,3vw,30px)", fontWeight: 600, letterSpacing: "-0.8px", color: "var(--text)", marginBottom: 8 }}>
+              How the four reports connect
+            </h2>
+            <p style={{ fontSize: 14, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.75, marginBottom: 28, maxWidth: 540 }}>
+              Each report answers a different question. Read them in order for the full picture, or jump to the one that matches your interest.
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 0, border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden" }}>
+              {[
+                { step:"01", label:"Start here", title:"Technical Report", question:"What was built, how, and what accuracy did it achieve?", path:"/research/paper", color:"#FF2D78", note:"Core methodology · Results · 6 sections" },
+                { step:"02", label:"Then read", title:"Classifier Analysis", question:"Why Random Forest? How does it compare to SVM, k-NN, and LDA?", path:"/research/classifier-analysis", color:"#8B5CF6", note:"Model comparison · Feature importance" },
+                { step:"03", label:"Then read", title:"Windowing Analysis", question:"How does window size affect the accuracy-latency tradeoff?", path:"/research/windowing-analysis", color:"#3B82F6", note:"Window size · Overlap · Latency" },
+                { step:"04", label:"Finally", title:"Variability Review", question:"What breaks down in real-world deployment — and why?", path:"/research/variability-review", color:"#10B981", note:"Robustness · Domain adaptation · Gap analysis" },
+              ].map(({ step, label, title, question, path, color, note }, i) => (
+                <div key={step} onClick={() => navigate(path)} style={{
+                  padding: "22px 20px",
+                  borderRight: i < 3 ? "1px solid var(--border)" : "none",
+                  background: "var(--bg)",
+                  cursor: "pointer",
+                  transition: "background 0.15s",
+                  borderTop: `3px solid ${color}`,
+                }}
+                  onMouseEnter={e => e.currentTarget.style.background = `${color}06`}
+                  onMouseLeave={e => e.currentTarget.style.background = "var(--bg)"}
+                >
+                  <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:10 }}>
+                    <span style={{ fontSize:10, fontWeight:700, color, background:`${color}15`, border:`1px solid ${color}30`, borderRadius:100, padding:"2px 8px" }}>{step}</span>
+                    <span style={{ fontSize:10, color:"var(--text-tertiary)", fontWeight:300 }}>{label}</span>
+                  </div>
+                  <div style={{ fontSize:13, fontWeight:600, color:"var(--text)", marginBottom:8, lineHeight:1.3 }}>{title}</div>
+                  <p style={{ fontSize:11, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.6, margin:"0 0 10px" }}>{question}</p>
+                  <div style={{ fontSize:10, color:"var(--text-tertiary)", fontWeight:300 }}>{note}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Findings at a glance */}
+        <Reveal>
+          <div style={{ marginBottom: 56 }}>
+            <SectionPill>Findings at a glance</SectionPill>
+            <h2 style={{ fontSize: "clamp(22px,3vw,30px)", fontWeight: 600, letterSpacing: "-0.8px", color: "var(--text)", marginBottom: 32 }}>
+              What the numbers show
+            </h2>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+
+              {/* Classifier comparison */}
+              <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: "var(--radius)", padding: "24px 28px" }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 16 }}>Classifier comparison — Ninapro DB5</div>
+                {[
+                  { label: "Random Forest", val: 84.85, color: "#FF2D78" },
+                  { label: "SVM (RBF)",     val: 82.30, color: "#8B5CF6" },
+                  { label: "k-NN (k=5)",    val: 76.40, color: "#3B82F6" },
+                  { label: "LDA",           val: 71.80, color: "#10B981" },
+                ].map(({ label, val, color }) => (
+                  <div key={label} style={{ marginBottom: 14 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                      <span style={{ fontSize: 12, fontWeight: 500, color: "var(--text)" }}>{label}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color }}>{val}%</span>
+                    </div>
+                    <div style={{ height: 6, background: "var(--border)", borderRadius: 4, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${val}%`, background: color, borderRadius: 4, transition: "width 1s ease" }} />
+                    </div>
+                  </div>
+                ))}
+                <div style={{ marginTop: 16, fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300, lineHeight: 1.6 }}>
+                  10-fold cross-validation · 10 subjects · 6-class gesture recognition · window size 200 samples
+                </div>
+              </div>
+
+              {/* Key findings */}
+              <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", gap: 12 }}>
+                {[
+                  { val: "84.85%", label: "Cross-subject accuracy", sub: "Random Forest on held-out subjects never seen during training", color: "#FF2D78" },
+                  { val: "32pp",   label: "Cross-subject gap",       sub: "Intra-subject ~96% vs cross-subject 84.85% — unsolved open problem", color: "#F59E0B" },
+                  { val: "1,250ms", label: "Optimal window",        sub: "Window size where accuracy peaks before motion blur degrades signal", color: "#8B5CF6" },
+                  { val: "<300ms", label: "Prosthetic threshold",   sub: "End-to-end latency required for natural prosthetic feel", color: "#3B82F6" },
+                ].map(({ val, label, sub, color }) => (
+                  <div key={label} style={{
+                    border: `1px solid ${color}20`,
+                    borderLeft: `3px solid ${color}`,
+                    borderRadius: "2px 8px 8px 2px",
+                    background: `${color}08`,
+                    padding: "12px 16px",
+                    display: "flex",
+                    gap: 14,
+                    alignItems: "flex-start",
+                  }}>
+                    <div style={{ fontSize: 20, fontWeight: 700, color, letterSpacing: "-1px", flexShrink: 0, lineHeight: 1.2, paddingTop: 2 }}>{val}</div>
+                    <div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text)", marginBottom: 3 }}>{label}</div>
+                      <div style={{ fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300, lineHeight: 1.5 }}>{sub}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          </div>
+        </Reveal>
+
         {/* Paper card */}
         <Reveal>
           <div style={{ borderRadius: "var(--radius)", border: "1px solid var(--border)", overflow: "hidden", marginBottom: 48, background: "var(--bg-secondary)" }}>

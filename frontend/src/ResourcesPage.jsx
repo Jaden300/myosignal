@@ -239,102 +239,119 @@ const TAG_COLORS = {
 function TagPill({ tag }) {
   const color = TAG_COLORS[tag] || "#AEAEB2"
   return (
-    <span style={{ fontSize: 10, fontWeight: 500, color, background: color + "18", border: `1px solid ${color}30`, borderRadius: 100, padding: "2px 8px" }}>
+    <span style={{ fontSize:10, fontWeight:500, color, background:`${color}18`, border:`1px solid ${color}30`, borderRadius:100, padding:"2px 8px" }}>
       {tag}
     </span>
   )
 }
 
+const TOTAL = SECTIONS.reduce((s, sec) => s + sec.items.length, 0)
+
 export default function ResourcesPage() {
   const navigate = useNavigate()
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
+    <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
+      <style>{`
+        .res-card { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+        .res-card:hover { transform: translateY(-3px) !important; box-shadow: 0 12px 32px rgba(0,0,0,0.09) !important; }
+      `}</style>
       <Navbar />
 
-      {/* Hero */}
-      <div style={{ position: "relative", overflow: "hidden", borderBottom: "1px solid var(--border)", padding: "100px 32px 72px" }}>
+      {/* ── Hero ── */}
+      <div style={{ position:"relative", overflow:"hidden", borderBottom:"1px solid var(--border)", padding:"100px 32px 72px" }}>
         <NeuralNoise color={[0.93, 0.30, 0.61]} opacity={0.85} speed={0.0006} />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(3,0,18,0.65)", zIndex: 1 }} />
-        <div style={{ maxWidth: 860, margin: "0 auto", position: "relative", zIndex: 2 }}>
+        <div style={{ position:"absolute", inset:0, background:"rgba(3,0,18,0.65)", zIndex:1 }}/>
+        <div style={{ maxWidth:860, margin:"0 auto", position:"relative", zIndex:2 }}>
           <Reveal>
             <SectionPill>External resources</SectionPill>
-            <h1 style={{ fontSize: "clamp(36px,6vw,64px)", fontWeight: 600, letterSpacing: "-2px", lineHeight: 1.04, color: "#fff", marginBottom: 20 }}>
-              Further reading.<br /><span style={{ color: "var(--accent)" }}>Beyond myojam.</span>
+            <h1 style={{ fontSize:"clamp(36px,6vw,64px)", fontWeight:600, letterSpacing:"-2px", lineHeight:1.04, color:"#fff", marginBottom:20 }}>
+              Further reading.<br/><span style={{ color:"var(--accent)" }}>Beyond myojam.</span>
             </h1>
-            <p style={{ fontSize: 17, color: "rgba(255,255,255,0.72)", fontWeight: 300, lineHeight: 1.75, maxWidth: 520 }}>
-              Datasets, foundational papers, software libraries, and courses that form the broader context for what myojam does - curated for students, educators, and independent researchers.
+            <p style={{ fontSize:17, color:"rgba(255,255,255,0.72)", fontWeight:300, lineHeight:1.75, maxWidth:520, marginBottom:36 }}>
+              Datasets, foundational papers, software libraries, and courses that form the broader context for what myojam does — curated for students, educators, and independent researchers.
             </p>
+            <div style={{ display:"flex", gap:28 }}>
+              {[[String(TOTAL),"curated resources"],["5","categories"],["Free","all open access"]].map(([val, label]) => (
+                <div key={label}>
+                  <div style={{ fontSize:22, fontWeight:700, color:"var(--accent)", letterSpacing:"-0.5px" }}>{val}</div>
+                  <div style={{ fontSize:11, color:"rgba(255,255,255,0.5)", fontWeight:300, textTransform:"uppercase", letterSpacing:"0.08em", marginTop:2 }}>{label}</div>
+                </div>
+              ))}
+            </div>
           </Reveal>
         </div>
       </div>
 
-      <div style={{ maxWidth: 860, margin: "0 auto", padding: "64px 32px 80px" }}>
+      <div style={{ maxWidth:860, margin:"0 auto", padding:"64px 32px 80px" }}>
 
         {/* Section nav */}
-        <div style={{ display: "flex", gap: 8, marginBottom: 56, flexWrap: "wrap" }}>
+        <div style={{ display:"flex", gap:8, marginBottom:56, flexWrap:"wrap" }}>
           {SECTIONS.map(s => (
-            <a key={s.id} href={`#${s.id}`} style={{ fontSize: 12, fontWeight: 500, color: s.color, background: s.color + "12", border: `1px solid ${s.color}30`, borderRadius: 100, padding: "5px 14px", textDecoration: "none", transition: "all 0.15s" }}
-              onMouseEnter={e => { e.currentTarget.style.background = s.color + "22" }}
-              onMouseLeave={e => { e.currentTarget.style.background = s.color + "12" }}
-            >{s.label}</a>
+            <a key={s.id} href={`#${s.id}`} style={{
+              fontSize:12, fontWeight:500, color:s.color,
+              background:`${s.color}12`, border:`1px solid ${s.color}30`,
+              borderRadius:100, padding:"5px 14px", textDecoration:"none",
+              transition:"all 0.15s",
+              display:"inline-flex", alignItems:"center", gap:6,
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = `${s.color}22`}
+              onMouseLeave={e => e.currentTarget.style.background = `${s.color}12`}
+            >
+              {s.label}
+              <span style={{ fontSize:10, opacity:0.75, background:"rgba(0,0,0,0.08)", borderRadius:100, padding:"1px 5px" }}>{s.items.length}</span>
+            </a>
           ))}
         </div>
 
         {/* Sections */}
         {SECTIONS.map((section, si) => (
-          <div key={section.id} id={section.id} style={{ marginBottom: 64 }}>
-            <Reveal delay={si * 0.05}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                <div style={{ width: 4, height: 24, borderRadius: 2, background: section.color, flexShrink: 0 }} />
-                <h2 style={{ fontSize: 22, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.5px" }}>{section.label}</h2>
+          <div key={section.id} id={section.id} style={{ marginBottom:64 }}>
+            <Reveal delay={si * 0.04}>
+              <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:6 }}>
+                <div style={{ width:4, height:28, borderRadius:2, background:section.color, flexShrink:0 }}/>
+                <h2 style={{ fontSize:22, fontWeight:600, color:"var(--text)", letterSpacing:"-0.5px" }}>
+                  {section.label}
+                  <span style={{ fontSize:13, fontWeight:400, color:"var(--text-tertiary)", marginLeft:10 }}>
+                    {section.items.length} {section.items.length === 1 ? "resource" : "resources"}
+                  </span>
+                </h2>
               </div>
-              <p style={{ fontSize: 14, color: "var(--text-tertiary)", fontWeight: 300, marginBottom: 24, marginLeft: 16 }}>{section.desc}</p>
+              <p style={{ fontSize:14, color:"var(--text-tertiary)", fontWeight:300, marginBottom:20, marginLeft:16 }}>{section.desc}</p>
             </Reveal>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(320px, 1fr))", gap:12 }}>
               {section.items.map((item, ii) => (
-                <Reveal key={item.title} delay={si * 0.05 + ii * 0.04}>
+                <Reveal key={item.title} delay={si * 0.04 + ii * 0.03}>
                   <a
                     href={item.href}
                     target="_blank"
                     rel="noreferrer"
+                    className="res-card"
                     style={{
-                      display: "block",
-                      padding: "24px 0",
-                      borderBottom: "1px solid var(--border)",
-                      textDecoration: "none",
-                      cursor: "pointer",
-                      transition: "background 0.15s",
+                      display:"flex", flexDirection:"column",
+                      borderRadius:12,
+                      border:`1px solid var(--border)`,
+                      borderTop:`3px solid ${section.color}`,
+                      padding:"20px", background:"var(--bg)",
+                      textDecoration:"none",
+                      height:"100%", boxSizing:"border-box",
                     }}
-                    onMouseEnter={e => e.currentTarget.style.background = section.color.replace("#", "rgba(").replace(")", ",0.02)")}
-                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                   >
-                    <div style={{ display: "flex", gap: 24, alignItems: "flex-start" }}>
-                      {/* Left: number */}
-                      <div style={{ fontSize: 12, color: "var(--text-tertiary)", fontWeight: 300, width: 24, flexShrink: 0, paddingTop: 3, fontVariantNumeric: "tabular-nums" }}>
-                        {String(ii + 1).padStart(2, "0")}
-                      </div>
-
-                      {/* Main */}
-                      <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8, flexWrap: "wrap" }}>
-                          <span style={{ fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300 }}>{item.source}</span>
-                          <span style={{ fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300 }}>· {item.year}</span>
-                        </div>
-                        <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.2px", lineHeight: 1.35, marginBottom: 10 }}>
-                          {item.title}
-                        </h3>
-                        <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.75, fontWeight: 300, margin: "0 0 12px 0", maxWidth: "62ch" }}>
-                          {item.desc}
-                        </p>
-                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                          {item.tags.map(t => <TagPill key={t} tag={t} />)}
-                        </div>
-                      </div>
-
-                      {/* Arrow */}
-                      <span style={{ fontSize: 14, color: section.color, flexShrink: 0, marginTop: 4, opacity: 0.7 }}>↗</span>
+                    <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:10, marginBottom:6 }}>
+                      <h3 style={{ fontSize:15, fontWeight:600, color:"var(--text)", letterSpacing:"-0.2px", lineHeight:1.3, flex:1 }}>
+                        {item.title}
+                      </h3>
+                      <span style={{ fontSize:14, color:section.color, flexShrink:0, opacity:0.8 }}>↗</span>
+                    </div>
+                    <div style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, marginBottom:10 }}>
+                      {item.source} · {item.year}
+                    </div>
+                    <p style={{ fontSize:13, color:"var(--text-secondary)", lineHeight:1.65, fontWeight:300, flex:1, margin:"0 0 14px" }}>
+                      {item.desc}
+                    </p>
+                    <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                      {item.tags.map(t => <TagPill key={t} tag={t} />)}
                     </div>
                   </a>
                 </Reveal>
@@ -345,15 +362,15 @@ export default function ResourcesPage() {
 
         {/* Attribution note */}
         <Reveal delay={0.1}>
-          <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius)", border: "1px solid var(--border)", padding: "28px 32px", marginTop: 16 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>A note on these links</div>
-            <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.75, fontWeight: 300, margin: "0 0 16px 0" }}>
+          <div style={{ background:"var(--bg-secondary)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"28px 32px", marginTop:16 }}>
+            <div style={{ fontSize:11, fontWeight:600, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10 }}>A note on these links</div>
+            <p style={{ fontSize:13, color:"var(--text-secondary)", lineHeight:1.75, fontWeight:300, margin:"0 0 16px" }}>
               All resources listed here are independent of myojam and maintained by their respective authors and organisations. Links are provided for educational reference only. If you find a broken link or want to suggest an addition, open an issue on the myojam GitHub.
             </p>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <a href="https://github.com/Jaden300/myojam" target="_blank" rel="noreferrer" style={{ fontSize: 13, color: "var(--accent)", fontWeight: 400, textDecoration: "none" }}>Suggest a resource on GitHub ↗</a>
-              <span style={{ color: "var(--border)" }}>·</span>
-              <span onClick={() => navigate("/research")} style={{ fontSize: 13, color: "var(--text-secondary)", fontWeight: 300, cursor: "pointer", transition: "color 0.15s" }}
+            <div style={{ display:"flex", gap:12, flexWrap:"wrap" }}>
+              <a href="https://github.com/Jaden300/myojam" target="_blank" rel="noreferrer" style={{ fontSize:13, color:"var(--accent)", fontWeight:400, textDecoration:"none" }}>Suggest a resource on GitHub ↗</a>
+              <span style={{ color:"var(--border)" }}>·</span>
+              <span onClick={() => navigate("/research")} style={{ fontSize:13, color:"var(--text-secondary)", fontWeight:300, cursor:"pointer", transition:"color 0.15s" }}
                 onMouseEnter={e => e.currentTarget.style.color = "var(--accent)"}
                 onMouseLeave={e => e.currentTarget.style.color = "var(--text-secondary)"}
               >Back to research →</span>

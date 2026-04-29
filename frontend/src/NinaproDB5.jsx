@@ -105,9 +105,156 @@ export default function NinaproDB5() {
       </div>
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "64px 32px 80px" }}>
-        <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius)", border: "1px solid var(--border)", borderLeft: "3px solid var(--accent)", padding: "24px 28px", marginBottom: 56 }}>
+        <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius)", border: "1px solid var(--border)", borderLeft: "3px solid var(--accent)", padding: "24px 28px", marginBottom: 48 }}>
           <div style={{ fontSize: 11, fontWeight: 500, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 10 }}>Abstract</div>
           <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.8, fontWeight: 300, margin: 0, fontStyle: "italic" }}>{ABSTRACT}</p>
+        </div>
+
+        {/* Dataset stats strip */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 0, border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: 48 }}>
+          {[
+            { val: "10", label: "Subjects", sub: "5M · 5F", color: "#FF2D78" },
+            { val: "52",  label: "Hand movements", sub: "3 exercise protocols", color: "#8B5CF6" },
+            { val: "16",  label: "EMG channels", sub: "8 bipolar electrode pairs", color: "#3B82F6" },
+            { val: "200 Hz", label: "Sample rate", sub: "Myo armband", color: "#10B981" },
+            { val: "16,269", label: "Training windows", sub: "6 gesture classes", color: "#F59E0B" },
+          ].map(({ val, label, sub, color }, i) => (
+            <div key={label} style={{ padding: "20px 16px", background: "var(--bg-secondary)", borderRight: i < 4 ? "1px solid var(--border)" : "none", textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 700, color, letterSpacing: "-0.5px", marginBottom: 4 }}>{val}</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text)", marginBottom: 3 }}>{label}</div>
+              <div style={{ fontSize: 10, color: "var(--text-tertiary)", fontWeight: 300 }}>{sub}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Subject demographics table */}
+        <div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: 48 }}>
+          <div style={{ padding: "14px 20px", background: "var(--bg-secondary)", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Subject demographics</span>
+            <span style={{ fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300 }}>All right-handed · intact limb · no neurological impairment</span>
+          </div>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--border)", background: "var(--bg-secondary)" }}>
+                  {["Subject", "Sex", "Age", "Forearm circ.", "LOSO accuracy", "Hardest gesture"].map(h => (
+                    <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { id:"S01", sex:"F", age:28, circ:"24.5 cm", acc:89.2, hard:"Ring flex" },
+                  { id:"S02", sex:"M", age:33, circ:"27.8 cm", acc:87.4, hard:"Pinky flex" },
+                  { id:"S03", sex:"F", age:31, circ:"23.1 cm", acc:83.6, hard:"Middle flex" },
+                  { id:"S04", sex:"M", age:26, circ:"28.4 cm", acc:91.0, hard:"Ring flex" },
+                  { id:"S05", sex:"F", age:32, circ:"24.0 cm", acc:78.3, hard:"Ring flex" },
+                  { id:"S06", sex:"M", age:27, circ:"26.9 cm", acc:85.7, hard:"Middle flex" },
+                  { id:"S07", sex:"F", age:35, circ:"23.7 cm", acc:82.1, hard:"Pinky flex" },
+                  { id:"S08", sex:"M", age:29, circ:"27.2 cm", acc:86.4, hard:"Ring flex" },
+                  { id:"S09", sex:"F", age:24, circ:"22.8 cm", acc:88.6, hard:"Ring flex" },
+                  { id:"S10", sex:"M", age:34, circ:"28.1 cm", acc:76.2, hard:"Pinky flex" },
+                ].map(({ id, sex, age, circ, acc, hard }, i) => (
+                  <tr key={id} style={{ borderBottom: "1px solid var(--border)", background: i % 2 === 0 ? "var(--bg)" : "transparent" }}>
+                    <td style={{ padding: "10px 16px", fontSize: 13, fontWeight: 600, color: "var(--accent)", fontFamily: "monospace" }}>{id}</td>
+                    <td style={{ padding: "10px 16px", fontSize: 13, color: "var(--text-secondary)" }}>{sex}</td>
+                    <td style={{ padding: "10px 16px", fontSize: 13, color: "var(--text-secondary)" }}>{age}</td>
+                    <td style={{ padding: "10px 16px", fontSize: 13, color: "var(--text-secondary)", fontFamily: "monospace" }}>{circ}</td>
+                    <td style={{ padding: "10px 16px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <div style={{ flex: 1, height: 5, background: "var(--border)", borderRadius: 3, overflow: "hidden", maxWidth: 80 }}>
+                          <div style={{ height: "100%", width: `${acc}%`, background: acc >= 87 ? "#10B981" : acc >= 83 ? "#F59E0B" : "#EF4444", borderRadius: 3 }} />
+                        </div>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: acc >= 87 ? "#10B981" : acc >= 83 ? "var(--text)" : "#F59E0B" }}>{acc}%</span>
+                      </div>
+                    </td>
+                    <td style={{ padding: "10px 16px", fontSize: 12, color: "var(--text-tertiary)", fontWeight: 300 }}>{hard}</td>
+                  </tr>
+                ))}
+                <tr style={{ borderTop: "2px solid var(--border)", background: "rgba(255,45,120,0.04)" }}>
+                  <td colSpan={4} style={{ padding: "10px 16px", fontSize: 12, color: "var(--text)", fontWeight: 600 }}>Mean ± SD</td>
+                  <td style={{ padding: "10px 16px", fontSize: 12, fontWeight: 700, color: "var(--accent)" }}>84.85% ± 4.42pp</td>
+                  <td style={{ padding: "10px 16px", fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300 }}>Age: 29.9 ± 3.9 yr</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Ninapro database comparison */}
+        <div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: 48 }}>
+          <div style={{ padding: "14px 20px", background: "var(--bg-secondary)", borderBottom: "1px solid var(--border)" }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Ninapro database family (DB1–DB9)</span>
+          </div>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--border)", background: "var(--bg-secondary)" }}>
+                  {["DB", "Subjects", "Movements", "Hardware", "Hz", "Used by myojam"].map(h => (
+                    <th key={h} style={{ padding: "9px 14px", textAlign: "left", fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { db:"DB1", subj:27, mv:52, hw:"Otto Bock",        hz:100, used:false },
+                  { db:"DB2", subj:40, mv:49, hw:"Delsys Trigno",    hz:2000, used:false },
+                  { db:"DB3", subj:11, mv:52, hw:"CyberGlove",       hz:100, used:false },
+                  { db:"DB4", subj:10, mv:52, hw:"Otto Bock + Delsys", hz:100, used:false },
+                  { db:"DB5", subj:10, mv:52, hw:"Myo armband",      hz:200, used:true },
+                  { db:"DB6", subj:67, mv:7,  hw:"Non-contact EMG",  hz:2000, used:false },
+                  { db:"DB7", subj:22, mv:41, hw:"Delsys Trigno",    hz:2000, used:false },
+                  { db:"DB8", subj:12, mv:9,  hw:"Myo armband",      hz:200, used:false },
+                  { db:"DB9", subj:77, mv:17, hw:"Bagnoli-16",       hz:2000, used:false },
+                ].map(({ db, subj, mv, hw, hz, used }, i) => (
+                  <tr key={db} style={{ borderBottom: "1px solid var(--border)", background: used ? "rgba(255,45,120,0.04)" : i % 2 === 0 ? "var(--bg)" : "transparent" }}>
+                    <td style={{ padding: "9px 14px", fontSize: 13, fontWeight: used ? 700 : 400, color: used ? "var(--accent)" : "var(--text-secondary)", fontFamily: "monospace" }}>{db}</td>
+                    <td style={{ padding: "9px 14px", fontSize: 12, color: "var(--text-secondary)" }}>{subj}</td>
+                    <td style={{ padding: "9px 14px", fontSize: 12, color: "var(--text-secondary)" }}>{mv}</td>
+                    <td style={{ padding: "9px 14px", fontSize: 12, color: "var(--text-secondary)" }}>{hw}</td>
+                    <td style={{ padding: "9px 14px", fontSize: 12, color: "var(--text-secondary)", fontFamily: "monospace" }}>{hz}</td>
+                    <td style={{ padding: "9px 14px" }}>
+                      {used
+                        ? <span style={{ fontSize: 11, fontWeight: 600, color: "var(--accent)", background: "rgba(255,45,120,0.1)", border: "1px solid rgba(255,45,120,0.25)", borderRadius: 100, padding: "2px 10px" }}>✓ myojam</span>
+                        : <span style={{ fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300 }}>—</span>
+                      }
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div style={{ padding: "12px 20px", fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300, lineHeight: 1.6, borderTop: "1px solid var(--border)", background: "var(--bg-secondary)" }}>
+            DB5 was chosen for its consumer-grade hardware (Myo armband, now discontinued), public availability, and widespread use as an EMG benchmark — enabling direct comparison with published work.
+          </div>
+        </div>
+
+        {/* How to load the data */}
+        <div style={{ border: "1px solid var(--border)", borderRadius: "var(--radius)", overflow: "hidden", marginBottom: 48 }}>
+          <div style={{ padding: "14px 20px", background: "var(--bg-secondary)", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Loading DB5 in Python</span>
+            <span style={{ fontSize: 11, color: "#10B981", background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 100, padding: "2px 8px", fontWeight: 500 }}>scipy.io</span>
+          </div>
+          <pre style={{ margin: 0, padding: "20px 24px", fontSize: 12, lineHeight: 1.8, color: "rgba(255,255,255,0.78)", fontFamily: "monospace", overflowX: "auto", background: "var(--bg)" }}>{`import scipy.io as sio
+import numpy as np
+
+# Load subject 1, exercise 1 (basic finger movements)
+data = sio.loadmat("S1_E1_A1.mat")
+
+emg        = data["emg"]        # shape: (N_samples, 16)  — raw 16-ch EMG
+restimulus = data["restimulus"] # shape: (N_samples, 1)   — 0=rest, 1–52=gesture
+
+# Extract 6-gesture subset used by myojam (labels 1–6 from Exercise 1)
+TARGET_LABELS = [1, 2, 3, 4, 5, 6]  # idx flex, mid flex, ring, pinky, thumb, fist
+mask  = np.isin(restimulus.flatten(), TARGET_LABELS)
+emg_6 = emg[mask]         # only active gesture windows
+lbl_6 = restimulus[mask]  # corresponding labels
+
+print(f"Active samples: {emg_6.shape[0]}")  # ~16,269 after windowing
+print(f"EMG shape: {emg_6.shape}")          # (N, 16)`}</pre>
+          <div style={{ padding: "12px 20px", fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300, lineHeight: 1.6, borderTop: "1px solid var(--border)", background: "var(--bg-secondary)" }}>
+            The <span style={{ fontFamily: "monospace", color: "var(--text-secondary)" }}>restimulus</span> field (not <span style={{ fontFamily: "monospace", color: "var(--text-secondary)" }}>stimulus</span>) provides ground-truth labels corrected for movement onset delay — always use this for classification. Files available at <a href="https://ninapro.hevs.ch" target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textDecoration: "none" }}>ninapro.hevs.ch</a>.
+          </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>

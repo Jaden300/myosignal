@@ -708,6 +708,104 @@ export default function DesktopApp() {
         </div>
       </div>
 
+      {/* ── Hardware wiring guide ────────────────────────────────────────────── */}
+      <div style={{ background: "var(--bg)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", padding: "96px 32px" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <Reveal>
+            <SectionPill>Wiring guide</SectionPill>
+            <h2 style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 600, letterSpacing: "-1.5px", color: "var(--text)", marginBottom: 16, marginTop: 16 }}>
+              How to connect the hardware.
+            </h2>
+            <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.75, maxWidth: 520, marginBottom: 48 }}>
+              Three wires connect a MyoWare 2.0 to an Arduino Uno. The Arduino forwards the analog voltage over USB serial at 115200 baud.
+            </p>
+          </Reveal>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, alignItems: "start" }}>
+
+            {/* Pin table */}
+            <Reveal>
+              <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 16, overflow: "hidden" }}>
+                <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--border)", fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.07em" }}>
+                  Pin connections
+                </div>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                      {["MyoWare 2.0", "Arduino Uno", "Wire colour", "Purpose"].map(h => (
+                        <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { myo: "+",    ard: "5V",   wire: "Red",    wcolor: "#EF4444", purpose: "Power (5 V supply)"     },
+                      { myo: "−",    ard: "GND",  wire: "Black",  wcolor: "#6B7280", purpose: "Ground reference"        },
+                      { myo: "SIG",  ard: "A0",   wire: "Yellow", wcolor: "#F59E0B", purpose: "Analog EMG signal"       },
+                    ].map(({ myo, ard, wire, wcolor, purpose }) => (
+                      <tr key={myo} style={{ borderBottom: "1px solid var(--border)" }}>
+                        <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700, color: "#FF2D78", fontFamily: "monospace" }}>{myo}</td>
+                        <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 600, color: "var(--text)", fontFamily: "monospace" }}>{ard}</td>
+                        <td style={{ padding: "12px 16px" }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--text-secondary)" }}>
+                            <span style={{ width: 10, height: 10, borderRadius: "50%", background: wcolor, flexShrink: 0, border: "1px solid rgba(255,255,255,0.1)" }}/>
+                            {wire}
+                          </span>
+                        </td>
+                        <td style={{ padding: "12px 16px", fontSize: 12, color: "var(--text-tertiary)", fontWeight: 300 }}>{purpose}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div style={{ padding: "14px 20px", fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300, lineHeight: 1.6, borderTop: "1px solid var(--border)" }}>
+                  Place the sensor on your forearm, centred over the flexor digitorum. Electrode placement matters — see the education hub article for a guide.
+                </div>
+              </div>
+            </Reveal>
+
+            {/* Arduino sketch */}
+            <Reveal delay={0.1}>
+              <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 16, overflow: "hidden" }}>
+                <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.07em" }}>Arduino sketch</span>
+                  <span style={{ fontSize: 10, color: "#10B981", background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 100, padding: "2px 8px", fontWeight: 500 }}>Copy from GitHub</span>
+                </div>
+                <pre style={{ margin: 0, padding: "20px", fontSize: 12, lineHeight: 1.7, color: "rgba(255,255,255,0.75)", fontFamily: "monospace", overflowX: "auto", background: "transparent" }}>{`void setup() {
+  Serial.begin(115200);
+}
+
+void loop() {
+  int val = analogRead(A0);
+  // Map 0–1023 → 0–3.3V (mV)
+  float mv = val * (3300.0 / 1023.0);
+  Serial.println(mv);
+  delay(5); // 200 Hz
+}`}</pre>
+                <div style={{ padding: "14px 20px", fontSize: 11, color: "var(--text-tertiary)", fontWeight: 300, lineHeight: 1.6, borderTop: "1px solid var(--border)" }}>
+                  Upload this to the Arduino. The app auto-detects the serial port when you switch to Sensor mode. Baud rate must be <span style={{ color: "#22D3EE", fontFamily: "monospace" }}>115200</span>.
+                </div>
+              </div>
+            </Reveal>
+          </div>
+
+          {/* Placement tips */}
+          <Reveal delay={0.15}>
+            <div style={{ marginTop: 24, display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12 }}>
+              {[
+                { tip: "Sensor placement", body: "Centre the electrode pad over the belly of the flexor digitorum superficialis — roughly 3–4 cm below the elbow crease, forearm facing up.", color: "#FF2D78" },
+                { tip: "Reference electrode", body: "Attach the reference (REF) electrode on a bony, muscle-free area: the bony point of the elbow (olecranon) works well and reduces interference.", color: "#A78BFA" },
+                { tip: "Between sessions", body: "Remove and reattach the sensor in the same position each time. Even 1–2 cm of drift degrades accuracy by 5–10pp. Mark your forearm with a pen as a guide.", color: "#22D3EE" },
+              ].map(({ tip, body, color }) => (
+                <div key={tip} style={{ border: `1px solid ${color}20`, borderTop: `3px solid ${color}`, borderRadius: "0 0 12px 12px", background: `${color}06`, padding: "16px 18px" }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text)", marginBottom: 6 }}>{tip}</div>
+                  <p style={{ fontSize: 12, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.65, margin: 0 }}>{body}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+      </div>
+
       {/* ── Research backing ─────────────────────────────────────────────────── */}
       <div style={{ background: "var(--bg)", borderBottom: "1px solid var(--border)", padding: "96px 32px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto" }}>

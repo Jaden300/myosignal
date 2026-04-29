@@ -713,10 +713,20 @@ export default function Blog() {
   const [activeTag, setActiveTag] = useState("All")
   const [selected, setSelected]   = useState(null)
 
-  const filtered = POSTS.filter(p => activeTag === "All" || p.tag === activeTag)
+  const tagCounts = {}
+  POSTS.forEach(p => { tagCounts[p.tag] = (tagCounts[p.tag] || 0) + 1 })
+
+  const filtered      = POSTS.filter(p => activeTag === "All" || p.tag === activeTag)
+  const featuredPost  = POSTS[0]
+  const showFeatured  = activeTag === "All"
+  const gridPosts     = showFeatured ? filtered.filter(p => p.id !== featuredPost.id) : filtered
 
   return (
     <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
+      <style>{`
+        .featured-post { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .featured-post:hover { transform: scale(1.006) !important; box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important; }
+      `}</style>
       <Navbar />
 
       {/* Hero */}
@@ -729,33 +739,102 @@ export default function Blog() {
             <h1 style={{ fontSize:"clamp(36px,6vw,64px)", fontWeight:600, letterSpacing:"-2px", lineHeight:1.04, color:"#fff", marginBottom:20 }}>
               What's happening<br/><span style={{ color:"var(--accent)" }}>at myojam.</span>
             </h1>
-            <p style={{ fontSize:17, color:"rgba(255,255,255,0.72)", fontWeight:300, lineHeight:1.75, maxWidth:500 }}>
+            <p style={{ fontSize:17, color:"rgba(255,255,255,0.72)", fontWeight:300, lineHeight:1.75, maxWidth:500, marginBottom:0 }}>
               Launches, milestones, and EMG facts. Tap any post to read it.
             </p>
+            <div style={{ display:"flex", gap:24, marginTop:36 }}>
+              {[[String(POSTS.length),"posts"],[String(Object.keys(tagCounts).length),"categories"]].map(([val,label])=>(
+                <div key={label}>
+                  <div style={{ fontSize:20, fontWeight:700, color:"#fff", letterSpacing:"-0.5px" }}>{val}</div>
+                  <div style={{ fontSize:11, color:"rgba(255,255,255,0.5)", fontWeight:300, textTransform:"uppercase", letterSpacing:"0.08em", marginTop:2 }}>{label}</div>
+                </div>
+              ))}
+            </div>
           </Reveal>
         </div>
       </div>
 
       <div style={{ maxWidth:900, margin:"0 auto", padding:"48px 32px 80px" }}>
 
-        {/* Tag filter */}
-        <div style={{ display:"flex", gap:8, marginBottom:36, flexWrap:"wrap" }}>
-          {ALL_TAGS.map(tag => (
-            <button key={tag} onClick={()=>setActiveTag(tag)} style={{
-              background: activeTag===tag ? "var(--accent)" : "var(--bg-secondary)",
-              color: activeTag===tag ? "#fff" : "var(--text-secondary)",
-              border:`1px solid ${activeTag===tag ? "var(--accent)" : "var(--border)"}`,
-              borderRadius:100, padding:"6px 16px", fontSize:12,
-              fontWeight: activeTag===tag ? 500 : 400,
-              cursor:"pointer", fontFamily:"var(--font)", transition:"all 0.15s"
-            }}>{tag}</button>
-          ))}
+        {/* Tag filter with counts */}
+        <div style={{ display:"flex", gap:8, marginBottom:32, flexWrap:"wrap" }}>
+          {ALL_TAGS.map(tag => {
+            const active = activeTag === tag
+            const count  = tag === "All" ? POSTS.length : (tagCounts[tag] || 0)
+            return (
+              <button key={tag} onClick={() => setActiveTag(tag)} style={{
+                background: active ? "var(--accent)" : "var(--bg-secondary)",
+                color: active ? "#fff" : "var(--text-secondary)",
+                border:`1px solid ${active ? "var(--accent)" : "var(--border)"}`,
+                borderRadius:100, padding:"6px 14px", fontSize:12,
+                fontWeight: active ? 500 : 400,
+                cursor:"pointer", fontFamily:"var(--font)", transition:"all 0.15s",
+                display:"flex", alignItems:"center", gap:5,
+              }}>
+                {tag}
+                <span style={{ fontSize:10, opacity: active ? 0.8 : 0.6, background: active ? "rgba(255,255,255,0.2)" : "var(--bg)", borderRadius:100, padding:"1px 6px" }}>
+                  {count}
+                </span>
+              </button>
+            )
+          })}
         </div>
+
+        {/* Featured post */}
+        {showFeatured && (
+          <div
+            className="featured-post"
+            onClick={() => setSelected(featuredPost)}
+            style={{
+              borderRadius:16, overflow:"hidden",
+              background:featuredPost.cover.bg,
+              cursor:"pointer", position:"relative",
+              marginBottom:20,
+              boxShadow:"0 4px 24px rgba(0,0,0,0.2)",
+            }}
+          >
+            {/* Glow */}
+            <div style={{ position:"absolute", inset:0, background:`radial-gradient(ellipse at 15% 50%, ${featuredPost.cover.accent}30 0%, transparent 60%)`, pointerEvents:"none" }}/>
+            <div style={{ position:"relative", zIndex:1, padding:"32px 40px", display:"flex", alignItems:"center", gap:40, flexWrap:"wrap" }}>
+              {/* Big label */}
+              <div style={{ flexShrink:0 }}>
+                <div style={{ fontSize:"clamp(32px,5vw,52px)", fontWeight:800, color:featuredPost.cover.accent, letterSpacing:"-2px", lineHeight:1, marginBottom:4 }}>
+                  {featuredPost.cover.label}
+                </div>
+                <div style={{ fontSize:10, color:"rgba(255,255,255,0.45)", textTransform:"uppercase", letterSpacing:"0.06em" }}>
+                  {featuredPost.cover.sublabel}
+                </div>
+              </div>
+              {/* Content */}
+              <div style={{ flex:1, minWidth:200 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12, flexWrap:"wrap" }}>
+                  <span style={{ fontSize:10, fontWeight:600, color:featuredPost.cover.accent, background:`${featuredPost.cover.accent}22`, border:`1px solid ${featuredPost.cover.accent}40`, borderRadius:100, padding:"3px 10px" }}>
+                    {featuredPost.tag}
+                  </span>
+                  <span style={{ fontSize:11, color:"rgba(255,255,255,0.4)" }}>{featuredPost.date}</span>
+                  <span style={{ fontSize:9, fontWeight:700, color:featuredPost.cover.accent, background:`${featuredPost.cover.accent}22`, border:`1px solid ${featuredPost.cover.accent}40`, borderRadius:100, padding:"2px 8px", textTransform:"uppercase", letterSpacing:"0.06em" }}>
+                    Latest
+                  </span>
+                </div>
+                <h2 style={{ fontSize:"clamp(15px,2.2vw,20px)", fontWeight:700, color:"#fff", lineHeight:1.25, letterSpacing:"-0.4px", marginBottom:10 }}>
+                  {featuredPost.title}
+                </h2>
+                <p style={{ fontSize:13, color:"rgba(255,255,255,0.6)", lineHeight:1.6, fontWeight:300, margin:0 }}>
+                  {featuredPost.slides[0].body.slice(0, 130)}…
+                </p>
+              </div>
+              {/* Arrow */}
+              <div style={{ flexShrink:0, width:44, height:44, borderRadius:"50%", background:"rgba(255,255,255,0.1)", border:"1px solid rgba(255,255,255,0.2)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, color:"rgba(255,255,255,0.8)" }}>
+                →
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Grid */}
         <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12 }}>
-          {filtered.map(post => (
-            <CoverCard key={post.id} post={post} onClick={()=>setSelected(post)} />
+          {gridPosts.map(post => (
+            <CoverCard key={post.id} post={post} onClick={() => setSelected(post)} />
           ))}
         </div>
 
@@ -779,7 +858,7 @@ export default function Blog() {
                 onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)"}}
                 onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--border)";e.currentTarget.style.color="var(--text-secondary)"}}
               >Instagram ↗</a>
-              <button onClick={()=>navigate("/changelog")} style={{ background:"var(--accent)", color:"#fff", border:"none", borderRadius:100, padding:"10px 20px", fontSize:13, fontWeight:500, cursor:"pointer", fontFamily:"var(--font)", boxShadow:"0 4px 16px rgba(255,45,120,0.25)", transition:"transform 0.15s, box-shadow 0.15s" }}
+              <button onClick={() => navigate("/changelog")} style={{ background:"var(--accent)", color:"#fff", border:"none", borderRadius:100, padding:"10px 20px", fontSize:13, fontWeight:500, cursor:"pointer", fontFamily:"var(--font)", boxShadow:"0 4px 16px rgba(255,45,120,0.25)", transition:"transform 0.15s, box-shadow 0.15s" }}
                 onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.04)";e.currentTarget.style.boxShadow="0 8px 24px rgba(255,45,120,0.35)"}}
                 onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 4px 16px rgba(255,45,120,0.25)"}}
               >Full changelog →</button>
@@ -788,7 +867,7 @@ export default function Blog() {
         </Reveal>
       </div>
 
-      {selected && <Modal post={selected} onClose={()=>setSelected(null)} />}
+      {selected && <Modal post={selected} onClose={() => setSelected(null)} />}
 
       <Footer />
     </div>

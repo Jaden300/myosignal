@@ -520,6 +520,28 @@ export default function HowItWorks() {
         </div>
       </div>
 
+      {/* ── Pipeline spec strip ── */}
+      <div style={{ borderBottom:"1px solid var(--border)", background:"var(--bg-secondary)" }}>
+        <div style={{ maxWidth:860, margin:"0 auto", display:"flex", overflowX:"auto" }}>
+          {[
+            ["200 Hz",      "Sampling rate"],
+            ["16",          "EMG channels"],
+            ["64",          "Features / window"],
+            ["200 samples", "Window size"],
+            ["84.85%",      "Cross-subject accuracy"],
+            ["< 50 ms",     "End-to-end latency"],
+          ].map(([val, label], i) => (
+            <div key={label} style={{
+              padding:"20px 28px", flexShrink:0, textAlign:"center",
+              borderRight: i < 5 ? "1px solid var(--border)" : "none",
+            }}>
+              <div style={{ fontSize:20, fontWeight:700, color:"var(--accent)", letterSpacing:"-0.5px" }}>{val}</div>
+              <div style={{ fontSize:10, color:"var(--text-tertiary)", fontWeight:300, textTransform:"uppercase", letterSpacing:"0.06em", marginTop:3 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* ── Sticky 3D pipeline ── */}
       <StickyPipeline />
 
@@ -547,21 +569,66 @@ export default function HowItWorks() {
           </div>
         </Reveal>
 
+        {/* Quick reference */}
+        <Reveal delay={0.05}>
+          <div style={{ marginTop:32, background:"var(--bg-secondary)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"28px 32px" }}>
+            <div style={{ fontSize:11, fontWeight:600, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:20 }}>Pipeline quick reference</div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(180px, 1fr))", gap:"14px 24px" }}>
+              {[
+                ["Sampling rate",   "200 Hz"],
+                ["Channels",        "16 differential"],
+                ["Bandpass filter", "Butterworth 20–90 Hz, 4th order"],
+                ["Window size",     "200 samples (1000 ms)"],
+                ["Window step",     "50 samples (250 ms), 75% overlap"],
+                ["Features",        "MAV · RMS · ZC · WL × 16 ch"],
+                ["Classifier",      "Random Forest · 500 trees"],
+                ["Training set",    "16,269 windows · 10 subjects"],
+                ["Accuracy",        "84.85% cross-subject (LOSO)"],
+                ["Latency",         "< 50 ms end-to-end"],
+              ].map(([label, val]) => (
+                <div key={label}>
+                  <div style={{ fontSize:10, color:"var(--text-tertiary)", fontWeight:300, textTransform:"uppercase", letterSpacing:"0.06em", marginBottom:3 }}>{label}</div>
+                  <div style={{ fontSize:13, color:"var(--text)", fontWeight:500 }}>{val}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
         <Reveal>
-          <div style={{ marginTop: 48, display: "flex", gap: 12 }}>
+          <div style={{ marginTop: 32, display: "flex", gap: 12, flexWrap:"wrap" }}>
             <button onClick={() => navigate("/demos")} style={{
               background: "var(--accent)", color: "#fff", border: "none",
               borderRadius: 100, padding: "13px 32px", fontSize: 15,
               fontWeight: 500, cursor: "pointer", fontFamily: "var(--font)",
               boxShadow: "0 4px 24px rgba(255,45,120,0.3)",
-            }}>
+              transition: "transform 0.15s, box-shadow 0.15s",
+            }}
+              onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.04)";e.currentTarget.style.boxShadow="0 8px 28px rgba(255,45,120,0.4)"}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 4px 24px rgba(255,45,120,0.3)"}}
+            >
               Try the interactive tools
             </button>
-            <button onClick={() => navigate("/education")} style={{
+            <button onClick={() => navigate("/research")} style={{
               background: "transparent", color: "var(--text)", fontFamily: "var(--font)",
-              border: "1px solid var(--border-mid)", borderRadius: 100,
+              border: "1px solid var(--border)", borderRadius: 100,
               padding: "13px 28px", fontSize: 15, cursor: "pointer",
-            }}>
+              transition: "border-color 0.15s",
+            }}
+              onMouseEnter={e => e.currentTarget.style.borderColor = "var(--accent)"}
+              onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
+            >
+              Read the research
+            </button>
+            <button onClick={() => navigate("/education")} style={{
+              background: "transparent", color: "var(--text-secondary)", fontFamily: "var(--font)",
+              border: "1px solid var(--border)", borderRadius: 100,
+              padding: "13px 28px", fontSize: 15, cursor: "pointer",
+              transition: "border-color 0.15s, color 0.15s",
+            }}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--border)";e.currentTarget.style.color="var(--text)"}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--border)";e.currentTarget.style.color="var(--text-secondary)"}}
+            >
               Read the articles
             </button>
           </div>

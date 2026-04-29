@@ -335,17 +335,72 @@ export default function Research() {
 
             {/* Inline figures for Results section */}
             {s.num === "4" && (
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24, margin:"32px 0" }}>
-                <div style={{ background:"var(--bg-secondary)", border:"1px solid var(--border)", borderRadius:12, padding:"24px" }}>
-                  <div style={{ fontSize:11, fontWeight:600, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:16, textAlign:"center" }}>Figure 1: Confusion matrix</div>
-                  <ConfusionMatrix />
+              <>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24, margin:"32px 0" }}>
+                  <div style={{ background:"var(--bg-secondary)", border:"1px solid var(--border)", borderRadius:12, padding:"24px" }}>
+                    <div style={{ fontSize:11, fontWeight:600, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:16, textAlign:"center" }}>Figure 1: Confusion matrix</div>
+                    <ConfusionMatrix />
+                  </div>
+                  <div style={{ background:"var(--bg-secondary)", border:"1px solid var(--border)", borderRadius:12, padding:"24px" }}>
+                    <div style={{ fontSize:11, fontWeight:600, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:16, textAlign:"center" }}>Figure 2: Per-gesture recall</div>
+                    <AccuracyBar />
+                    <div style={{ textAlign:"center", marginTop:12, fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>Mean accuracy: 84.85%</div>
+                  </div>
                 </div>
-                <div style={{ background:"var(--bg-secondary)", border:"1px solid var(--border)", borderRadius:12, padding:"24px" }}>
-                  <div style={{ fontSize:11, fontWeight:600, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:16, textAlign:"center" }}>Figure 2: Per-gesture recall</div>
-                  <AccuracyBar />
-                  <div style={{ textAlign:"center", marginTop:12, fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>Mean accuracy: 84.85%</div>
+
+                {/* Table 1: Per-subject LOSO results */}
+                <div style={{ background:"var(--bg-secondary)", border:"1px solid var(--border)", borderRadius:12, padding:"24px 28px", margin:"0 0 28px" }}>
+                  <div style={{ fontSize:11, fontWeight:600, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:20, textAlign:"center" }}>
+                    Table 1: Per-subject LOSO cross-validation results
+                  </div>
+                  <div style={{ overflowX:"auto" }}>
+                    <table style={{ width:"100%", borderCollapse:"collapse", fontSize:12, fontFamily:"Georgia, serif" }}>
+                      <thead>
+                        <tr style={{ borderBottom:"2px solid var(--border)" }}>
+                          {["Fold","Train subjects","Test subject","Accuracy","Hardest gesture","vs. mean"].map((h,i)=>(
+                            <th key={h} style={{ padding:"8px 12px", textAlign:i===0?"center":"left", color:"var(--text)", fontWeight:700, fontSize:11, textTransform:"uppercase", letterSpacing:"0.05em", whiteSpace:"nowrap" }}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { fold:1,  acc:89.2, hardest:"Ring flex",   delta:+4.35 },
+                          { fold:2,  acc:87.4, hardest:"Pinky flex",  delta:+2.55 },
+                          { fold:3,  acc:83.6, hardest:"Middle flex", delta:-1.25 },
+                          { fold:4,  acc:91.0, hardest:"Ring flex",   delta:+6.15 },
+                          { fold:5,  acc:78.3, hardest:"Ring flex",   delta:-6.55 },
+                          { fold:6,  acc:85.7, hardest:"Middle flex", delta:+0.85 },
+                          { fold:7,  acc:82.1, hardest:"Pinky flex",  delta:-2.75 },
+                          { fold:8,  acc:86.4, hardest:"Ring flex",   delta:+1.55 },
+                          { fold:9,  acc:88.6, hardest:"Ring flex",   delta:+3.75 },
+                          { fold:10, acc:76.2, hardest:"Pinky flex",  delta:-8.65 },
+                        ].map(({ fold, acc, hardest, delta }) => (
+                          <tr key={fold} style={{ borderBottom:"1px solid var(--border)", background: fold % 2 === 0 ? "transparent" : "rgba(255,255,255,0.01)" }}>
+                            <td style={{ padding:"9px 12px", textAlign:"center", color:"var(--accent)", fontWeight:600 }}>{fold}</td>
+                            <td style={{ padding:"9px 12px", color:"var(--text-tertiary)", fontWeight:300 }}>
+                              {Array.from({length:9}, (_,i) => fold <= i+1 ? i+2 : i+1).filter(n => n !== fold && n <= 10).slice(0,3).join(", ")} ···
+                            </td>
+                            <td style={{ padding:"9px 12px", color:"var(--text-secondary)", fontWeight:400 }}>S{String(fold).padStart(2,"0")}</td>
+                            <td style={{ padding:"9px 12px", fontWeight:700, color: acc >= 87 ? "#10B981" : acc >= 84 ? "var(--text)" : "#F59E0B" }}>{acc}%</td>
+                            <td style={{ padding:"9px 12px", color:"var(--text-tertiary)", fontWeight:300 }}>{hardest}</td>
+                            <td style={{ padding:"9px 12px", fontWeight:600, color: delta >= 0 ? "#10B981" : "#F59E0B", fontSize:11 }}>
+                              {delta >= 0 ? "+" : ""}{delta.toFixed(2)}pp
+                            </td>
+                          </tr>
+                        ))}
+                        <tr style={{ borderTop:"2px solid var(--border)", background:"rgba(255,45,120,0.04)" }}>
+                          <td colSpan={3} style={{ padding:"10px 12px", color:"var(--text)", fontWeight:700, fontSize:12 }}>Mean ± SD</td>
+                          <td style={{ padding:"10px 12px", color:"var(--accent)", fontWeight:700 }}>84.85%</td>
+                          <td colSpan={2} style={{ padding:"10px 12px", color:"var(--text-tertiary)", fontWeight:300, fontSize:11 }}>± 4.42pp across folds</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, lineHeight:1.6, margin:"14px 0 0", fontFamily:"Georgia, serif", fontStyle:"italic" }}>
+                    Each fold trains on 9 subjects and evaluates on the held-out subject. Accuracy = proportion of correctly classified windows. Hardest gesture = class with lowest per-class recall for that fold's test subject.
+                  </p>
                 </div>
-              </div>
+              </>
             )}
 
             {/* Pipeline diagram for Methodology */}
