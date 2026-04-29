@@ -6,6 +6,7 @@ import { Reveal, SectionPill } from "./Animate"
 import { LiquidChrome } from "./components/LiquidChrome"
 
 const MAC_URL = "https://github.com/Jaden300/myojam/releases/download/v1.0.0-macos/myojam-mac.zip"
+const WIN_URL = "https://github.com/Jaden300/myojam/releases/download/v1.0.0-windows/myojam-windows.zip"
 
 // Pre-computed waveform path for Mac banner — 1600 wide (double for seamless loop)
 // Uses harmonics 3, 8, 21 of period=800 so the signal repeats exactly at x=800
@@ -24,6 +25,9 @@ const W = 1600
 const MAC_WAVE_1 = buildWave(W, 110, 46, 0)
 const MAC_WAVE_2 = buildWave(W, 110, 30, 1.1)
 const MAC_WAVE_3 = buildWave(W, 110, 18, 2.4)
+const WIN_WAVE_1 = buildWave(W, 110, 42, 0.6)
+const WIN_WAVE_2 = buildWave(W, 110, 27, 1.7)
+const WIN_WAVE_3 = buildWave(W, 110, 16, 3.0)
 
 // Apple logo path (simplified trefoil shape)
 const APPLE_PATH = "M12.5 2.5C12.5 2.5 10 2 9 5.5C8 3 5.5 2.5 5.5 2.5C5.5 2.5 3 2.5 3 6C3 9.5 7.5 13.5 9 14C10.5 13.5 15 9.5 15 6C15 2.5 12.5 2.5 12.5 2.5Z"
@@ -121,101 +125,90 @@ function WindowsBanner({ hovered }) {
     <div style={{
       position: "relative", width: "100%", height: 220, overflow: "hidden",
       borderRadius: "20px 20px 0 0",
-      background: "linear-gradient(160deg, #030d1a 0%, #07182e 40%, #030d1a 100%)",
+      background: "linear-gradient(160deg, #020c1e 0%, #061525 40%, #020c1e 100%)",
     }}>
       <style>{`
-        @keyframes winGlow  { 0%,100%{opacity:0.25} 50%{opacity:0.40} }
-        @keyframes winFloat { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-54%) scale(1.04)} }
-        @keyframes winGrid  { 0%{transform:translateX(0) translateY(0)} 100%{transform:translateX(24px) translateY(24px)} }
-        @keyframes winSoon  { 0%,100%{opacity:0.7} 50%{opacity:1} }
+        @keyframes winWave1 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        @keyframes winWave2 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        @keyframes winWave3 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        @keyframes winGlow  { 0%,100%{opacity:0.45} 50%{opacity:0.70} }
+        @keyframes winPulse { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.07} 50%{transform:translate(-50%,-50%) scale(1.07);opacity:0.11} }
+        @keyframes winScan  { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
       `}</style>
 
-      {/* Radial glow — muted blue */}
+      {/* Radial glow */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
-        background: "radial-gradient(ellipse 70% 80% at 50% 55%, rgba(0,120,215,0.20) 0%, transparent 70%)",
-        animation: "winGlow 3.8s ease-in-out infinite",
+        background: "radial-gradient(ellipse 70% 80% at 50% 55%, rgba(0,120,215,0.30) 0%, transparent 70%)",
+        animation: "winGlow 3.5s ease-in-out infinite",
       }}/>
 
-      {/* Animated dot grid */}
-      <svg style={{
-        position:"absolute", inset:0, width:"100%", height:"100%", opacity:0.08,
-        animation:"winGrid 4s linear infinite",
-      }} xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="wgrid" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-            <circle cx="1" cy="1" r="1" fill="#0078D7"/>
-          </pattern>
-        </defs>
-        <rect width="200%" height="200%" fill="url(#wgrid)"/>
+      {/* Hover glow intensifier */}
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        background: "radial-gradient(ellipse 60% 70% at 50% 55%, rgba(0,140,255,0.22) 0%, transparent 65%)",
+        opacity: hovered ? 1 : 0, transition: "opacity 0.4s ease",
+      }}/>
+
+      {/* Animated waveforms */}
+      <svg viewBox={`0 0 ${W} 220`} preserveAspectRatio="none"
+        style={{ position:"absolute", top:0, left:0, width:"200%", height:"100%",
+          animation:"winWave1 7s linear infinite", willChange:"transform" }}>
+        <path d={WIN_WAVE_3} stroke="rgba(0,140,255,0.10)" strokeWidth="1" fill="none"/>
+        <path d={WIN_WAVE_2} stroke="rgba(30,160,255,0.20)" strokeWidth="1.4" fill="none"/>
+        <path d={WIN_WAVE_1} stroke="rgba(0,120,215,0.68)" strokeWidth="2" fill="none"
+          style={{ filter:"drop-shadow(0 0 6px rgba(0,120,215,0.7))" }}/>
       </svg>
 
-      {/* Windows logo — animated float */}
+      {/* Large background Windows logo */}
       <div style={{
         position: "absolute", top: "50%", left: "50%",
-        animation: "winFloat 5s ease-in-out infinite",
         transform: "translate(-50%, -50%)",
+        animation: "winPulse 4.5s ease-in-out infinite",
       }}>
-        {[
-          { x: 0,  y: 0,  color: "rgba(0,180,255,0.18)" },
-          { x: 36, y: 0,  color: "rgba(0,180,255,0.13)" },
-          { x: 0,  y: 36, color: "rgba(0,180,255,0.13)" },
-          { x: 36, y: 36, color: "rgba(0,180,255,0.08)" },
-        ].map((t, i) => (
-          <div key={i} style={{
-            position: "absolute",
-            left: t.x, top: t.y,
-            width: 30, height: 30,
-            background: t.color,
-            border: "1px solid rgba(0,140,220,0.25)",
-            borderRadius: 3,
-          }}/>
-        ))}
-        {/* Invisible spacer for the float container */}
-        <div style={{ width: 66, height: 66, opacity: 0 }}/>
+        <svg width="100" height="100" viewBox="0 0 16 16" fill="none">
+          <rect x="0" y="0" width="7" height="7" rx="1" fill="rgba(0,140,255,0.9)"/>
+          <rect x="9" y="0" width="7" height="7" rx="1" fill="rgba(0,140,255,0.7)"/>
+          <rect x="0" y="9" width="7" height="7" rx="1" fill="rgba(0,140,255,0.7)"/>
+          <rect x="9" y="9" width="7" height="7" rx="1" fill="rgba(0,140,255,0.5)"/>
+        </svg>
       </div>
+
+      {/* Scan line on hover */}
+      {hovered && (
+        <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+          <div style={{
+            position: "absolute", top: 0, bottom: 0, width: "30%",
+            background: "linear-gradient(90deg, transparent, rgba(0,120,215,0.06), transparent)",
+            animation: "winScan 1.6s ease-in-out infinite",
+          }}/>
+        </div>
+      )}
 
       {/* OS label */}
-      <div style={{ position: "absolute", top: 18, left: 22, display: "flex", alignItems: "center", gap: 8, opacity: 0.7 }}>
-        <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(0,120,215,0.18)", border: "1px solid rgba(0,120,215,0.25)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <rect x="0" y="0" width="7" height="7" rx="1" fill="rgba(0,180,255,0.7)"/>
-            <rect x="9" y="0" width="7" height="7" rx="1" fill="rgba(0,180,255,0.55)"/>
-            <rect x="0" y="9" width="7" height="7" rx="1" fill="rgba(0,180,255,0.55)"/>
-            <rect x="9" y="9" width="7" height="7" rx="1" fill="rgba(0,180,255,0.40)"/>
+      <div style={{ position: "absolute", top: 18, left: 22, display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(0,120,215,0.20)", border: "1px solid rgba(0,120,215,0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+            <rect x="0" y="0" width="7" height="7" rx="1" fill="rgba(0,180,255,0.9)"/>
+            <rect x="9" y="0" width="7" height="7" rx="1" fill="rgba(0,180,255,0.7)"/>
+            <rect x="0" y="9" width="7" height="7" rx="1" fill="rgba(0,180,255,0.7)"/>
+            <rect x="9" y="9" width="7" height="7" rx="1" fill="rgba(0,180,255,0.5)"/>
           </svg>
         </div>
-        <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.65)", letterSpacing: "0.02em" }}>Windows</span>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.9)", letterSpacing: "0.02em" }}>Windows</span>
       </div>
 
-      {/* Coming Soon badge */}
+      {/* Available badge */}
       <div style={{
         position: "absolute", top: 18, right: 18,
-        background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.14)",
+        background: "rgba(0,120,215,0.18)", border: "1px solid rgba(0,120,215,0.40)",
         borderRadius: 100, padding: "3px 10px",
-        fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", letterSpacing: "0.06em",
-        animation: "winSoon 3s ease-in-out infinite",
+        fontSize: 10, fontWeight: 600, color: "#3BAAFF", letterSpacing: "0.06em",
+        display: "flex", alignItems: "center", gap: 5,
       }}>
-        COMING SOON
+        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#3BAAFF" }}/>
+        AVAILABLE
       </div>
-
-      {/* Diagonal "Coming Soon" stamp */}
-      <div style={{
-        position: "absolute", bottom: 28, right: -32,
-        transform: "rotate(-12deg)",
-        background: "rgba(0,120,215,0.12)",
-        border: "1px solid rgba(0,120,215,0.25)",
-        padding: "6px 40px",
-        fontSize: 11, fontWeight: 700,
-        color: "rgba(0,180,255,0.45)",
-        letterSpacing: "0.2em", textTransform: "uppercase",
-        whiteSpace: "nowrap",
-      }}>
-        In development
-      </div>
-
-      {/* Whole-card desaturate overlay */}
-      <div style={{ position: "absolute", inset: 0, background: "rgba(3,13,26,0.3)", pointerEvents: "none" }}/>
     </div>
   )
 }
@@ -230,18 +223,17 @@ function PlatformCard({ platform, hovered, setHovered }) {
       style={{
         borderRadius: 20,
         border: `1px solid ${hovered
-          ? isMac ? "rgba(255,45,120,0.45)" : "rgba(0,120,215,0.25)"
+          ? isMac ? "rgba(255,45,120,0.45)" : "rgba(0,120,215,0.45)"
           : "rgba(255,255,255,0.10)"}`,
         background: "rgba(8,8,26,0.92)",
         overflow: "hidden",
-        transform: hovered && isMac ? "translateY(-6px) scale(1.01)" : "translateY(0) scale(1)",
+        transform: hovered ? "translateY(-6px) scale(1.01)" : "translateY(0) scale(1)",
         transition: "transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
-        boxShadow: hovered && isMac
-          ? "0 32px 80px rgba(255,45,120,0.22), 0 0 0 1px rgba(255,45,120,0.12)"
-          : hovered
-            ? "0 16px 48px rgba(0,120,215,0.10)"
-            : "0 8px 32px rgba(0,0,0,0.4)",
-        opacity: isMac ? 1 : 0.75,
+        boxShadow: hovered
+          ? isMac
+            ? "0 32px 80px rgba(255,45,120,0.22), 0 0 0 1px rgba(255,45,120,0.12)"
+            : "0 32px 80px rgba(0,120,215,0.20), 0 0 0 1px rgba(0,120,215,0.12)"
+          : "0 8px 32px rgba(0,0,0,0.4)",
         flex: 1,
         minWidth: 0,
       }}
@@ -253,16 +245,16 @@ function PlatformCard({ platform, hovered, setHovered }) {
         {/* Platform name */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
           <div>
-            <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.5px", color: isMac ? "#fff" : "rgba(255,255,255,0.55)", marginBottom: 3 }}>
+            <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.5px", color: "#fff", marginBottom: 3 }}>
               {isMac ? "macOS" : "Windows"}
             </div>
-            <div style={{ fontSize: 12, color: isMac ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.25)", fontWeight: 300 }}>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 300 }}>
               {isMac ? "Apple Silicon · Intel" : "x64 · ARM64"}
             </div>
           </div>
           {isMac
             ? <div style={{ fontSize: 11, fontWeight: 500, color: "#FF2D78", background: "rgba(255,45,120,0.1)", border: "1px solid rgba(255,45,120,0.2)", borderRadius: 100, padding: "4px 12px" }}>v1.0.0</div>
-            : <div style={{ fontSize: 11, fontWeight: 500, color: "rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 100, padding: "4px 12px" }}>Coming soon</div>
+            : <div style={{ fontSize: 11, fontWeight: 500, color: "#3BAAFF", background: "rgba(0,120,215,0.12)", border: "1px solid rgba(0,120,215,0.28)", borderRadius: 100, padding: "4px 12px" }}>v1.0.0</div>
           }
         </div>
 
@@ -270,11 +262,11 @@ function PlatformCard({ platform, hovered, setHovered }) {
         <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 28 }}>
           {(isMac
             ? [["Requires", "macOS 12 Monterey or later"], ["Size", "~295 MB"], ["License", "MIT · Free forever"], ["Arch", "Apple Silicon + Intel"]]
-            : [["Requires", "Windows 10 or later"], ["Size", "TBD"], ["License", "MIT · Free forever"], ["Status", "In development"]]
+            : [["Requires", "Windows 10 or later"], ["Size", "~280 MB"], ["License", "MIT · Free forever"], ["Arch", "x64 · ARM64"]]
           ).map(([k, v]) => (
-            <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "7px 0", borderBottom: `1px solid ${isMac ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.04)"}` }}>
-              <span style={{ fontSize: 12, color: isMac ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.2)", fontWeight: 300 }}>{k}</span>
-              <span style={{ fontSize: 12, color: isMac ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.3)", fontWeight: 400, textAlign: "right" }}>{v}</span>
+            <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "7px 0", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontWeight: 300 }}>{k}</span>
+              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.75)", fontWeight: 400, textAlign: "right" }}>{v}</span>
             </div>
           ))}
         </div>
@@ -282,7 +274,7 @@ function PlatformCard({ platform, hovered, setHovered }) {
         {/* CTA button */}
         {isMac
           ? <MacDownloadButton hovered={hovered}/>
-          : <WindowsComingSoon/>
+          : <WindowsDownloadButton hovered={hovered}/>
         }
       </div>
     </div>
@@ -318,43 +310,32 @@ function MacDownloadButton({ hovered }) {
   )
 }
 
-function WindowsComingSoon() {
-  const [showTooltip, setShowTooltip] = useState(false)
+function WindowsDownloadButton({ hovered }) {
+  const [btnHovered, setBtnHovered] = useState(false)
+  const active = hovered || btnHovered
   return (
-    <div style={{ position: "relative" }}>
-      <button
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-        style={{
-          display: "flex", alignItems: "center", justifyContent: "center", gap: 9,
-          width: "100%", padding: "14px 0", borderRadius: 12,
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          color: "rgba(255,255,255,0.3)", fontSize: 15, fontWeight: 500,
-          cursor: "not-allowed", fontFamily: "var(--font)",
-          letterSpacing: "0.01em",
-        }}
-      >
-        <svg width="15" height="15" viewBox="0 0 12 12" fill="none">
-          <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.4" fill="none"/>
-          <path d="M6 4v3M6 8.5h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-        </svg>
-        Windows — Coming Soon
-      </button>
-      {showTooltip && (
-        <div style={{
-          position: "absolute", bottom: "calc(100% + 8px)", left: "50%", transform: "translateX(-50%)",
-          background: "rgba(10,10,30,0.96)", border: "1px solid rgba(255,255,255,0.12)",
-          borderRadius: 10, padding: "10px 14px", whiteSpace: "nowrap",
-          fontSize: 12, color: "rgba(255,255,255,0.65)", fontWeight: 300,
-          boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
-          zIndex: 10,
-        }}>
-          Windows build is in development — check back soon.
-          <div style={{ position: "absolute", bottom: -5, left: "50%", transform: "translateX(-50%)", width: 8, height: 8, background: "rgba(10,10,30,0.96)", border: "1px solid rgba(255,255,255,0.12)", borderBottom: "none", borderRight: "none", transform: "translateX(-50%) rotate(225deg)" }}/>
-        </div>
-      )}
-    </div>
+    <a
+      href={WIN_URL}
+      onMouseEnter={() => setBtnHovered(true)}
+      onMouseLeave={() => setBtnHovered(false)}
+      style={{
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 9,
+        width: "100%", padding: "14px 0", borderRadius: 12,
+        background: active
+          ? "linear-gradient(135deg, #1a9fff, #0070c0)"
+          : "linear-gradient(135deg, #0078D7, #0060b0)",
+        color: "#fff", textDecoration: "none", fontSize: 15, fontWeight: 600,
+        boxShadow: active ? "0 8px 28px rgba(0,120,215,0.55)" : "0 4px 16px rgba(0,120,215,0.35)",
+        transform: active ? "scale(1.02)" : "scale(1)",
+        transition: "all 0.2s ease",
+        letterSpacing: "0.01em",
+      }}
+    >
+      <svg width="15" height="15" viewBox="0 0 12 12" fill="none">
+        <path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+      Download for Windows — Free
+    </a>
   )
 }
 
@@ -687,12 +668,16 @@ export default function DesktopApp() {
                 <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 Download for Mac
               </a>
-              <button disabled style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.3)", borderRadius: 100, padding: "14px 32px", fontSize: 15, fontWeight: 500, cursor: "not-allowed", fontFamily: "var(--font)" }}>
-                Windows — Soon
-              </button>
+              <a href={WIN_URL} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(0,120,215,0.18)", border: "1px solid rgba(0,120,215,0.35)", color: "#3BAAFF", textDecoration: "none", borderRadius: 100, padding: "14px 32px", fontSize: 15, fontWeight: 600, transition: "all 0.18s" }}
+                onMouseEnter={e => { e.currentTarget.style.transform="scale(1.04)"; e.currentTarget.style.background="rgba(0,120,215,0.28)" }}
+                onMouseLeave={e => { e.currentTarget.style.transform="scale(1)"; e.currentTarget.style.background="rgba(0,120,215,0.18)" }}
+              >
+                <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Download for Windows
+              </a>
             </div>
             <div style={{ marginTop: 24, fontSize: 12, color: "rgba(255,255,255,0.25)", fontWeight: 300 }}>
-              v1.0.0 · macOS 12+ · MIT licence · no account required
+              v1.0.0 · macOS 12+ · Windows 10+ · MIT licence · no account required
             </div>
           </Reveal>
         </div>
