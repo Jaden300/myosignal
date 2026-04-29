@@ -1,12 +1,15 @@
 import sys
 import os
 import math
+import platform as _platform
 import threading
 import random
 import pickle
 import subprocess
 import time
 import numpy as np
+
+_OS = _platform.system()   # "Darwin" | "Linux" | "Windows"
 import scipy.io as sio
 from emg_classifier import EMGClassifier
 from scipy.signal import butter, filtfilt
@@ -24,22 +27,55 @@ from PyQt6.QtCore import (
     Qt, QThread, pyqtSignal, QTimer, QPointF, QRect, QRectF,
 )
 
-# ── Input actions
+# ── Input actions (platform-aware)
 def _run(*args):
     subprocess.run(list(args), capture_output=True)
 
-def mouse_move(dx, dy):
-    r = subprocess.run(['cliclick', 'p:.'], capture_output=True, text=True)
-    if not r.stdout.strip():
-        return
-    x, y = map(int, r.stdout.strip().split(','))
-    _run('cliclick', f'm:{x+dx},{y+dy}')
+if _OS == "Linux":
+    from pynput import mouse as _pnm, keyboard as _pnk
+    _mouse_ctrl = _pnm.Controller()
+    _kbd_ctrl   = _pnk.Controller()
 
-def mouse_click():
-    _run('cliclick', 'c:.')
+    def mouse_move(dx, dy):
+        x, y = _mouse_ctrl.position
+        _mouse_ctrl.position = (x + dx, y + dy)
 
-def press_space():
-    _run('osascript', '-e', 'tell application "System Events" to key code 49')
+    def mouse_click():
+        _mouse_ctrl.click(_pnm.Button.left)
+
+    def press_space():
+        _kbd_ctrl.press(_pnk.Key.space)
+        _kbd_ctrl.release(_pnk.Key.space)
+
+elif _OS == "Windows":
+    import ctypes as _ct
+
+    def mouse_move(dx, dy):
+        pt = _ct.wintypes.POINT()
+        _ct.windll.user32.GetCursorPos(_ct.byref(pt))
+        _ct.windll.user32.SetCursorPos(pt.x + dx, pt.y + dy)
+
+    def mouse_click():
+        _ct.windll.user32.mouse_event(0x0002, 0, 0, 0, 0)
+        _ct.windll.user32.mouse_event(0x0004, 0, 0, 0, 0)
+
+    def press_space():
+        _ct.windll.user32.keybd_event(0x20, 0, 0, 0)
+        _ct.windll.user32.keybd_event(0x20, 0, 0x0002, 0)
+
+else:  # Darwin
+    def mouse_move(dx, dy):
+        r = subprocess.run(['cliclick', 'p:.'], capture_output=True, text=True)
+        if not r.stdout.strip():
+            return
+        x, y = map(int, r.stdout.strip().split(','))
+        _run('cliclick', f'm:{x+dx},{y+dy}')
+
+    def mouse_click():
+        _run('cliclick', 'c:.')
+
+    def press_space():
+        _run('osascript', '-e', 'tell application "System Events" to key code 49')
 
 # ── Paths
 BASE        = os.path.dirname(os.path.abspath(__file__))
@@ -633,8 +669,9 @@ class GlobalKeyListener(QThread):
 
     def run(self):
         python = sys.executable
+        kw = 'keywatcher.py' if _OS == 'Darwin' else 'keywatcher_cross.py'
         proc = subprocess.Popen(
-            [python, os.path.join(BASE, 'keywatcher.py')],
+            [python, os.path.join(BASE, kw)],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
         )
         for line in proc.stdout:

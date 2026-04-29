@@ -6,7 +6,8 @@ import { Reveal, SectionPill } from "./Animate"
 import { LiquidChrome } from "./components/LiquidChrome"
 
 const MAC_URL = "https://github.com/Jaden300/myojam/releases/download/v1.0.0-macos/myojam-mac.zip"
-const WIN_URL = "https://github.com/Jaden300/myojam/releases/download/v1.0.0-windows/myojam-windows.zip"
+const WIN_URL   = "https://github.com/Jaden300/myojam/releases/download/v1.0.0-windows/myojam-windows.zip"
+const LINUX_URL = "https://github.com/Jaden300/myojam/releases/download/v1.0.0-linux/myojam-linux.tar.gz"
 
 // Stable references — defined at module level so LiquidChrome's useEffect dep
 // comparison never sees a "new" array and won't tear down/rebuild the canvas.
@@ -33,6 +34,16 @@ const MAC_WAVE_3 = buildWave(W, 110, 18, 2.4)
 const WIN_WAVE_1 = buildWave(W, 110, 42, 0.6)
 const WIN_WAVE_2 = buildWave(W, 110, 27, 1.7)
 const WIN_WAVE_3 = buildWave(W, 110, 16, 3.0)
+const LIN_WAVE_1 = buildWave(W, 110, 38, 1.4)
+const LIN_WAVE_2 = buildWave(W, 110, 24, 2.5)
+const LIN_WAVE_3 = buildWave(W, 110, 14, 0.2)
+
+const PLATFORM_ACCENT = { mac: "#FF2D78", windows: "#3BAAFF", linux: "#10B981" }
+const PLATFORM_RGBA   = {
+  mac:     (a) => `rgba(255,45,120,${a})`,
+  windows: (a) => `rgba(0,120,215,${a})`,
+  linux:   (a) => `rgba(16,185,129,${a})`,
+}
 
 // Apple logo path (simplified trefoil shape)
 const APPLE_PATH = "M12.5 2.5C12.5 2.5 10 2 9 5.5C8 3 5.5 2.5 5.5 2.5C5.5 2.5 3 2.5 3 6C3 9.5 7.5 13.5 9 14C10.5 13.5 15 9.5 15 6C15 2.5 12.5 2.5 12.5 2.5Z"
@@ -218,8 +229,101 @@ function WindowsBanner({ hovered }) {
   )
 }
 
+function LinuxBanner({ hovered }) {
+  return (
+    <div style={{
+      position: "relative", width: "100%", height: 220, overflow: "hidden",
+      borderRadius: "20px 20px 0 0",
+      background: "linear-gradient(160deg, #020f08 0%, #061a0e 40%, #020f08 100%)",
+    }}>
+      <style>{`
+        @keyframes linWave1 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        @keyframes linGlow  { 0%,100%{opacity:0.45} 50%{opacity:0.72} }
+        @keyframes linPulse { 0%,100%{transform:scale(1);opacity:0.07} 50%{transform:scale(1.08);opacity:0.12} }
+        @keyframes linScan  { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+      `}</style>
+
+      {/* Radial glow */}
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        background: "radial-gradient(ellipse 70% 80% at 50% 55%, rgba(16,185,129,0.26) 0%, transparent 70%)",
+        animation: "linGlow 4s ease-in-out infinite",
+      }}/>
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        background: "radial-gradient(ellipse 60% 70% at 50% 55%, rgba(16,185,129,0.18) 0%, transparent 65%)",
+        opacity: hovered ? 1 : 0, transition: "opacity 0.4s ease",
+      }}/>
+
+      {/* Animated waveforms */}
+      <svg viewBox={`0 0 ${W} 220`} preserveAspectRatio="none"
+        style={{ position:"absolute", top:0, left:0, width:"200%", height:"100%",
+          animation:"linWave1 9s linear infinite", willChange:"transform" }}>
+        <path d={LIN_WAVE_3} stroke="rgba(16,185,129,0.10)" strokeWidth="1" fill="none"/>
+        <path d={LIN_WAVE_2} stroke="rgba(52,211,153,0.18)" strokeWidth="1.4" fill="none"/>
+        <path d={LIN_WAVE_1} stroke="rgba(16,185,129,0.65)" strokeWidth="2" fill="none"
+          style={{ filter:"drop-shadow(0 0 6px rgba(16,185,129,0.65))" }}/>
+      </svg>
+
+      {/* Large terminal symbol */}
+      <div style={{
+        position: "absolute", top: "50%", left: "50%",
+        transform: "translate(-50%, -50%)",
+        fontSize: 72, color: "rgba(16,185,129,0.07)",
+        fontFamily: "monospace", fontWeight: 700, userSelect: "none", letterSpacing: -2,
+        animation: "linPulse 4.8s ease-in-out infinite",
+        whiteSpace: "nowrap",
+      }}>$_</div>
+
+      {/* Scan line on hover */}
+      {hovered && (
+        <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+          <div style={{
+            position: "absolute", top: 0, bottom: 0, width: "30%",
+            background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.06), transparent)",
+            animation: "linScan 1.7s ease-in-out infinite",
+          }}/>
+        </div>
+      )}
+
+      {/* OS label */}
+      <div style={{ position: "absolute", top: 18, left: 22, display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(16,185,129,0.18)", border: "1px solid rgba(16,185,129,0.32)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+            <rect x="1" y="1" width="14" height="14" rx="2" stroke="rgba(16,185,129,0.85)" strokeWidth="1.4" fill="none"/>
+            <path d="M4 5.5l3.5 3-3.5 3" stroke="rgba(16,185,129,0.85)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+            <line x1="9.5" y1="11.5" x2="14" y2="11.5" stroke="rgba(52,211,153,0.65)" strokeWidth="1.4" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.9)", letterSpacing: "0.02em" }}>Linux</span>
+      </div>
+
+      {/* Available badge */}
+      <div style={{
+        position: "absolute", top: 18, right: 18,
+        background: "rgba(16,185,129,0.16)", border: "1px solid rgba(16,185,129,0.38)",
+        borderRadius: 100, padding: "3px 10px",
+        fontSize: 10, fontWeight: 600, color: "#34D399", letterSpacing: "0.06em",
+        display: "flex", alignItems: "center", gap: 5,
+      }}>
+        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#34D399" }}/>
+        AVAILABLE
+      </div>
+    </div>
+  )
+}
+
+const PLATFORM_NAMES = { mac: "macOS",   windows: "Windows", linux: "Linux"       }
+const PLATFORM_ARCH  = { mac: "Apple Silicon · Intel", windows: "x64 · ARM64", linux: "x86_64 · ARM64" }
+const PLATFORM_SPECS = {
+  mac:     [["Requires","macOS 12 Monterey+"],          ["Size","~295 MB"],  ["License","MIT · Free"],  ["Arch","Apple Silicon + Intel"]],
+  windows: [["Requires","Windows 10+"],                  ["Size","~280 MB"],  ["License","MIT · Free"],  ["Arch","x64 · ARM64"]],
+  linux:   [["Requires","Ubuntu 20.04+ / Debian 11+"],   ["Size","~260 MB"],  ["License","MIT · Free"],  ["Arch","x86_64 · ARM64"]],
+}
+
 function PlatformCard({ platform, hovered, setHovered }) {
-  const isMac = platform === "mac"
+  const accent = PLATFORM_ACCENT[platform]
+  const ra     = PLATFORM_RGBA[platform]
 
   return (
     <div
@@ -227,59 +331,56 @@ function PlatformCard({ platform, hovered, setHovered }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         borderRadius: 20,
-        border: `1px solid ${hovered
-          ? isMac ? "rgba(255,45,120,0.45)" : "rgba(0,120,215,0.45)"
-          : "rgba(255,255,255,0.10)"}`,
+        border: `1px solid ${hovered ? ra(0.45) : "rgba(255,255,255,0.10)"}`,
         background: "rgba(8,8,26,0.92)",
         overflow: "hidden",
         transform: hovered ? "translateY(-6px) scale(1.01)" : "translateY(0) scale(1)",
         transition: "transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
         boxShadow: hovered
-          ? isMac
-            ? "0 32px 80px rgba(255,45,120,0.22), 0 0 0 1px rgba(255,45,120,0.12)"
-            : "0 32px 80px rgba(0,120,215,0.20), 0 0 0 1px rgba(0,120,215,0.12)"
+          ? `0 32px 80px ${ra(0.20)}, 0 0 0 1px ${ra(0.12)}`
           : "0 8px 32px rgba(0,0,0,0.4)",
-        flex: 1,
-        minWidth: 0,
+        flex: 1, minWidth: 0,
       }}
     >
-      {isMac ? <MacBanner hovered={hovered}/> : <WindowsBanner hovered={hovered}/>}
+      {platform === "mac"
+        ? <MacBanner hovered={hovered}/>
+        : platform === "windows"
+          ? <WindowsBanner hovered={hovered}/>
+          : <LinuxBanner hovered={hovered}/>
+      }
 
-      {/* Info area */}
-      <div style={{ padding: "28px 28px 32px" }}>
-        {/* Platform name */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+      <div style={{ padding: "24px 24px 28px" }}>
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
           <div>
-            <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.5px", color: "#fff", marginBottom: 3 }}>
-              {isMac ? "macOS" : "Windows"}
+            <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: "-0.4px", color: "#fff", marginBottom: 2 }}>
+              {PLATFORM_NAMES[platform]}
             </div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 300 }}>
-              {isMac ? "Apple Silicon · Intel" : "x64 · ARM64"}
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.38)", fontWeight: 300 }}>
+              {PLATFORM_ARCH[platform]}
             </div>
           </div>
-          {isMac
-            ? <div style={{ fontSize: 11, fontWeight: 500, color: "#FF2D78", background: "rgba(255,45,120,0.1)", border: "1px solid rgba(255,45,120,0.2)", borderRadius: 100, padding: "4px 12px" }}>v1.0.0</div>
-            : <div style={{ fontSize: 11, fontWeight: 500, color: "#3BAAFF", background: "rgba(0,120,215,0.12)", border: "1px solid rgba(0,120,215,0.28)", borderRadius: 100, padding: "4px 12px" }}>v1.0.0</div>
-          }
+          <div style={{ fontSize: 11, fontWeight: 500, color: accent, background: ra(0.12), border: `1px solid ${ra(0.28)}`, borderRadius: 100, padding: "4px 11px" }}>
+            v1.0.0
+          </div>
         </div>
 
         {/* Specs */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 28 }}>
-          {(isMac
-            ? [["Requires", "macOS 12 Monterey or later"], ["Size", "~295 MB"], ["License", "MIT · Free forever"], ["Arch", "Apple Silicon + Intel"]]
-            : [["Requires", "Windows 10 or later"], ["Size", "~280 MB"], ["License", "MIT · Free forever"], ["Arch", "x64 · ARM64"]]
-          ).map(([k, v]) => (
-            <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "7px 0", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontWeight: 300 }}>{k}</span>
-              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.75)", fontWeight: 400, textAlign: "right" }}>{v}</span>
+        <div style={{ display: "flex", flexDirection: "column", marginBottom: 22 }}>
+          {PLATFORM_SPECS[platform].map(([k, v]) => (
+            <div key={k} style={{ display: "flex", justifyContent: "space-between", gap: 8, padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.32)", fontWeight: 300, flexShrink: 0 }}>{k}</span>
+              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.72)", fontWeight: 400, textAlign: "right" }}>{v}</span>
             </div>
           ))}
         </div>
 
-        {/* CTA button */}
-        {isMac
+        {/* CTA */}
+        {platform === "mac"
           ? <MacDownloadButton hovered={hovered}/>
-          : <WindowsDownloadButton hovered={hovered}/>
+          : platform === "windows"
+            ? <WindowsDownloadButton hovered={hovered}/>
+            : <LinuxDownloadButton hovered={hovered}/>
         }
       </div>
     </div>
@@ -340,6 +441,35 @@ function WindowsDownloadButton({ hovered }) {
         <path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
       Download for Windows — Free
+    </a>
+  )
+}
+
+function LinuxDownloadButton({ hovered }) {
+  const [btnHovered, setBtnHovered] = useState(false)
+  const active = hovered || btnHovered
+  return (
+    <a
+      href={LINUX_URL}
+      onMouseEnter={() => setBtnHovered(true)}
+      onMouseLeave={() => setBtnHovered(false)}
+      style={{
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 9,
+        width: "100%", padding: "14px 0", borderRadius: 12,
+        background: active
+          ? "linear-gradient(135deg, #14d08a, #0c9e68)"
+          : "linear-gradient(135deg, #10B981, #0a8a5a)",
+        color: "#fff", textDecoration: "none", fontSize: 15, fontWeight: 600,
+        boxShadow: active ? "0 8px 28px rgba(16,185,129,0.50)" : "0 4px 16px rgba(16,185,129,0.32)",
+        transform: active ? "scale(1.02)" : "scale(1)",
+        transition: "all 0.2s ease",
+        letterSpacing: "0.01em",
+      }}
+    >
+      <svg width="15" height="15" viewBox="0 0 12 12" fill="none">
+        <path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+      Download for Linux — Free
     </a>
   )
 }
@@ -418,6 +548,7 @@ export default function DesktopApp() {
   const navigate = useNavigate()
   const [macHovered, setMacHovered] = useState(false)
   const [winHovered, setWinHovered] = useState(false)
+  const [linHovered, setLinHovered] = useState(false)
 
   return (
     <div style={{
@@ -459,12 +590,15 @@ export default function DesktopApp() {
             </p>
 
             {/* Platform cards */}
-            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", alignItems: "stretch" }}>
-              <div style={{ flex: "1 1 340px", minWidth: 0 }}>
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "stretch" }}>
+              <div style={{ flex: "1 1 280px", minWidth: 0 }}>
                 <PlatformCard platform="mac" hovered={macHovered} setHovered={setMacHovered}/>
               </div>
-              <div style={{ flex: "1 1 340px", minWidth: 0 }}>
+              <div style={{ flex: "1 1 280px", minWidth: 0 }}>
                 <PlatformCard platform="windows" hovered={winHovered} setHovered={setWinHovered}/>
+              </div>
+              <div style={{ flex: "1 1 280px", minWidth: 0 }}>
+                <PlatformCard platform="linux" hovered={linHovered} setHovered={setLinHovered}/>
               </div>
             </div>
 
@@ -684,16 +818,23 @@ export default function DesktopApp() {
                 <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 Download for Mac
               </a>
-              <a href={WIN_URL} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(0,120,215,0.18)", border: "1px solid rgba(0,120,215,0.35)", color: "#3BAAFF", textDecoration: "none", borderRadius: 100, padding: "14px 32px", fontSize: 15, fontWeight: 600, transition: "all 0.18s" }}
+              <a href={WIN_URL} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(0,120,215,0.18)", border: "1px solid rgba(0,120,215,0.35)", color: "#3BAAFF", textDecoration: "none", borderRadius: 100, padding: "14px 28px", fontSize: 15, fontWeight: 600, transition: "all 0.18s" }}
                 onMouseEnter={e => { e.currentTarget.style.transform="scale(1.04)"; e.currentTarget.style.background="rgba(0,120,215,0.28)" }}
                 onMouseLeave={e => { e.currentTarget.style.transform="scale(1)"; e.currentTarget.style.background="rgba(0,120,215,0.18)" }}
               >
                 <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Download for Windows
+                Windows
+              </a>
+              <a href={LINUX_URL} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.32)", color: "#34D399", textDecoration: "none", borderRadius: 100, padding: "14px 28px", fontSize: 15, fontWeight: 600, transition: "all 0.18s" }}
+                onMouseEnter={e => { e.currentTarget.style.transform="scale(1.04)"; e.currentTarget.style.background="rgba(16,185,129,0.25)" }}
+                onMouseLeave={e => { e.currentTarget.style.transform="scale(1)"; e.currentTarget.style.background="rgba(16,185,129,0.15)" }}
+              >
+                <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Linux
               </a>
             </div>
             <div style={{ marginTop: 24, fontSize: 12, color: "rgba(255,255,255,0.25)", fontWeight: 300 }}>
-              v1.0.0 · macOS 12+ · Windows 10+ · MIT licence · no account required
+              v1.0.0 · macOS 12+ · Windows 10+ · Ubuntu 20.04+ · MIT licence · no account required
             </div>
           </Reveal>
         </div>
