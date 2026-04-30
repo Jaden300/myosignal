@@ -49,6 +49,7 @@ import SubmitArticle from "./SubmitArticle"
 import DesktopApp from "./DesktopApp"
 import PipelineExplorer from "./PipelineExplorer"
 import ResearchExplorer from "./ResearchExplorer"
+import Mission from "./Mission"
 
 import { initTheme } from "./theme"
 initTheme()
@@ -105,6 +106,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/download" element={<DesktopApp />} />
         <Route path="/pipeline" element={<PipelineExplorer />} />
         <Route path="/research/explorer" element={<ResearchExplorer />} />
+        <Route path="/mission" element={<Mission />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

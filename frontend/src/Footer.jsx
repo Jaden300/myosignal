@@ -33,6 +33,7 @@ export default function Footer() {
               ["For educators",   "/educators"],
               ["Interactive tools","/demos"],
               ["About",           "/about"],
+              ["Mission",         "/mission"],
               ["How it works",    "/how-it-works"],
               ["Research",        "/research"],
               ["Resources",       "/resources"],

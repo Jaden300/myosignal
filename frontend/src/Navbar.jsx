@@ -173,6 +173,7 @@ export default function Navbar() {
 
         <Dropdown label={t("nav_company")} pathname={pathname} items={[
           [t("nav_about"),        "/about",             IconBulb],
+          ["Mission",             "/mission",           IconRocket],
           [t("nav_team"),         "/team",              IconPeople],
           [t("nav_careers"),      "/careers",           IconRocket],
           [t("nav_corporations"), "/corporations",      IconBuilding],
