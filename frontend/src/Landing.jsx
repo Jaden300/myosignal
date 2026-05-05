@@ -140,7 +140,7 @@ function HeroHeading() {
       fontWeight: 700,
       letterSpacing: "-3.5px",
       lineHeight: 1.1,
-      color: "var(--text)",
+      color: "#fff",
       marginBottom: 28,
     }}>
       Explore the science of<br/>
@@ -165,6 +165,63 @@ function HeroHeading() {
   )
 }
 
+function AccuracyRing() {
+  const ref = useRef(null)
+  const [drawn, setDrawn] = useState(0)
+  const [started, setStarted] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setStarted(true); obs.disconnect() }
+    }, { threshold: 0.3 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!started) return
+    let startTs = null
+    const duration = 1800
+    let id = requestAnimationFrame(function tick(ts) {
+      if (!startTs) startTs = ts
+      const progress = Math.min((ts - startTs) / duration, 1)
+      setDrawn(1 - Math.pow(1 - progress, 3))
+      if (progress < 1) id = requestAnimationFrame(tick)
+    })
+    return () => cancelAnimationFrame(id)
+  }, [started])
+
+  const r = 76
+  const circ = 2 * Math.PI * r
+  const pct = 84.85
+  const offset = circ * (1 - (pct / 100) * drawn)
+  const disp = drawn >= 1 ? "84.85" : (pct * drawn).toFixed(0)
+
+  return (
+    <div ref={ref} style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"28px 24px" }}>
+      <svg width={184} height={184} viewBox="0 0 184 184">
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#FF2D78"/>
+            <stop offset="100%" stopColor="#FF8AAB"/>
+          </linearGradient>
+        </defs>
+        <circle cx={92} cy={92} r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={10}/>
+        <circle cx={92} cy={92} r={r} fill="none" stroke="url(#ringGrad)" strokeWidth={10}
+          strokeDasharray={circ} strokeDashoffset={offset}
+          strokeLinecap="round" transform="rotate(-90 92 92)"
+        />
+        <text x={92} y={86} textAnchor="middle" fill="#fff" fontSize={29} fontWeight={700} fontFamily="var(--font)" letterSpacing="-1">{disp}%</text>
+        <text x={92} y={107} textAnchor="middle" fill="rgba(255,255,255,0.45)" fontSize={11} fontFamily="var(--font)">cross-subject</text>
+        <text x={92} y={122} textAnchor="middle" fill="rgba(255,255,255,0.28)" fontSize={9} fontFamily="var(--font)">LOSO · 10 subjects</text>
+      </svg>
+      <div style={{ fontSize:9, color:"rgba(255,255,255,0.22)", textTransform:"uppercase", letterSpacing:"0.14em", marginTop:4, textAlign:"center" }}>Ninapro DB5</div>
+    </div>
+  )
+}
+
 export default function Landing() {
   const navigate = useNavigate()
   const todaysRead = useMemo(() => {
@@ -181,26 +238,22 @@ export default function Landing() {
       <Navbar />
 
       {/* ── HERO */}
-      <section style={{ position:"relative", minHeight:"100vh", display:"flex", alignItems:"center", background:"linear-gradient(160deg, #ffffff 0%, #fff0f5 50%, #f5f0ff 100%)" }}>
-        <div style={{ position:"absolute", inset:0, zIndex:0, opacity:0.6 }}>
-          <Threads
-            color={[1, 0.18, 0.47]}
-            amplitude={2.6}
-            distance={0}
-            enableMouseInteraction={false}
-          />
+      <section style={{ position:"relative", minHeight:"100vh", display:"flex", alignItems:"center", background:"#030012" }}>
+        <div style={{ position:"absolute", inset:0, zIndex:0, opacity:0.45 }}>
+          <Threads color={[1, 0.18, 0.47]} amplitude={2.6} distance={0} enableMouseInteraction={false}/>
         </div>
-        <div style={{ position:"absolute", bottom:0, left:0, right:0, height:180, background:"linear-gradient(160deg, rgba(255,255,255,0.85) 0%, rgba(255,240,245,0.85) 50%, rgba(245,240,255,0.85) 100%)", zIndex:1, pointerEvents:"none" }}/>
+        <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 70% 60% at 20% 50%, rgba(255,45,120,0.10) 0%, transparent 70%)", zIndex:1, pointerEvents:"none" }}/>
+        <div style={{ position:"absolute", bottom:0, left:0, right:0, height:220, background:"linear-gradient(to bottom, transparent, var(--bg))", zIndex:2, pointerEvents:"none" }}/>
 
-        <div style={{ maxWidth:920, margin:"0 auto", padding:"140px 32px 120px", position:"relative", zIndex:1, width:"100%" }}>
-          <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,255,255,0.85)", backdropFilter:"blur(8px)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:100, padding:"6px 18px", fontSize:13, color:"var(--accent)", fontWeight:500, marginBottom:36, animation:"fadeUp 0.6s ease", boxShadow:"0 2px 12px rgba(255,45,120,0.1)" }}>
+        <div style={{ maxWidth:920, margin:"0 auto", padding:"140px 32px 120px", position:"relative", zIndex:3, width:"100%" }}>
+          <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,255,255,0.07)", backdropFilter:"blur(8px)", border:"1px solid rgba(255,45,120,0.22)", borderRadius:100, padding:"6px 18px", fontSize:13, color:"rgba(255,255,255,0.78)", fontWeight:500, marginBottom:36, animation:"fadeUp 0.6s ease", boxShadow:"0 2px 12px rgba(255,45,120,0.1)" }}>
             <span style={{ width:7,height:7,borderRadius:"50%",background:"var(--accent)",display:"inline-block",animation:"pulse 2s infinite" }}/>
             {t("landing_badge")}
           </div>
 
           <HeroHeading />
 
-          <p style={{ fontSize:"clamp(17px,2.5vw,21px)", color:"var(--text)", fontWeight:400, lineHeight:1.75, maxWidth:600, marginBottom:48, animation:"fadeUp 0.6s 0.2s ease both" }}>
+          <p style={{ fontSize:"clamp(17px,2.5vw,21px)", color:"rgba(255,255,255,0.65)", fontWeight:400, lineHeight:1.75, maxWidth:600, marginBottom:48, animation:"fadeUp 0.6s 0.2s ease both" }}>
             {t("landing_sub")}
           </p>
 
@@ -209,9 +262,9 @@ export default function Landing() {
               onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.04)";e.currentTarget.style.boxShadow="0 8px 32px rgba(255,45,120,0.5)"}}
               onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow="0 4px 24px rgba(255,45,120,0.35)"}}
             >{t("landing_try")}</button>
-            <button onClick={()=>navigate("/educators")} style={{ background:"rgba(255,255,255,0.85)", backdropFilter:"blur(8px)", color:"var(--text)", border:"1px solid var(--border-mid)", borderRadius:100, padding:"15px 32px", fontSize:16, fontFamily:"var(--font)", fontWeight:400, cursor:"pointer", transition:"border-color 0.2s" }}
-              onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,45,120,0.3)"}
-              onMouseLeave={e=>e.currentTarget.style.borderColor="var(--border-mid)"}
+            <button onClick={()=>navigate("/educators")} style={{ background:"rgba(255,255,255,0.08)", backdropFilter:"blur(8px)", color:"rgba(255,255,255,0.85)", border:"1px solid rgba(255,255,255,0.15)", borderRadius:100, padding:"15px 32px", fontSize:16, fontFamily:"var(--font)", fontWeight:400, cursor:"pointer", transition:"border-color 0.2s, background 0.2s" }}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor="rgba(255,45,120,0.4)";e.currentTarget.style.background="rgba(255,255,255,0.12)"}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor="rgba(255,255,255,0.15)";e.currentTarget.style.background="rgba(255,255,255,0.08)"}}
             >{t("landing_science")}</button>
           </div>
         </div>
@@ -369,33 +422,38 @@ export default function Landing() {
           </Reveal>
 
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
-            {/* Per-gesture accuracy */}
+            {/* Left: Accuracy ring + per-gesture bars */}
             <Reveal>
-              <div style={{ background:"var(--bg)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"28px 32px" }}>
-                <div style={{ fontSize:11, fontWeight:600, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:20 }}>Per-gesture recall (cross-subject)</div>
-                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
-                  {[
-                    { label:"Index flex",  val:88, color:"#FF2D78" },
-                    { label:"Fist",        val:87, color:"#EF4444" },
-                    { label:"Thumb flex",  val:87, color:"#F59E0B" },
-                    { label:"Middle flex", val:83, color:"#3B82F6" },
-                    { label:"Pinky flex",  val:82, color:"#10B981" },
-                    { label:"Ring flex",   val:80, color:"#8B5CF6" },
-                  ].map(r => (
-                    <div key={r.label} style={{ display:"flex", alignItems:"center", gap:12 }}>
-                      <div style={{ width:76, fontSize:12, color:"var(--text-secondary)", fontWeight:300, textAlign:"right", flexShrink:0 }}>{r.label}</div>
-                      <div style={{ flex:1, height:6, background:"var(--border)", borderRadius:100, overflow:"hidden" }}>
-                        <div style={{ height:"100%", width:`${r.val}%`, background:r.color, borderRadius:100 }}/>
-                      </div>
-                      <div style={{ width:36, fontSize:12, fontWeight:600, color:r.color, flexShrink:0 }}>{r.val}%</div>
-                    </div>
-                  ))}
+              <div style={{ background:"var(--bg)", borderRadius:"var(--radius)", border:"1px solid var(--border)", overflow:"hidden", height:"100%" }}>
+                <div style={{ background:"#030012", borderBottom:"1px solid rgba(255,45,120,0.14)", display:"flex", justifyContent:"center" }}>
+                  <AccuracyRing />
                 </div>
-                <div style={{ marginTop:16, fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>Mean: 84.85%  ·  LOSO evaluation  ·  10 subjects</div>
+                <div style={{ padding:"24px 28px" }}>
+                  <div style={{ fontSize:11, fontWeight:600, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:16 }}>Per-gesture recall</div>
+                  <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                    {[
+                      { label:"Index flex",  val:88, color:"#FF2D78" },
+                      { label:"Fist",        val:87, color:"#EF4444" },
+                      { label:"Thumb flex",  val:87, color:"#F59E0B" },
+                      { label:"Middle flex", val:83, color:"#3B82F6" },
+                      { label:"Pinky flex",  val:82, color:"#10B981" },
+                      { label:"Ring flex",   val:80, color:"#8B5CF6" },
+                    ].map(r => (
+                      <div key={r.label} style={{ display:"flex", alignItems:"center", gap:12 }}>
+                        <div style={{ width:76, fontSize:12, color:"var(--text-secondary)", fontWeight:300, textAlign:"right", flexShrink:0 }}>{r.label}</div>
+                        <div style={{ flex:1, height:6, background:"var(--border)", borderRadius:100, overflow:"hidden" }}>
+                          <div style={{ height:"100%", width:`${r.val}%`, background:r.color, borderRadius:100 }}/>
+                        </div>
+                        <div style={{ width:36, fontSize:12, fontWeight:600, color:r.color, flexShrink:0 }}>{r.val}%</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop:16, fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>Mean: 84.85%  ·  LOSO evaluation  ·  10 subjects</div>
+                </div>
               </div>
             </Reveal>
 
-            {/* Classifier comparison + callouts */}
+            {/* Right: Classifier comparison + callouts */}
             <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
               <Reveal>
                 <div style={{ background:"var(--bg)", borderRadius:"var(--radius)", border:"1px solid var(--border)", padding:"24px 28px" }}>
@@ -458,10 +516,10 @@ export default function Landing() {
               <div style={{ display:"flex", gap:10 }}>
                 {[
                   { icon:"fab fa-github",      href:"https://github.com/Jaden300/myojam",            label:"GitHub"    },
-                  { icon:"fab fa-linkedin-in", href:"https://www.linkedin.com/company/myojam/",     label:"LinkedIn"  },
-                  { icon:"fab fa-instagram",   href:"https://www.instagram.com/myojam_official/",   label:"Instagram" },
-                  { icon:"fab fa-x-twitter",   href:"https://x.com/myojam_official",                label:"X"         },
-                  { icon:"fab fa-youtube",     href:"https://www.youtube.com/@myojam-official",      label:"YouTube"   },
+                  { icon:"fab fa-linkedin-in", href:"https://www.linkedin.com/company/myojam/",       label:"LinkedIn"  },
+                  { icon:"fab fa-instagram",   href:"https://www.instagram.com/myojam_official/",     label:"Instagram" },
+                  { icon:"fab fa-x-twitter",   href:"https://x.com/myojam_official",                  label:"X"         },
+                  { icon:"fab fa-youtube",     href:"https://www.youtube.com/@myojam-official",        label:"YouTube"   },
                 ].map(s => (
                   <a key={s.label} href={s.href} target="_blank" rel="noreferrer" title={s.label} style={{
                     width:44, height:44, borderRadius:"50%",
@@ -552,16 +610,16 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Desktop app download */}
+      {/* ── DESKTOP APP */}
       <section style={{ borderTop:"1px solid var(--border)", background:"var(--bg-secondary)", padding:"64px 32px" }}>
         <div style={{ maxWidth:860, margin:"0 auto", display:"flex", justifyContent:"space-between", alignItems:"center", gap:40, flexWrap:"wrap" }}>
           <div>
-            <div style={{ fontSize:11, fontWeight:600, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.1em", marginBottom:12 }}>macOS Desktop App</div>
+            <div style={{ fontSize:11, fontWeight:600, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.1em", marginBottom:12 }}>Desktop App</div>
             <h2 style={{ fontSize:"clamp(22px,3.5vw,36px)", fontWeight:600, letterSpacing:"-1px", color:"var(--text)", lineHeight:1.1, marginBottom:16 }}>
               The future of EMG,<br/>in your hands.
             </h2>
             <p style={{ fontSize:15, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:440, marginBottom:0 }}>
-              Real-time gesture classification from a surface EMG sensor — running locally on your Mac, powered by a Random Forest with 84.85% cross-subject accuracy. Live waveform, 3D hand model, session tracking.
+              Real-time gesture classification from a surface EMG sensor — running locally, powered by a Random Forest with 84.85% cross-subject accuracy. Live waveform, 3D hand model, session tracking.
             </p>
           </div>
           <div style={{ display:"flex", flexDirection:"column", gap:12, flexShrink:0 }}>
@@ -577,7 +635,7 @@ export default function Landing() {
               Get the desktop app →
             </button>
             <div style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300, textAlign:"center" }}>
-              v1.0.0 · ~295 MB · macOS 12+ · MIT licence
+              v1.0.0 · macOS, Windows & Linux · MIT licence
             </div>
           </div>
         </div>
