@@ -124,6 +124,7 @@ export default function Navbar() {
   const [progress, setProgress] = useState(0)
 
   const isArticle = ARTICLE_PATHS.some(p => pathname.startsWith(p)) && pathname !== "/education"
+  const isDark = pathname === "/download" || pathname === "/signal"
 
   useEffect(() => {
     if (!isArticle) { setProgress(0); return }
@@ -150,7 +151,7 @@ export default function Navbar() {
     {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
     <nav style={{
       position:"fixed", top:0, left:0, right:0, zIndex:100,
-      background:"rgba(255,255,255,0.88)",
+      background: isDark ? "rgba(7,7,26,0.92)" : "rgba(255,255,255,0.88)",
       backdropFilter:"blur(20px)",
       borderBottom:"1px solid var(--border)",
       height:52, padding:"0 32px",

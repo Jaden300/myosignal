@@ -260,6 +260,31 @@ function GapViz() {
   )
 }
 
+const ROTATE_WORDS = ["gesture recognition", "muscle sensing", "neural interfaces", "signal classification", "bioelectric control"]
+
+function RotatingText() {
+  const [idx, setIdx] = useState(0)
+  const [visible, setVisible] = useState(true)
+  useEffect(() => {
+    const t = setInterval(() => {
+      setVisible(false)
+      setTimeout(() => { setIdx(p => (p + 1) % ROTATE_WORDS.length); setVisible(true) }, 280)
+    }, 2600)
+    return () => clearInterval(t)
+  }, [])
+  return (
+    <span style={{
+      color: PINK,
+      display: "inline-block",
+      opacity: visible ? 1 : 0,
+      transform: visible ? "translateY(0)" : "translateY(-10px)",
+      transition: "opacity 0.28s ease, transform 0.28s ease",
+    }}>
+      {ROTATE_WORDS[idx]}
+    </span>
+  )
+}
+
 export default function Landing() {
   const navigate = useNavigate()
   const todaysRead = useMemo(() => {
@@ -282,21 +307,19 @@ export default function Landing() {
           <Threads color={[1, 0.18, 0.47]} amplitude={2.6} distance={0} enableMouseInteraction={false}/>
         </div>
         <div style={{ position:"absolute", inset:0, background:"radial-gradient(ellipse 65% 55% at 15% 50%, rgba(255,45,120,0.09) 0%, transparent 70%)", zIndex:1, pointerEvents:"none" }}/>
-        <div style={{ position:"absolute", bottom:0, left:0, right:0, height:220, background:"linear-gradient(to bottom, transparent, var(--bg))", zIndex:2, pointerEvents:"none" }}/>
-
         <div style={{ maxWidth:1000, margin:"0 auto", padding:"120px 32px 100px", position:"relative", zIndex:3, width:"100%" }}>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 420px", gap:56, alignItems:"center" }}>
             {/* Left — text */}
             <div>
               <div style={{ display:"inline-flex", alignItems:"center", gap:8, background:"rgba(255,255,255,0.06)", border:"1px solid rgba(255,45,120,0.2)", borderRadius:100, padding:"5px 16px", fontSize:12, color:"rgba(255,255,255,0.65)", fontFamily:"monospace", marginBottom:32, animation:"fadeUp 0.5s ease" }}>
                 <span style={{ width:6, height:6, borderRadius:"50%", background:PINK, display:"inline-block", animation:"pulse 2s infinite" }}/>
-                Student research · MIT License · Open source
+                MIT License · Open source · Ninapro DB5
               </div>
 
               <h1 style={{ fontSize:"clamp(36px,5.5vw,68px)", fontWeight:700, letterSpacing:"-2.5px", lineHeight:1.08, color:"#fff", marginBottom:24, animation:"fadeUp 0.5s 0.08s ease both" }}>
                 Open-source EMG<br/>
-                gesture classification<br/>
-                <span style={{ color:PINK }}>that generalises.</span>
+                <RotatingText /><br/>
+                that generalises.
               </h1>
 
               <p style={{ fontSize:"clamp(15px,1.8vw,18px)", color:"rgba(255,255,255,0.62)", fontWeight:300, lineHeight:1.8, maxWidth:520, marginBottom:14, animation:"fadeUp 0.5s 0.16s ease both" }}>
@@ -347,7 +370,7 @@ export default function Landing() {
             { label:"License",  value:"MIT",              href:"https://github.com/Jaden300/myojam/blob/main/LICENSE" },
             { label:"Method",   value:"LOSO cross-validation", href:"/research/paper" },
             { label:"Hardware", value:"Delsys Trigno, 16-ch sEMG", href:null },
-            { label:"Platform", value:"Student research project", href:null },
+            { label:"Stack", value:"Python · PyQt6 · scikit-learn", href:null },
           ].map(p => (
             <div key={p.label} style={{ display:"flex", gap:6, alignItems:"center" }}>
               <span style={{ fontSize:10, color:"var(--text-tertiary)", fontWeight:300, fontFamily:"monospace" }}>{p.label}:</span>
