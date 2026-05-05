@@ -5,821 +5,652 @@ import Footer from "./Footer"
 import { Reveal, SectionPill } from "./Animate"
 import LiquidChrome from "./components/LiquidChrome"
 
-const CYAN   = "#06B6D4"
-const BLUE   = "#3B82F6"
-const PURPLE = "#8B5CF6"
-const GREEN  = "#10B981"
-const AMBER  = "#F59E0B"
-const PINK   = "#FF2D78"
+const CYAN="#06B6D4", BLUE="#3B82F6", PURPLE="#8B5CF6", GREEN="#10B981", AMBER="#F59E0B", PINK="#FF2D78", RED="#EF4444"
 
-function useInView(threshold = 0.15) {
-  const ref = useRef(null)
-  const [vis, setVis] = useState(false)
-  useEffect(() => {
-    const el = ref.current; if (!el) return
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVis(true) }, { threshold })
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
-  return [ref, vis]
+function useInView(threshold=0.08){
+  const ref=useRef(null), [vis,setVis]=useState(false)
+  useEffect(()=>{
+    const el=ref.current; if(!el) return
+    const obs=new IntersectionObserver(([e])=>{if(e.isIntersecting)setVis(true)},{threshold})
+    obs.observe(el); return()=>obs.disconnect()
+  },[])
+  return[ref,vis]
 }
 
-// ── EMG Hero Canvas ───────────────────────────────────────────────────────────
-function EMGPulse() {
-  const canvasRef = useRef(null)
-  const raf = useRef(null)
-  useEffect(() => {
-    const canvas = canvasRef.current; if (!canvas) return
-    const ctx = canvas.getContext("2d")
-    const ro = new ResizeObserver(() => {
-      const dpr = window.devicePixelRatio || 1
-      canvas.width  = canvas.offsetWidth  * dpr
-      canvas.height = canvas.offsetHeight * dpr
-      ctx.scale(dpr, dpr)
-    })
-    ro.observe(canvas)
-    const phases = [0,1.3,2.6,3.9,5.2], freqs = [1.2,1.7,0.9,1.4,1.1]
-    let t = 0
-    function draw() {
-      const W = canvas.offsetWidth, H = canvas.offsetHeight
-      ctx.clearRect(0, 0, W, H)
-      for (let c = 0; c < 5; c++) {
-        const cy = H / 6 * (c + 1), amp = (H / 6) * 0.38
-        ctx.filter = `blur(2px)`
-        ctx.strokeStyle = `rgba(255,45,120,${0.06 + c * 0.03})`
-        ctx.lineWidth = 1.5
+function EMGPulse(){
+  const canvasRef=useRef(null), raf=useRef(null)
+  useEffect(()=>{
+    const canvas=canvasRef.current; if(!canvas) return
+    const ctx=canvas.getContext("2d")
+    const ro=new ResizeObserver(()=>{
+      const dpr=window.devicePixelRatio||1
+      canvas.width=canvas.offsetWidth*dpr; canvas.height=canvas.offsetHeight*dpr
+      ctx.scale(dpr,dpr)
+    }); ro.observe(canvas)
+    const phases=[0,1.3,2.6,3.9,5.2], freqs=[1.2,1.7,0.9,1.4,1.1]; let t=0
+    function draw(){
+      const W=canvas.offsetWidth, H=canvas.offsetHeight
+      ctx.clearRect(0,0,W,H)
+      for(let c=0;c<5;c++){
+        const cy=H/6*(c+1), amp=(H/6)*0.38
+        ctx.filter=`blur(2px)`; ctx.strokeStyle=`rgba(255,45,120,${0.06+c*0.03})`; ctx.lineWidth=1.5
         ctx.beginPath()
-        for (let x = 0; x < W; x++) {
-          const y = cy + amp * 0.6 * Math.sin(x * 0.025 * freqs[c] + phases[c] + t * freqs[c])
-                      + amp * 0.3 * Math.sin(x * 0.06  + phases[c] * 1.5 + t * 0.7)
-          x === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y)
+        for(let x=0;x<W;x++){
+          const y=cy+amp*0.6*Math.sin(x*0.025*freqs[c]+phases[c]+t*freqs[c])+amp*0.3*Math.sin(x*0.06+phases[c]*1.5+t*0.7)
+          x===0?ctx.moveTo(x,y):ctx.lineTo(x,y)
         }
-        ctx.stroke()
-        ctx.filter = "none"
-        ctx.strokeStyle = `rgba(255,45,120,${0.18 + c * 0.04})`
-        ctx.lineWidth = 1
+        ctx.stroke(); ctx.filter="none"; ctx.strokeStyle=`rgba(255,45,120,${0.18+c*0.04})`; ctx.lineWidth=1
         ctx.beginPath()
-        for (let x = 0; x < W; x++) {
-          const y = cy + amp * 0.6 * Math.sin(x * 0.025 * freqs[c] + phases[c] + t * freqs[c])
-                      + amp * 0.3 * Math.sin(x * 0.06  + phases[c] * 1.5 + t * 0.7)
-          x === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y)
+        for(let x=0;x<W;x++){
+          const y=cy+amp*0.6*Math.sin(x*0.025*freqs[c]+phases[c]+t*freqs[c])+amp*0.3*Math.sin(x*0.06+phases[c]*1.5+t*0.7)
+          x===0?ctx.moveTo(x,y):ctx.lineTo(x,y)
         }
-        ctx.stroke()
-        phases[c] += 0.018
+        ctx.stroke(); phases[c]+=0.018
       }
-      t += 0.012
-      raf.current = requestAnimationFrame(draw)
+      t+=0.012; raf.current=requestAnimationFrame(draw)
     }
-    draw()
-    return () => { ro.disconnect(); cancelAnimationFrame(raf.current) }
-  }, [])
-  return <canvas ref={canvasRef} style={{ position:"absolute", inset:0, width:"100%", height:"100%" }}/>
+    draw(); return()=>{ro.disconnect();cancelAnimationFrame(raf.current)}
+  },[])
+  return <canvas ref={canvasRef} style={{position:"absolute",inset:0,width:"100%",height:"100%"}}/>
 }
 
-// ── Card 1: The 300ms Wall ────────────────────────────────────────────────────
-const WIN_DATA = [
-  { w:100,  a:62.4  }, { w:200, a:68.2  }, { w:300,  a:73.1  },
-  { w:400,  a:76.8  }, { w:600, a:80.4  }, { w:800,  a:83.2  },
-  { w:1000, a:84.85 }, { w:1500,a:85.1  }, { w:2000, a:85.3  },
+// ── CARD 1: THE 300ms WALL ────────────────────────────────────────────────────
+const WIN_DATA=[
+  {w:100,a:62.4},{w:200,a:68.2},{w:300,a:73.1},{w:400,a:76.8},
+  {w:600,a:80.4},{w:800,a:83.2},{w:1000,a:84.85},{w:1500,a:85.1},{w:2000,a:85.3}
 ]
 
-function WindowChart({ vis }) {
-  const W=300, H=140, PL=36, PR=12, PT=12, PB=28
+function WindowChart({vis}){
+  const W=420,H=200,PL=44,PR=20,PT=18,PB=36
   const CW=W-PL-PR, CH=H-PT-PB
-  const tx = w => PL + (w/2000)*CW
-  const ty = a => PT + (1-(a-55)/35)*CH
-  const lineD = WIN_DATA.map((p,i)=>`${i===0?"M":"L"}${tx(p.w)},${ty(p.a)}`).join(" ")
-  const areaD = `${lineD} L${tx(2000)},${ty(55)} L${tx(100)},${ty(55)} Z`
-  return (
-    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow:"visible" }}>
+  const tx=w=>PL+(w/2000)*CW, ty=a=>PT+(1-(a-58)/32)*CH
+  const lineD=WIN_DATA.map((p,i)=>`${i===0?"M":"L"}${tx(p.w)},${ty(p.a)}`).join(" ")
+  const areaD=`${lineD} L${tx(2000)},${ty(58)} L${tx(100)},${ty(58)} Z`
+  return(
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{overflow:"visible"}}>
       <defs>
-        <linearGradient id="cwGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={CYAN} stopOpacity="0.3"/>
-          <stop offset="100%" stopColor={CYAN} stopOpacity="0"/>
+        <linearGradient id="waG" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={CYAN} stopOpacity="0.25"/><stop offset="100%" stopColor={CYAN} stopOpacity="0"/>
         </linearGradient>
-        <clipPath id="cwClip"><rect x={PL} y={PT} width={CW} height={CH}/></clipPath>
+        <clipPath id="waC"><rect x={PL} y={PT} width={CW} height={CH}/></clipPath>
+        <linearGradient id="redZ" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor={RED} stopOpacity="0.15"/><stop offset="100%" stopColor={RED} stopOpacity="0.03"/>
+        </linearGradient>
       </defs>
-      {[65,70,75,80,85].map(a=>(
+      {[60,65,70,75,80,85,90].map(a=>(
         <g key={a}>
-          <line x1={PL} x2={PL+CW} y1={ty(a)} y2={ty(a)} stroke={`${CYAN}10`}/>
-          <text x={PL-3} y={ty(a)+4} textAnchor="end" fill={`${CYAN}50`} fontSize={7.5}>{a}%</text>
+          <line x1={PL} x2={PL+CW} y1={ty(a)} y2={ty(a)} stroke={a===80?`${GREEN}28`:`${CYAN}08`} strokeWidth={a===80?1.5:1} strokeDasharray={a===80?"5,3":""}/>
+          <text x={PL-6} y={ty(a)+4} textAnchor="end" fill={a===80?`${GREEN}80`:`${CYAN}35`} fontSize={8.5} fontWeight={a===80?700:400}>{a}%</text>
         </g>
       ))}
-      {/* 80% clinical threshold */}
-      <line x1={PL} x2={PL+CW} y1={ty(80)} y2={ty(80)} stroke={`${GREEN}55`} strokeWidth={1} strokeDasharray="4,3"/>
-      <text x={PL+CW-2} y={ty(80)-3} textAnchor="end" fill={`${GREEN}80`} fontSize={7}>80% target</text>
-      {/* 300ms deadline */}
-      <line x1={tx(300)} x2={tx(300)} y1={PT} y2={PT+CH} stroke="rgba(239,68,68,0.55)" strokeWidth={1.5} strokeDasharray="4,3"/>
-      <text x={tx(300)+3} y={PT+8} fill="rgba(239,68,68,0.75)" fontSize={7}>300ms</text>
-      {/* Area */}
-      <path d={areaD} fill="url(#cwGrad)" clipPath="url(#cwClip)" opacity={vis?1:0} style={{ transition:"opacity 0.5s 0.6s" }}/>
-      {/* Line */}
-      <path d={lineD} fill="none" stroke={CYAN} strokeWidth={2} clipPath="url(#cwClip)"
-        strokeDasharray={380} strokeDashoffset={vis?0:380}
-        style={{ transition:"stroke-dashoffset 1.4s cubic-bezier(0.22,1,0.36,1) 0.2s" }}
-        strokeLinecap="round" strokeLinejoin="round"/>
+      <rect x={PL} y={PT} width={tx(300)-PL} height={CH} fill="url(#redZ)" clipPath="url(#waC)"/>
+      <line x1={tx(300)} x2={tx(300)} y1={PT} y2={PT+CH} stroke={`${RED}60`} strokeWidth={1.5} strokeDasharray="5,3"/>
+      <text x={tx(300)+4} y={PT+14} fill={`${RED}85`} fontSize={8.5} fontWeight={700}>300ms limit</text>
+      <text x={PL+CW-2} y={ty(80)-6} textAnchor="end" fill={`${GREEN}85`} fontSize={8.5} fontWeight={700}>80% clinical target</text>
+      <path d={areaD} fill="url(#waG)" clipPath="url(#waC)" opacity={vis?1:0} style={{transition:"opacity 0.5s 0.6s"}}/>
+      <path d={lineD} fill="none" stroke={CYAN} strokeWidth={2.5} clipPath="url(#waC)" strokeLinecap="round" strokeLinejoin="round"
+        strokeDasharray={520} strokeDashoffset={vis?0:520} style={{transition:"stroke-dashoffset 1.6s cubic-bezier(0.22,1,0.36,1) 0.2s"}}/>
       {WIN_DATA.map((p,i)=>(
-        <circle key={i} cx={tx(p.w)} cy={ty(p.a)} r={p.w===1000?5:3}
-          fill={p.w===1000?CYAN:"transparent"} stroke={p.w===1000?CYAN:`${CYAN}60`} strokeWidth={1.5}
-          opacity={vis?1:0} style={{ transition:`opacity 0.3s ${0.9+i*0.07}s` }}/>
+        <g key={i}>
+          <circle cx={tx(p.w)} cy={ty(p.a)} r={p.w===1000?6:3.5}
+            fill={p.w===1000?CYAN:"none"} stroke={p.w===1000?CYAN:`${CYAN}60`} strokeWidth={1.5}
+            opacity={vis?1:0} style={{transition:`opacity 0.3s ${0.8+i*0.07}s`}}/>
+          {p.w===1000&&vis&&<text x={tx(p.w)} y={ty(p.a)-12} textAnchor="middle" fill={CYAN} fontSize={9} fontWeight={700}>84.85% @ 1,000ms</text>}
+        </g>
       ))}
       {[0,500,1000,1500,2000].map(w=>(
-        <text key={w} x={tx(w)} y={H-3} textAnchor="middle" fill={`${CYAN}35`} fontSize={7}>{w}ms</text>
+        <text key={w} x={tx(w)} y={H-5} textAnchor="middle" fill={`${CYAN}35`} fontSize={8}>{w}ms</text>
       ))}
+      <text x={PL+CW/2} y={H+1} textAnchor="middle" fill={`${CYAN}25`} fontSize={7.5}>window size →</text>
     </svg>
   )
 }
 
-function LatencyCard() {
-  const [open, setOpen] = useState(false)
-  const [chartRef, chartVis] = useInView(0.05)
-  const [gaugeVis, setGaugeVis] = useState(false)
-  useEffect(() => { const t = setTimeout(() => setGaugeVis(true), 700); return () => clearTimeout(t) }, [])
-
-  return (
-    <div style={{ border:`1px solid ${CYAN}25`, borderRadius:16, overflow:"hidden", marginBottom:20, background:"var(--bg)" }}>
-      <div style={{ display:"grid", gridTemplateColumns:"110px 1fr" }}>
-        {/* Dark left panel */}
-        <div style={{ background:"linear-gradient(160deg,#001920,#000E14)", padding:"28px 20px", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", borderRight:`1px solid ${CYAN}18` }}>
-          <div style={{ fontSize:52, fontWeight:800, color:CYAN, letterSpacing:"-3px", lineHeight:1 }}>300</div>
-          <div style={{ fontSize:12, fontWeight:700, color:`${CYAN}70`, letterSpacing:"0.15em", textTransform:"uppercase" }}>ms</div>
-          <div style={{ fontSize:8.5, color:`${CYAN}45`, textTransform:"uppercase", letterSpacing:"0.1em", marginTop:6, textAlign:"center", lineHeight:1.6 }}>the<br/>hard wall</div>
-        </div>
-
-        <div style={{ padding:"22px 22px" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
-            <span style={{ fontSize:9.5, fontWeight:700, color:CYAN, background:`${CYAN}14`, border:`1px solid ${CYAN}30`, borderRadius:100, padding:"2px 9px" }}>EMG Fact · Apr 2025</span>
-          </div>
-          <div style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginBottom:7, letterSpacing:"-0.3px", lineHeight:1.3 }}>
-            The 300ms wall: real-time EMG has a latency problem
-          </div>
-          <p style={{ fontSize:12, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.65, margin:"0 0 14px" }}>
-            For a prosthetic limb to feel natural, the detect-classify-move loop must finish in under 300ms. Longer and the hand stops feeling like yours.
-          </p>
-          {/* Mini gauge always visible */}
-          <div style={{ marginBottom:12 }}>
-            <div style={{ fontSize:8.5, fontWeight:600, color:`${CYAN}70`, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:5 }}>End-to-end latency</div>
-            <div style={{ position:"relative", paddingBottom:14 }}>
-              <div style={{ display:"flex", height:8, borderRadius:4, overflow:"hidden" }}>
-                <div style={{ flex:3, background:`${GREEN}28`, borderRight:`1px solid ${GREEN}40` }}/>
-                <div style={{ flex:3, background:`${AMBER}18`, borderRight:`1px solid ${AMBER}35` }}/>
-                <div style={{ flex:4, background:"rgba(239,68,68,0.12)" }}/>
-              </div>
-              <div style={{ position:"absolute", top:-3, left:gaugeVis?"64%":"0%", transform:"translateX(-50%)", transition:"left 1.3s cubic-bezier(0.22,1,0.36,1) 0.5s" }}>
-                <div style={{ width:14, height:14, borderRadius:"50%", background:CYAN, border:"2px solid rgba(255,255,255,0.88)", boxShadow:`0 0 10px ${CYAN}90` }}/>
-              </div>
-              <div style={{ display:"flex", justifyContent:"space-between", position:"absolute", bottom:0, left:0, right:0 }}>
-                <span style={{ fontSize:7.5, color:GREEN, fontWeight:600 }}>0</span>
-                <span style={{ fontSize:7.5, color:AMBER, fontWeight:600 }}>300ms</span>
-                <span style={{ fontSize:7.5, color:CYAN, fontWeight:700 }}>~640ms</span>
-                <span style={{ fontSize:7.5, color:"rgba(239,68,68,0.55)" }}>1s+</span>
-              </div>
-            </div>
-          </div>
-          <button onClick={()=>setOpen(o=>!o)} style={{ background:"none", border:`1px solid ${CYAN}30`, borderRadius:100, padding:"5px 14px", fontSize:11, color:CYAN, cursor:"pointer", fontFamily:"var(--font)", transition:"all 0.15s" }}
-            onMouseEnter={e=>e.currentTarget.style.background=`${CYAN}12`}
-            onMouseLeave={e=>e.currentTarget.style.background="none"}
-          >{open?"Collapse ↑":"Full analysis ↓"}</button>
-        </div>
-      </div>
-
-      {open && (
-        <div ref={chartRef} style={{ borderTop:`1px solid ${CYAN}18`, padding:"28px 24px", background:`${CYAN}04` }}>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:28, alignItems:"start" }}>
-            <div>
-              <div style={{ fontSize:12, fontWeight:700, color:"var(--text)", marginBottom:10, letterSpacing:"-0.2px" }}>Window size vs. classification accuracy</div>
-              <WindowChart vis={chartVis}/>
-            </div>
-            <div style={{ paddingTop:4 }}>
-              <div style={{ fontSize:12, fontWeight:600, color:"var(--text)", marginBottom:8 }}>You can't have both</div>
-              <p style={{ fontSize:11.5, color:"var(--text-secondary)", lineHeight:1.75, fontWeight:300, marginBottom:14 }}>
-                A 100ms window gives 62.4% accuracy. A 1000ms window gives 84.85%. But a 1000ms window takes at least 1000ms to fill — already 3× past the deadline before processing begins. Every window shorter than ~600ms fails to cross the 80% clinical threshold.
-              </p>
-              <div style={{ padding:"12px 16px", background:`${CYAN}08`, border:`1px solid ${CYAN}20`, borderLeft:`3px solid ${CYAN}`, borderRadius:"0 10px 10px 0", display:"grid", gap:6 }}>
-                {[["100ms window","62.4% accuracy"],["300ms window","73.1% — below clinical"],["1000ms window","84.85% — myojam's point"]].map(([a,b])=>(
-                  <div key={a} style={{ display:"flex", justifyContent:"space-between", gap:12 }}>
-                    <span style={{ fontSize:11, fontWeight:600, color:CYAN }}>{a}</span>
-                    <span style={{ fontSize:11, color:"var(--text-tertiary)", fontWeight:300 }}>{b}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ── Card 2: Cross-Subject Failure ─────────────────────────────────────────────
-const SUBJECTS = [
-  { id:1, cross:87.2, intra:96.4 }, { id:2, cross:79.3, intra:94.8 },
-  { id:3, cross:91.4, intra:97.2 }, { id:4, cross:82.6, intra:95.6 },
-  { id:5, cross:88.9, intra:96.8 }, { id:6, cross:76.1, intra:93.2 },
-  { id:7, cross:90.2, intra:97.5 }, { id:8, cross:83.7, intra:95.1 },
-  { id:9, cross:78.4, intra:94.0 }, { id:10, cross:85.0,intra:96.1 },
-]
-
-function SubjectDots({ vis }) {
-  return (
-    <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", gap:8 }}>
-      {SUBJECTS.map((s,i) => (
-        <div key={s.id} style={{ textAlign:"center", opacity: vis?1:0, transform: vis?"translateY(0)":"translateY(8px)", transition:`opacity 0.35s ${0.3+i*0.06}s, transform 0.35s ${0.3+i*0.06}s` }}>
-          {/* Person icon */}
-          <svg width={28} height={28} viewBox="0 0 28 28" style={{ margin:"0 auto", display:"block" }}>
-            <circle cx={14} cy={9} r={5} fill={s.cross < 81 ? `${BLUE}60` : BLUE}/>
-            <path d={`M4,27 Q4,18 14,18 Q24,18 24,27`} fill={s.cross < 81 ? `${BLUE}60` : BLUE}/>
-          </svg>
-          {/* Accuracy bar */}
-          <div style={{ height:3, background:"rgba(59,130,246,0.12)", borderRadius:99, marginTop:4, overflow:"hidden" }}>
-            <div style={{ height:"100%", background: s.cross < 81 ? `${BLUE}60` : BLUE, borderRadius:99, width: vis?`${(s.cross-60)/40*100}%`:"0%", transition:`width 0.7s cubic-bezier(0.22,1,0.36,1) ${0.5+i*0.05}s` }}/>
-          </div>
-          <div style={{ fontSize:7.5, color:`${BLUE}90`, marginTop:2, fontWeight:600 }}>{s.cross.toFixed(1)}%</div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function CrossSubjectCard() {
-  const [open, setOpen] = useState(false)
-  const [cardRef, cardVis] = useInView(0.1)
-
-  return (
-    <div ref={cardRef} style={{ border:`1px solid ${BLUE}25`, borderRadius:16, overflow:"hidden", marginBottom:20, background:"var(--bg)" }}>
-      {/* Header: subject grid */}
-      <div style={{ background:`linear-gradient(135deg,${BLUE}06,transparent)`, padding:"22px 22px 16px", borderBottom:`1px solid ${BLUE}14` }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, marginBottom:16 }}>
+function LatencyCard(){
+  const [ref,vis]=useInView(0.05)
+  const PIPELINE=[
+    {label:"Acquisition",ms:"~2ms",note:"16ch @ 200Hz",hot:false},
+    {label:"Band-pass",ms:"~1ms",note:"20–90Hz",hot:false},
+    {label:"Window buffer",ms:"300–1000ms",note:"BOTTLENECK",hot:true},
+    {label:"Feature ext.",ms:"~8ms",note:"64 features",hot:false},
+    {label:"RF classify",ms:"~12ms",note:"100 trees",hot:false},
+    {label:"Output",ms:"~5ms",note:"class+conf",hot:false},
+  ]
+  return(
+    <article ref={ref} style={{borderRadius:20,overflow:"hidden",marginBottom:36,border:`1px solid ${CYAN}30`,background:"#000E18"}}>
+      <div style={{padding:"36px 36px 28px",borderBottom:`1px solid ${CYAN}15`}}>
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:24,flexWrap:"wrap",marginBottom:28}}>
           <div>
-            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
-              <span style={{ fontSize:9.5, fontWeight:700, color:BLUE, background:`${BLUE}14`, border:`1px solid ${BLUE}30`, borderRadius:100, padding:"2px 9px" }}>EMG Fact · Apr 2025</span>
-            </div>
-            <div style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginBottom:6, letterSpacing:"-0.3px", lineHeight:1.3 }}>
-              Why your classifier fails on new people
-            </div>
-            <p style={{ fontSize:12, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.65, margin:0, maxWidth:400 }}>
-              84.85% cross-subject accuracy means roughly <strong style={{ color:BLUE, fontWeight:600 }}>1 in 7</strong> gesture predictions is wrong — and it degrades when the model sees someone it never trained on.
+            <span style={{fontSize:10,fontWeight:700,color:CYAN,background:`${CYAN}15`,border:`1px solid ${CYAN}35`,borderRadius:100,padding:"3px 12px",letterSpacing:"0.06em",textTransform:"uppercase"}}>Deep Dive 01</span>
+            <h2 style={{fontSize:32,fontWeight:800,color:"#fff",letterSpacing:"-1.2px",lineHeight:1.05,margin:"14px 0 10px"}}>The 300ms<br/><span style={{color:CYAN}}>hard wall.</span></h2>
+            <p style={{fontSize:13,color:"rgba(255,255,255,0.5)",fontWeight:300,lineHeight:1.75,maxWidth:360,margin:0}}>
+              A prosthetic hand feels natural when the detect-classify-move loop completes in ≤300ms. The window buffer alone can consume that entire budget.
             </p>
           </div>
-          <div style={{ textAlign:"right", flexShrink:0 }}>
-            <div style={{ fontSize:38, fontWeight:800, color:BLUE, letterSpacing:"-2px", lineHeight:1 }}>1 in 7</div>
-            <div style={{ fontSize:9, color:`${BLUE}60`, textTransform:"uppercase", letterSpacing:"0.08em", lineHeight:1.5 }}>predictions<br/>wrong</div>
+          <div style={{textAlign:"right",flexShrink:0}}>
+            <div style={{fontSize:80,fontWeight:900,color:CYAN,letterSpacing:"-5px",lineHeight:0.85,opacity:0.85}}>300</div>
+            <div style={{fontSize:11,fontWeight:700,color:`${CYAN}55`,letterSpacing:"0.2em",textTransform:"uppercase",marginTop:6}}>ms budget</div>
           </div>
         </div>
-        {/* Subject accuracy grid */}
-        <div>
-          <div style={{ fontSize:8.5, fontWeight:600, color:`${BLUE}60`, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:8 }}>Per-subject cross-subject accuracy (10 subjects, Ninapro DB5)</div>
-          <SubjectDots vis={cardVis}/>
-        </div>
-      </div>
-
-      <div style={{ padding:"14px 22px", display:"flex", alignItems:"center", justifyContent:"space-between", gap:16 }}>
-        <div style={{ display:"flex", gap:16 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:5 }}>
-            <div style={{ width:8, height:8, borderRadius:"50%", background:BLUE }}/>
-            <span style={{ fontSize:10, color:"var(--text-tertiary)" }}>≥81% cross-subject</span>
-          </div>
-          <div style={{ display:"flex", alignItems:"center", gap:5 }}>
-            <div style={{ width:8, height:8, borderRadius:"50%", background:`${BLUE}55` }}/>
-            <span style={{ fontSize:10, color:"var(--text-tertiary)" }}>&lt;81% — harder subjects</span>
-          </div>
-        </div>
-        <button onClick={()=>setOpen(o=>!o)} style={{ background:"none", border:`1px solid ${BLUE}30`, borderRadius:100, padding:"5px 14px", fontSize:11, color:BLUE, cursor:"pointer", fontFamily:"var(--font)", transition:"all 0.15s" }}
-          onMouseEnter={e=>e.currentTarget.style.background=`${BLUE}12`}
-          onMouseLeave={e=>e.currentTarget.style.background="none"}
-        >{open?"Collapse ↑":"Why it happens ↓"}</button>
-      </div>
-
-      {open && (
-        <div style={{ borderTop:`1px solid ${BLUE}18`, padding:"24px 22px", background:`${BLUE}04` }}>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:28 }}>
-            {/* Variance comparison SVG */}
-            <div>
-              <div style={{ fontSize:12, fontWeight:700, color:"var(--text)", marginBottom:10 }}>Intra- vs cross-subject variance</div>
-              <svg width="100%" viewBox="0 0 260 120" style={{ overflow:"visible" }}>
-                <defs>
-                  <linearGradient id="intraG" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={PURPLE} stopOpacity="0.4"/>
-                    <stop offset="100%" stopColor={PURPLE} stopOpacity="0"/>
-                  </linearGradient>
-                  <linearGradient id="crossG" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={BLUE} stopOpacity="0.4"/>
-                    <stop offset="100%" stopColor={BLUE} stopOpacity="0"/>
-                  </linearGradient>
-                </defs>
-                {/* Y axis labels */}
-                {[70,80,90,100].map(v=>(
-                  <g key={v}>
-                    <text x={26} y={10+(1-(v-65)/40)*100+4} textAnchor="end" fill="rgba(59,130,246,0.4)" fontSize={7.5}>{v}%</text>
-                    <line x1={28} x2={260} y1={10+(1-(v-65)/40)*100} y2={10+(1-(v-65)/40)*100} stroke="rgba(59,130,246,0.06)"/>
-                  </g>
-                ))}
-                {/* Intra-subject: tight cluster ~94-97.5% */}
-                {SUBJECTS.map((s,i)=>{
-                  const y = 10+(1-(s.intra-65)/40)*100
-                  const x = 140+i*11
-                  return <circle key={s.id} cx={x} cy={y} r={4} fill={PURPLE} opacity={0.75}/>
-                })}
-                <text x={200} y={6} textAnchor="middle" fill={`${PURPLE}90`} fontSize={8} fontWeight={600}>intra-subject</text>
-                {/* Cross-subject: spread 76-91% */}
-                {SUBJECTS.map((s,i)=>{
-                  const y = 10+(1-(s.cross-65)/40)*100
-                  const x = 35+i*11
-                  return <circle key={s.id} cx={x} cy={y} r={4} fill={BLUE} opacity={0.75}/>
-                })}
-                <text x={90} y={6} textAnchor="middle" fill={`${BLUE}90`} fontSize={8} fontWeight={600}>cross-subject</text>
-                {/* Average lines */}
-                <line x1={30} x2={130} y1={10+(1-(84.85-65)/40)*100} y2={10+(1-(84.85-65)/40)*100} stroke={`${BLUE}60`} strokeDasharray="4,3" strokeWidth={1.5}/>
-                <line x1={140} x2={258} y1={10+(1-(96.1-65)/40)*100} y2={10+(1-(96.1-65)/40)*100} stroke={`${PURPLE}60`} strokeDasharray="4,3" strokeWidth={1.5}/>
-              </svg>
-            </div>
-            <div style={{ paddingTop:4 }}>
-              <div style={{ fontSize:12, fontWeight:600, color:"var(--text)", marginBottom:8 }}>The fix isn't more data</div>
-              <p style={{ fontSize:11.5, color:"var(--text-secondary)", lineHeight:1.75, fontWeight:300, marginBottom:12 }}>
-                Within-subject accuracy inflates numbers — train and test on the same person and you get 95%+. But that's memorisation. Cross-subject is the real test: does it work for someone it's never seen?
-              </p>
-              <p style={{ fontSize:11.5, color:"var(--text-secondary)", lineHeight:1.75, fontWeight:300 }}>
-                The real solution is domain adaptation — teaching the model to adjust to a new user's signal distribution in real time. That's the unsolved problem that makes EMG interfaces hard to ship at scale.
-              </p>
-              <div style={{ marginTop:14, padding:"10px 14px", background:`${BLUE}08`, border:`1px solid ${BLUE}20`, borderLeft:`3px solid ${BLUE}`, borderRadius:"0 8px 8px 0", display:"flex", justifyContent:"space-between" }}>
-                <div><div style={{ fontSize:16, fontWeight:700, color:BLUE }}>84.85%</div><div style={{ fontSize:9, color:"var(--text-tertiary)" }}>cross-subject avg</div></div>
-                <div style={{ textAlign:"right" }}><div style={{ fontSize:16, fontWeight:700, color:PURPLE }}>~96.1%</div><div style={{ fontSize:9, color:"var(--text-tertiary)" }}>intra-subject avg</div></div>
+        <div style={{fontSize:9,fontWeight:700,color:`${CYAN}45`,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:10}}>Pipeline latency breakdown</div>
+        <div style={{display:"flex",alignItems:"stretch",gap:2,overflowX:"auto"}}>
+          {PIPELINE.map((s,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center",flex:s.hot?3:1,minWidth:0}}>
+              <div style={{flex:1,padding:"10px 8px 8px",borderRadius:8,background:s.hot?`${RED}15`:`${CYAN}07`,border:`1px solid ${s.hot?RED+"45":CYAN+"18"}`,textAlign:"center",
+                opacity:vis?1:0,transform:vis?"translateY(0)":"translateY(8px)",transition:`opacity 0.4s ${i*0.08}s,transform 0.4s ${i*0.08}s`}}>
+                <div style={{fontSize:7.5,fontWeight:700,color:s.hot?`${RED}90`:`${CYAN}70`,textTransform:"uppercase",letterSpacing:"0.04em",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{s.label}</div>
+                <div style={{fontSize:s.hot?12:10,fontWeight:800,color:s.hot?RED:"#fff",margin:"3px 0 1px",whiteSpace:"nowrap"}}>{s.ms}</div>
+                <div style={{fontSize:7,color:"rgba(255,255,255,0.3)",whiteSpace:"nowrap"}}>{s.note}</div>
               </div>
+              {i<PIPELINE.length-1&&(
+                <svg width={10} height={10} viewBox="0 0 10 10" style={{flexShrink:0,margin:"0 1px"}}>
+                  <path d="M1,5 L9,5 M6,2 L9,5 L6,8" stroke={`${CYAN}40`} strokeWidth={1.2} fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
             </div>
+          ))}
+        </div>
+        <div style={{marginTop:10,fontSize:10.5,color:"rgba(255,255,255,0.38)",textAlign:"center",fontWeight:300}}>
+          Total real-world: <strong style={{color:`${RED}90`,fontWeight:700}}>~640ms</strong> — already 2× over the 300ms budget
+        </div>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 240px"}}>
+        <div style={{padding:"28px 36px",borderRight:`1px solid ${CYAN}10`}}>
+          <div style={{fontSize:9.5,fontWeight:700,color:`${CYAN}55`,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:14}}>Window size → classification accuracy</div>
+          <WindowChart vis={vis}/>
+        </div>
+        <div style={{padding:"28px 22px"}}>
+          <div style={{fontSize:9.5,fontWeight:700,color:"rgba(255,255,255,0.38)",textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:12}}>The tradeoff</div>
+          <div style={{display:"grid",gap:8}}>
+            {[
+              {w:"100ms",a:"62.4%",note:"Far below clinical threshold",c:RED},
+              {w:"300ms",a:"73.1%",note:"At deadline, still too low",c:RED},
+              {w:"600ms",a:"80.4%",note:"On target but 2× over budget",c:AMBER},
+              {w:"1,000ms",a:"84.85%",note:"myojam's baseline",c:CYAN},
+            ].map(r=>(
+              <div key={r.w} style={{padding:"9px 12px",borderRadius:9,background:`${r.c}08`,border:`1px solid ${r.c}22`}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
+                  <span style={{fontSize:11,fontWeight:700,color:`${r.c}CC`}}>{r.w}</span>
+                  <span style={{fontSize:12,fontWeight:800,color:r.c}}>{r.a}</span>
+                </div>
+                <div style={{fontSize:9.5,color:"rgba(255,255,255,0.35)"}}>{r.note}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{marginTop:12,padding:"11px 13px",background:"rgba(255,255,255,0.03)",borderRadius:9,border:"1px solid rgba(255,255,255,0.07)"}}>
+            <div style={{fontSize:10,color:"rgba(255,255,255,0.35)",lineHeight:1.75,fontWeight:300}}>A 1,000ms window takes at least 1,000ms to fill — before a single feature is computed. High accuracy and low latency are mutually exclusive. That is the fundamental constraint.</div>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    </article>
   )
 }
 
-// ── Card 3: Forearm Anatomy ───────────────────────────────────────────────────
-function ForearmSVG({ size = 200 }) {
-  const S = size
-  return (
-    <svg width={S} height={S * 1.15} viewBox="0 0 200 230" style={{ display:"block" }}>
+// ── CARD 2: CROSS-SUBJECT GAP ─────────────────────────────────────────────────
+const SUBJECTS=[
+  {id:1,cross:87.2,intra:96.4},{id:2,cross:79.3,intra:94.8},
+  {id:3,cross:91.4,intra:97.2},{id:4,cross:82.6,intra:95.6},
+  {id:5,cross:88.9,intra:96.8},{id:6,cross:76.1,intra:93.2},
+  {id:7,cross:90.2,intra:97.5},{id:8,cross:83.7,intra:95.1},
+  {id:9,cross:78.4,intra:94.0},{id:10,cross:85.0,intra:96.1}
+]
+
+function SubjectGapChart({vis}){
+  const W=500, H=200, PL=36, PR=16, PT=20, PB=28
+  const CW=W-PL-PR, CH=H-PT-PB
+  const minV=70, maxV=100
+  const ty=v=>PT+(1-(v-minV)/(maxV-minV))*CH
+  const barW=CW/SUBJECTS.length
+  return(
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{overflow:"visible"}}>
       <defs>
-        <radialGradient id="skinGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor={`${PURPLE}18`}/>
-          <stop offset="100%" stopColor={`${PURPLE}06`}/>
-        </radialGradient>
-        <radialGradient id="m1g"><stop offset="0%" stopColor={`${PURPLE}55`}/><stop offset="100%" stopColor={`${PURPLE}22`}/></radialGradient>
-        <radialGradient id="m2g"><stop offset="0%" stopColor={`${PINK}45`}/><stop offset="100%" stopColor={`${PINK}18`}/></radialGradient>
-        <radialGradient id="m3g"><stop offset="0%" stopColor={`${BLUE}45`}/><stop offset="100%" stopColor={`${BLUE}18`}/></radialGradient>
-        <radialGradient id="m4g"><stop offset="0%" stopColor={`${CYAN}45`}/><stop offset="100%" stopColor={`${CYAN}18`}/></radialGradient>
-        <radialGradient id="m5g"><stop offset="0%" stopColor={`${AMBER}45`}/><stop offset="100%" stopColor={`${AMBER}18`}/></radialGradient>
-        <radialGradient id="m6g"><stop offset="0%" stopColor={`${GREEN}40`}/><stop offset="100%" stopColor={`${GREEN}15`}/></radialGradient>
+        <linearGradient id="intraGrad" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0%" stopColor={PURPLE} stopOpacity="0.5"/><stop offset="100%" stopColor={PURPLE} stopOpacity="0.2"/>
+        </linearGradient>
       </defs>
-      {/* Outer skin boundary */}
-      <ellipse cx={100} cy={115} rx={72} ry={90} fill="url(#skinGrad)" stroke={`${PURPLE}35`} strokeWidth={1.5}/>
-      {/* Fascia layer */}
-      <ellipse cx={100} cy={115} rx={58} ry={75} fill="none" stroke={`${PURPLE}20`} strokeWidth={1} strokeDasharray="4,3"/>
-      {/* Muscle groups */}
-      <ellipse cx={88}  cy={90}  rx={18} ry={22} fill="url(#m1g)" stroke={`${PURPLE}40`} strokeWidth={1}/>
-      <ellipse cx={118} cy={88}  rx={16} ry={20} fill="url(#m2g)" stroke={`${PINK}35`} strokeWidth={1}/>
-      <ellipse cx={78}  cy={128} rx={14} ry={18} fill="url(#m3g)" stroke={`${BLUE}35`} strokeWidth={1}/>
-      <ellipse cx={122} cy={125} rx={15} ry={19} fill="url(#m4g)" stroke={`${CYAN}35`} strokeWidth={1}/>
-      <ellipse cx={100} cy={150} rx={12} ry={14} fill="url(#m5g)" stroke={`${AMBER}35`} strokeWidth={1}/>
-      <ellipse cx={100} cy={110} rx={8}  ry={10} fill="url(#m6g)" stroke={`${GREEN}35`} strokeWidth={1}/>
-      {/* Ulna bone */}
-      <ellipse cx={82} cy={115} rx={5} ry={6} fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" strokeWidth={1}/>
-      {/* Radius bone */}
-      <ellipse cx={118} cy={115} rx={6} ry={7} fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" strokeWidth={1}/>
-      {/* Electrode dots on skin surface */}
-      {[[-1,0],[1,-0.4],[0.7,0.8],[-0.7,0.8],[0,-1]].map(([ex,ey],i)=>{
-        const angle = (i / 5) * Math.PI * 2 - Math.PI/2
-        const ex2 = 100 + Math.cos(angle) * 68
-        const ey2 = 115 + Math.sin(angle) * 86
-        return (
-          <g key={i}>
-            <circle cx={ex2} cy={ey2} r={6} fill={PURPLE} opacity={0.9} stroke="rgba(255,255,255,0.6)" strokeWidth={1.5}/>
-            <circle cx={ex2} cy={ey2} r={3} fill="rgba(255,255,255,0.5)"/>
+      {[75,80,85,90,95,100].map(v=>(
+        <g key={v}>
+          <line x1={PL} x2={PL+CW} y1={ty(v)} y2={ty(v)} stroke="rgba(255,255,255,0.05)" strokeWidth={1}/>
+          <text x={PL-5} y={ty(v)+3.5} textAnchor="end" fill="rgba(255,255,255,0.22)" fontSize={7.5}>{v}%</text>
+        </g>
+      ))}
+      <line x1={PL} x2={PL+CW} y1={ty(84.85)} y2={ty(84.85)} stroke={`${BLUE}55`} strokeWidth={1.5} strokeDasharray="5,3"/>
+      <text x={PL+4} y={ty(84.85)-5} fill={`${BLUE}90`} fontSize={8} fontWeight={700}>84.85% cross-subject avg</text>
+      <line x1={PL} x2={PL+CW} y1={ty(96.1)} y2={ty(96.1)} stroke={`${PURPLE}55`} strokeWidth={1.5} strokeDasharray="5,3"/>
+      <text x={PL+4} y={ty(96.1)-5} fill={`${PURPLE}90`} fontSize={8} fontWeight={700}>96.1% intra-subject avg</text>
+      {SUBJECTS.map((s,i)=>{
+        const cx=PL+barW*(i+0.5)
+        const yIntra=ty(s.intra), yCross=ty(s.cross)
+        return(
+          <g key={s.id}>
+            <rect x={cx-4} y={yIntra} width={8} height={yCross-yIntra} fill={`${RED}18`} rx={0}
+              opacity={vis?1:0} style={{transition:`opacity 0.4s ${0.3+i*0.06}s`}}/>
+            <line x1={cx} x2={cx} y1={yIntra} y2={yCross} stroke="rgba(255,255,255,0.07)" strokeWidth={1}
+              opacity={vis?1:0} style={{transition:`opacity 0.3s ${0.3+i*0.06}s`}}/>
+            <circle cx={cx} cy={yIntra} r={5} fill={PURPLE} opacity={vis?0.8:0}
+              style={{transition:`opacity 0.4s ${0.4+i*0.06}s`}}/>
+            <circle cx={cx} cy={yCross} r={s.cross<81?5:4.5} fill={s.cross<81?RED:BLUE} opacity={vis?0.9:0}
+              style={{transition:`opacity 0.4s ${0.5+i*0.06}s`}}/>
+            <text x={cx} y={H-6} textAnchor="middle" fill="rgba(255,255,255,0.22)" fontSize={7.5}>S{s.id}</text>
           </g>
         )
       })}
-      {/* Cross-talk dashed lines */}
-      <line x1={88} y1={95} x2={118} y2={92} stroke={`${PINK}50`} strokeWidth={1} strokeDasharray="3,2"/>
-      <line x1={78} y1={130} x2={122} y2={128} stroke={`${BLUE}50`} strokeWidth={1} strokeDasharray="3,2"/>
-      {/* Labels */}
-      <text x={72} y={84}  textAnchor="middle" fill={`${PURPLE}CC`} fontSize={7} fontWeight={600}>FDS</text>
-      <text x={128} y={82} textAnchor="middle" fill={`${PINK}CC`} fontSize={7} fontWeight={600}>FDP</text>
-      <text x={63}  y={128} textAnchor="middle" fill={`${BLUE}CC`} fontSize={7} fontWeight={600}>ECU</text>
-      <text x={136} y={125} textAnchor="middle" fill={`${CYAN}CC`} fontSize={7} fontWeight={600}>ECRL</text>
-      <text x={100} y={162} textAnchor="middle" fill={`${AMBER}CC`} fontSize={7} fontWeight={600}>FCR</text>
+      <circle cx={PL+10} cy={PT-5} r={4} fill={PURPLE} opacity={0.8}/>
+      <text x={PL+18} y={PT-2} fill={`${PURPLE}80`} fontSize={8}>intra-subject</text>
+      <circle cx={PL+95} cy={PT-5} r={4} fill={BLUE} opacity={0.9}/>
+      <text x={PL+103} y={PT-2} fill={`${BLUE}80`} fontSize={8}>cross-subject</text>
     </svg>
   )
 }
 
-function ForearmCard() {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <div style={{ border:`1px solid ${PURPLE}25`, borderRadius:16, overflow:"hidden", marginBottom:20, background:"var(--bg)" }}>
-      <div style={{ display:"grid", gridTemplateColumns:"1fr auto" }}>
-        <div style={{ padding:"24px 24px" }}>
-          <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:10 }}>
-            <span style={{ fontSize:9.5, fontWeight:700, color:PURPLE, background:`${PURPLE}14`, border:`1px solid ${PURPLE}30`, borderRadius:100, padding:"2px 9px" }}>EMG Fact · Apr 2025</span>
-          </div>
-          <div style={{ display:"flex", alignItems:"baseline", gap:10, marginBottom:8 }}>
-            <div style={{ fontSize:48, fontWeight:800, color:PURPLE, letterSpacing:"-3px", lineHeight:1 }}>20+</div>
-            <div style={{ fontSize:11, color:`${PURPLE}70`, fontWeight:500 }}>muscles</div>
-          </div>
-          <div style={{ fontSize:14, fontWeight:700, color:"var(--text)", marginBottom:8, letterSpacing:"-0.3px", lineHeight:1.3 }}>
-            Your forearm controls 5 fingers with 20+ muscles
-          </div>
-          <p style={{ fontSize:12, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.65, marginBottom:14 }}>
-            Surface EMG electrodes sit on skin — underneath are 20+ muscles packed in a space smaller than your hand. A 2cm electrode picks up the summed field of 2–3 muscles simultaneously.
-          </p>
-          {/* Muscle list mini */}
-          <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:14 }}>
-            {[["FDS",PURPLE],["FDP",PINK],["ECU",BLUE],["ECRL",CYAN],["FCR",AMBER],["FCU",GREEN]].map(([n,c])=>(
-              <div key={n} style={{ fontSize:9.5, fontWeight:600, color:c, background:`${c}12`, border:`1px solid ${c}25`, borderRadius:6, padding:"2px 8px" }}>{n}</div>
-            ))}
-            <div style={{ fontSize:9.5, color:"var(--text-tertiary)", padding:"2px 4px" }}>+14 more</div>
-          </div>
-          <button onClick={()=>setOpen(o=>!o)} style={{ background:"none", border:`1px solid ${PURPLE}30`, borderRadius:100, padding:"5px 14px", fontSize:11, color:PURPLE, cursor:"pointer", fontFamily:"var(--font)", transition:"all 0.15s" }}
-            onMouseEnter={e=>e.currentTarget.style.background=`${PURPLE}12`}
-            onMouseLeave={e=>e.currentTarget.style.background="none"}
-          >{open?"Collapse ↑":"See anatomy ↓"}</button>
-        </div>
-        {/* Always-visible forearm SVG */}
-        <div style={{ padding:"16px 20px 16px 0", display:"flex", alignItems:"center", borderLeft:`1px solid ${PURPLE}15` }}>
-          <ForearmSVG size={120}/>
-        </div>
-      </div>
-
-      {open && (
-        <div style={{ borderTop:`1px solid ${PURPLE}18`, padding:"28px 24px", background:`${PURPLE}04` }}>
-          <div style={{ display:"grid", gridTemplateColumns:"auto 1fr", gap:32, alignItems:"start" }}>
-            <div>
-              <div style={{ fontSize:11, fontWeight:600, color:`${PURPLE}80`, marginBottom:8 }}>Forearm cross-section</div>
-              <ForearmSVG size={180}/>
-              <div style={{ marginTop:10, display:"grid", gap:4 }}>
-                {[["●","FDS / FDP","Finger flexors — share a muscle belly", PURPLE],["●","ECU / ECRL","Wrist extensors — side-by-side", BLUE],["○","Ulna + Radius","Bone — no electrical signal", "rgba(255,255,255,0.4)"],["⬤","Electrode","5 of 16 shown here", "rgba(255,255,255,0.7)"]].map(([s,n,d,c])=>(
-                  <div key={n} style={{ display:"flex", alignItems:"center", gap:8 }}>
-                    <span style={{ fontSize:10, color:c }}>{s}</span>
-                    <span style={{ fontSize:10, fontWeight:600, color:"var(--text)" }}>{n}</span>
-                    <span style={{ fontSize:9.5, color:"var(--text-tertiary)" }}>— {d}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <div style={{ fontSize:12, fontWeight:600, color:"var(--text)", marginBottom:8 }}>The cross-talk problem</div>
-              <p style={{ fontSize:11.5, color:"var(--text-secondary)", lineHeight:1.75, fontWeight:300, marginBottom:14 }}>
-                The flexor digitorum superficialis (FDS) has four separate tendon slips — one for each finger. But the muscle belly is shared. Bending your middle finger also partially activates the fibres next to your index and ring finger tendons.
-              </p>
-              <p style={{ fontSize:11.5, color:"var(--text-secondary)", lineHeight:1.75, fontWeight:300, marginBottom:14 }}>
-                This is cross-talk — the dashed lines in the diagram. A 2cm surface electrode picks up the summed electrical field of every motor unit within detection range, often spanning 2–3 muscles.
-              </p>
-              <div style={{ padding:"12px 14px", background:`${PURPLE}08`, border:`1px solid ${PURPLE}20`, borderLeft:`3px solid ${PURPLE}`, borderRadius:"0 8px 8px 0" }}>
-                <div style={{ fontSize:14, fontWeight:700, color:PURPLE, marginBottom:2 }}>16 channels</div>
-                <div style={{ fontSize:11, color:"var(--text-tertiary)", lineHeight:1.5 }}>Ninapro DB5 uses 16 electrodes distributed around the forearm. More channels = more spatial diversity, letting a 64-feature vector (4 features × 16 channels) separate gestures that would otherwise look identical in the signal.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ── Card 4: Frequency / Signal-to-Noise ──────────────────────────────────────
-function FreqSpectrumSVG({ filtered = false, vis = true, compact = false }) {
-  const W = compact ? 220 : 320
-  const H = compact ? 80  : 130
-  const PL = 8, PR = 8, PT = 8, PB = compact ? 14 : 22
-  const CW = W-PL-PR, CH = H-PT-PB
-
-  const freq = Array.from({ length: 200 }, (_,i) => i)
-  function rawPow(f) {
-    const muscle    = 0.85 * Math.exp(-Math.pow(f-80,2) / (2*45*45))
-    const motion    = f < 22 ? 0.55 * Math.exp(-f/5) : 0
-    const powerline = 0.42 * Math.exp(-Math.pow(f-50,2) / (2*1.8*1.8))
-    const noise     = 0.07
-    return Math.min(1, muscle + motion + powerline + noise)
-  }
-  function filtPow(f) {
-    if (f < 20 || f > 90) return 0.02
-    if (f >= 48 && f <= 52) return 0.015
-    return rawPow(f) * 0.88
-  }
-  const pow = filtered ? filtPow : rawPow
-  const pts = freq.map(f => ({ f, p: pow(f) }))
-  const tx = f => PL + (f/199)*CW
-  const ty = p => PT + (1-p)*CH
-  const pathD = pts.map((p,i)=>`${i===0?"M":"L"}${tx(p.f)},${ty(p.p)}`).join(" ")
-  const areaD = `${pathD} L${tx(199)},${ty(0)} L${tx(0)},${ty(0)} Z`
-
-  const color = filtered ? GREEN : CYAN
-
-  return (
-    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow:"visible" }}>
-      <defs>
-        <linearGradient id={`fg${filtered?1:0}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.35"/>
-          <stop offset="100%" stopColor={color} stopOpacity="0.02"/>
-        </linearGradient>
-        <clipPath id={`fc${filtered?1:0}`}><rect x={PL} y={PT} width={CW} height={CH}/></clipPath>
-      </defs>
-
-      {!filtered && !compact && (
-        <>
-          {/* Motion artifact zone */}
-          <rect x={PL} y={PT} width={tx(20)-PL} height={CH} fill="rgba(239,68,68,0.08)" clipPath={`url(#fc0)`}/>
-          {/* Useful band */}
-          <rect x={tx(20)} y={PT} width={tx(90)-tx(20)} height={CH} fill={`${GREEN}08`} clipPath={`url(#fc0)`}/>
-          {/* Noise zone */}
-          <rect x={tx(90)} y={PT} width={tx(199)-tx(90)} height={CH} fill="rgba(100,100,100,0.05)" clipPath={`url(#fc0)`}/>
-        </>
-      )}
-      {filtered && !compact && (
-        <rect x={tx(20)} y={PT} width={tx(90)-tx(20)} height={CH} fill={`${GREEN}10`} clipPath={`url(#fc1)`}/>
-      )}
-
-      <path d={areaD} fill={`url(#fg${filtered?1:0})`} clipPath={`url(#fc${filtered?1:0})`}
-        opacity={vis?1:0} style={{ transition:"opacity 0.6s 0.4s" }}/>
-      <path d={pathD} fill="none" stroke={color} strokeWidth={1.5} clipPath={`url(#fc${filtered?1:0})`}
-        strokeDasharray={600} strokeDashoffset={vis?0:600}
-        style={{ transition:"stroke-dashoffset 1.6s cubic-bezier(0.22,1,0.36,1) 0.2s" }}/>
-
-      {!compact && (
-        <>
-          {[0,50,100,150,200].map(f=>(
-            <text key={f} x={tx(f)} y={H-2} textAnchor="middle" fill={`${color}45`} fontSize={7}>{f}Hz</text>
-          ))}
-          {!filtered && (
-            <>
-              <text x={tx(10)}  y={PT+10} textAnchor="middle" fill="rgba(239,68,68,0.7)" fontSize={7}>motion</text>
-              <text x={tx(55)}  y={PT+10} textAnchor="middle" fill={`${GREEN}80`} fontSize={7}>useful</text>
-              <text x={tx(145)} y={PT+10} textAnchor="middle" fill="rgba(150,150,150,0.6)" fontSize={7}>noise</text>
-              <text x={tx(50)}  y={ty(0.42)-6} textAnchor="middle" fill="rgba(239,68,68,0.8)" fontSize={7.5} fontWeight={600}>50Hz spike</text>
-            </>
-          )}
-          {filtered && (
-            <text x={tx(55)} y={PT+10} textAnchor="middle" fill={`${GREEN}80`} fontSize={7}>20–90Hz band preserved</text>
-          )}
-        </>
-      )}
-    </svg>
-  )
-}
-
-function FrequencyCard() {
-  const [open, setOpen] = useState(false)
-  const [cardRef, cardVis] = useInView(0.1)
-
-  return (
-    <div ref={cardRef} style={{ border:`1px solid ${GREEN}25`, borderRadius:16, overflow:"hidden", marginBottom:20, background:"var(--bg)" }}>
-      {/* Full-width spectrum strip - always visible */}
-      <div style={{ background:"#001208", padding:"20px 22px 14px", borderBottom:`1px solid ${GREEN}18` }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, marginBottom:14 }}>
+function CrossSubjectCard(){
+  const [ref,vis]=useInView(0.08)
+  return(
+    <article ref={ref} style={{borderRadius:20,overflow:"hidden",marginBottom:36,border:`1px solid ${BLUE}30`,background:"#000A1A"}}>
+      <div style={{padding:"36px 36px 28px",borderBottom:`1px solid ${BLUE}15`}}>
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:24,flexWrap:"wrap",marginBottom:24}}>
           <div>
-            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
-              <span style={{ fontSize:9.5, fontWeight:700, color:GREEN, background:`${GREEN}20`, border:`1px solid ${GREEN}35`, borderRadius:100, padding:"2px 9px" }}>EMG Fact · Mar 2025</span>
-            </div>
-            <div style={{ fontSize:13, fontWeight:700, color:"#fff", letterSpacing:"-0.3px" }}>Raw forearm EMG spectrum — before filtering</div>
-          </div>
-          <div style={{ textAlign:"right", flexShrink:0 }}>
-            <div style={{ fontSize:32, fontWeight:800, color:GREEN, letterSpacing:"-1.5px", lineHeight:1 }}>20–90</div>
-            <div style={{ fontSize:9, color:`${GREEN}60`, textTransform:"uppercase", letterSpacing:"0.08em" }}>Hz useful band</div>
-          </div>
-        </div>
-        <FreqSpectrumSVG filtered={false} vis={cardVis}/>
-        <div style={{ display:"flex", gap:16, marginTop:6, flexWrap:"wrap" }}>
-          {[["red","Motion artefacts 0–20Hz"],["rgba(16,185,129,0.8)","Useful band 20–90Hz"],["rgba(150,150,150,0.55)","Thermal noise 90Hz+"]].map(([c,l])=>(
-            <div key={l} style={{ display:"flex", alignItems:"center", gap:5 }}>
-              <div style={{ width:8, height:2, background:c, borderRadius:1 }}/>
-              <span style={{ fontSize:8.5, color:"rgba(255,255,255,0.45)" }}>{l}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ padding:"14px 22px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-        <p style={{ fontSize:12, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.65, margin:0, maxWidth:500 }}>
-          The gesture information lives between 20–90Hz. The 50Hz powerline spike sits right in the middle and needs a notch filter. Everything else is motion artefact or thermal noise.
-        </p>
-        <button onClick={()=>setOpen(o=>!o)} style={{ flexShrink:0, background:"none", border:`1px solid ${GREEN}30`, borderRadius:100, padding:"5px 14px", fontSize:11, color:GREEN, cursor:"pointer", fontFamily:"var(--font)", transition:"all 0.15s", marginLeft:16 }}
-          onMouseEnter={e=>e.currentTarget.style.background=`${GREEN}12`}
-          onMouseLeave={e=>e.currentTarget.style.background="none"}
-        >{open?"Collapse ↑":"See after filter ↓"}</button>
-      </div>
-
-      {open && (
-        <div style={{ borderTop:`1px solid ${GREEN}18`, background:"#001208", padding:"22px 22px" }}>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24, marginBottom:20 }}>
-            <div>
-              <div style={{ fontSize:11, fontWeight:600, color:"rgba(239,68,68,0.8)", marginBottom:8 }}>Before: raw signal</div>
-              <FreqSpectrumSVG filtered={false} vis={cardVis}/>
-            </div>
-            <div>
-              <div style={{ fontSize:11, fontWeight:600, color:GREEN, marginBottom:8 }}>After: 4th-order Butterworth 20–90Hz</div>
-              <FreqSpectrumSVG filtered={true} vis={cardVis}/>
-            </div>
-          </div>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:16 }}>
-            <div style={{ padding:"12px 14px", background:`${GREEN}08`, border:`1px solid ${GREEN}20`, borderLeft:`3px solid ${GREEN}`, borderRadius:"0 8px 8px 0" }}>
-              <div style={{ fontSize:13, fontWeight:700, color:GREEN, marginBottom:3 }}>4th-order Butterworth</div>
-              <div style={{ fontSize:10.5, color:"rgba(255,255,255,0.5)", lineHeight:1.6 }}>Maximally flat passband — doesn't distort the signal within 20–90Hz, only attenuates outside. –40 dB/decade rolloff. 50Hz notch removes powerline.</div>
-            </div>
-            <div style={{ padding:"12px 14px", background:"rgba(239,68,68,0.06)", border:"1px solid rgba(239,68,68,0.2)", borderLeft:"3px solid rgba(239,68,68,0.7)", borderRadius:"0 8px 8px 0" }}>
-              <div style={{ fontSize:13, fontWeight:700, color:"rgba(239,68,68,0.9)", marginBottom:3 }}>What gets removed</div>
-              <div style={{ fontSize:10.5, color:"rgba(255,255,255,0.5)", lineHeight:1.6 }}>DC offset from skin-electrode interface. Electrode movement artefacts below 20Hz. Amplifier thermal noise above 90Hz. The 50Hz powerline interference spike.</div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ── Card 5: History Timeline ──────────────────────────────────────────────────
-const MILESTONES = [
-  { year:"1791", icon:"⚡", color:AMBER, title:"Galvani", detail:"Luigi Galvani discovers 'animal electricity' — a frog's leg twitches when touched with two metals. Foundational insight of electrophysiology." },
-  { year:"1849", icon:"🔬", color:"#E8A030", title:"Du Bois-Reymond", detail:"Emil du Bois-Reymond makes the first intentional EMG recording — detecting action potentials from human muscle contraction." },
-  { year:"1940s", icon:"📡", color:"#D4922A", title:"Surface EMG", detail:"First practical surface EMG recordings. Early systems required large electrodes; almost exclusively clinical diagnostic tools." },
-  { year:"1960s", icon:"🦾", color:"#C07820", title:"Myoelectric arm", detail:"First commercial myoelectric prosthetic arm — single-DOF hook controlled by bicep contraction. Core principle identical to myojam." },
-  { year:"2012",  icon:"💾", color:"#F59E0B", title:"Ninapro DB5", detail:"Ninapro DB5 released: 10 subjects, 16 channels, 53 gesture classes. The first large-scale public EMG benchmark." },
-  { year:"2025",  icon:"🚀", color:AMBER,    title:"myojam", detail:"84.85% cross-subject accuracy on Ninapro DB5. Open education platform, 11 articles, 3 lesson plans, desktop app." },
-]
-
-function HistoryCard() {
-  const [open, setOpen] = useState(false)
-  const [active, setActive] = useState(5)
-  const [cardRef, cardVis] = useInView(0.1)
-
-  return (
-    <div ref={cardRef} style={{ border:`1px solid ${AMBER}25`, borderRadius:16, overflow:"hidden", marginBottom:20, background:"var(--bg)" }}>
-      {/* Horizontal timeline - always visible */}
-      <div style={{ background:`linear-gradient(135deg,#14100200,#0A0800)`, padding:"24px 24px 18px", borderBottom:`1px solid ${AMBER}18` }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:16, marginBottom:18 }}>
-          <div>
-            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
-              <span style={{ fontSize:9.5, fontWeight:700, color:AMBER, background:`${AMBER}18`, border:`1px solid ${AMBER}35`, borderRadius:100, padding:"2px 9px" }}>EMG Fact · Mar 2025</span>
-            </div>
-            <div style={{ fontSize:14, fontWeight:700, color:"var(--text)", letterSpacing:"-0.3px", lineHeight:1.3 }}>EMG science is older than you think</div>
-          </div>
-          <div style={{ textAlign:"right", flexShrink:0 }}>
-            <div style={{ fontSize:38, fontWeight:800, color:AMBER, letterSpacing:"-2px", lineHeight:1 }}>1791</div>
-            <div style={{ fontSize:9, color:`${AMBER}60`, textTransform:"uppercase", letterSpacing:"0.08em" }}>Galvani's discovery</div>
-          </div>
-        </div>
-
-        {/* Horizontal timeline */}
-        <div style={{ position:"relative", paddingBottom:36 }}>
-          {/* Line */}
-          <div style={{ position:"absolute", top:14, left:0, right:0, height:2, background:`linear-gradient(90deg,${AMBER}15,${AMBER}60,${AMBER}15)`, borderRadius:99 }}/>
-          {/* Progress fill */}
-          <div style={{ position:"absolute", top:14, left:0, height:2, background:AMBER, borderRadius:99,
-            width: cardVis ? "100%" : "0%", transition:"width 1.8s cubic-bezier(0.22,1,0.36,1) 0.3s" }}/>
-          {/* Nodes */}
-          <div style={{ display:"flex", justifyContent:"space-between" }}>
-            {MILESTONES.map((m,i) => (
-              <div key={m.year} onClick={() => setActive(i)} style={{ display:"flex", flexDirection:"column", alignItems:"center", cursor:"pointer", flex:1 }}>
-                <div style={{
-                  width:28, height:28, borderRadius:"50%",
-                  background: active===i ? m.color : `${m.color}20`,
-                  border:`2px solid ${active===i ? m.color : m.color+"40"}`,
-                  display:"flex", alignItems:"center", justifyContent:"center",
-                  fontSize:12, transition:"all 0.25s",
-                  boxShadow: active===i ? `0 0 12px ${m.color}70` : "none",
-                  opacity: cardVis ? 1 : 0,
-                  transform: cardVis ? "scale(1)" : "scale(0.4)",
-                  transitionDelay: `${0.3 + i * 0.15}s`,
-                }}>
-                  {m.icon}
-                </div>
-                <div style={{ fontSize:8.5, fontWeight:700, color: active===i ? m.color : `${m.color}60`, marginTop:6, textAlign:"center", lineHeight:1.3 }}>{m.year}</div>
-              </div>
-            ))}
-          </div>
-          {/* Active detail */}
-          <div style={{ position:"absolute", bottom:0, left:0, right:0 }}>
-            <div style={{ fontSize:10, color:"var(--text-tertiary)", textAlign:"center", fontStyle:"italic", lineHeight:1.5 }}>
-              <strong style={{ color:AMBER, fontStyle:"normal" }}>{MILESTONES[active].title}</strong> — {MILESTONES[active].detail.slice(0,90)}…
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style={{ padding:"14px 22px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-        <p style={{ fontSize:12, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.65, margin:0, maxWidth:500 }}>
-          234 years from Galvani's frog to myojam's classifier. Click any node above to explore each milestone.
-        </p>
-        <button onClick={()=>setOpen(o=>!o)} style={{ flexShrink:0, background:"none", border:`1px solid ${AMBER}30`, borderRadius:100, padding:"5px 14px", fontSize:11, color:AMBER, cursor:"pointer", fontFamily:"var(--font)", transition:"all 0.15s", marginLeft:16 }}
-          onMouseEnter={e=>e.currentTarget.style.background=`${AMBER}12`}
-          onMouseLeave={e=>e.currentTarget.style.background="none"}
-        >{open?"Collapse ↑":"Full history ↓"}</button>
-      </div>
-
-      {open && (
-        <div style={{ borderTop:`1px solid ${AMBER}18`, padding:"24px 22px", background:`${AMBER}04` }}>
-          <div style={{ display:"grid", gap:12 }}>
-            {MILESTONES.map((m,i) => (
-              <div key={m.year} style={{ display:"grid", gridTemplateColumns:"64px 1fr", gap:16, alignItems:"start" }}>
-                <div style={{ textAlign:"right" }}>
-                  <div style={{ fontSize:14, fontWeight:700, color:m.color, letterSpacing:"-0.5px" }}>{m.year}</div>
-                  <div style={{ fontSize:9, color:`${m.color}60`, textTransform:"uppercase", letterSpacing:"0.06em" }}>{m.title}</div>
-                </div>
-                <div style={{ paddingLeft:16, borderLeft:`2px solid ${m.color}30`, paddingTop:2, paddingBottom:i<MILESTONES.length-1?12:0 }}>
-                  <div style={{ fontSize:11.5, color:"var(--text-secondary)", lineHeight:1.7, fontWeight:300 }}>{m.detail}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ── Journal ───────────────────────────────────────────────────────────────────
-const TAG_MAP = { "Launch":PINK, "Content":PURPLE, "Milestone":GREEN, "Open source":BLUE, "Research":AMBER }
-
-const JOURNAL = [
-  { id:"n9", tag:"Launch",      date:"Apr 27, 2025", title:"The desktop app is back — completely rebuilt",    body:"Rebuilt from scratch: dark theme, live waveform, 3D hand model, session tracking. Animated confidence bars, rotating 3D hand that reflects your gesture in real time.",             meta:"v1.0 · macOS 12+ · ~295 MB · MIT",     link:"/download"  },
-  { id:"n8", tag:"Content",     date:"Apr 22, 2025", title:"Lesson 3: applications and bioethics",           body:"EMG in the Real World — grades 7–11. Students use the confusion matrix explorer to calculate what 84.85% accuracy means in prosthetics vs keyboard shortcuts. Usually surprising.", meta:"60 min · Grades 7–11 · No hardware",    link:"/educators" },
-  { id:"n7", tag:"Milestone",   date:"Apr 10, 2025", title:"11 articles and counting",                      body:"Crossed 11 published articles: neuromuscular junction, windowing, bioethics, phantom limb, and more. Started as build notes, turned into something genuinely useful.",             meta:"11 articles · 9 topics · 450+ reads",   link:"/education" },
-  { id:"n6", tag:"Launch",      date:"Mar 18, 2025", title:"The educators hub is live",                     body:"Three full lesson plans. Curriculum standards. Differentiation. Assessment rubrics. Built-in quizzes. Designed for a teacher with 75 minutes and a class new to EMG.",              meta:"3 plans · Grades 7–uni · Free",         link:"/educators" },
-  { id:"n5", tag:"Milestone",   date:"Mar 4, 2025",  title:"1,000 unique visitors",                         body:"Most traffic from the education hub — people finding articles via search. A handful of teachers reached out about classroom use. That's the whole point.",                          meta:"Search-driven · Education hub",         link:null         },
-  { id:"n4", tag:"Launch",      date:"Feb 20, 2025", title:"Four tools. No hardware.",                      body:"Signal playground, confusion matrix explorer, frequency analyzer, gesture game — all running in browser on real Ninapro data. No sensor required.",                                meta:"4 tools · Browser-only · Real data",    link:"/demos"     },
-  { id:"n3", tag:"Launch",      date:"Feb 5, 2025",  title:"myojam.com is live",                            body:"FastAPI on Render. React/Vite on Vercel. Classifier accessible in browser for the first time — no MyoWare sensor required.",                                                     meta:"FastAPI · Render · Vite · Vercel",      link:null         },
-  { id:"n2", tag:"Open source", date:"Jan 14, 2025", title:"Everything is open source",                     body:"Signal pipeline, ML model, React frontend, FastAPI backend — all on GitHub. MIT license. No private forks, no login, no waitlist.",                                               meta:"MIT · GitHub · Full source",            link:null         },
-  { id:"n1", tag:"Research",    date:"Dec 18, 2024", title:"84.85% — and we mean it",                      body:"Cross-subject accuracy — tested on people never seen during training. Real generalisation. 1 in 7 predictions still wrong. That's the honest baseline.",                          meta:"16,269 windows · 10 subjects · LOSO",   link:"/research/paper" },
-]
-
-function JournalEntry({ entry, navigate, isLast }) {
-  const [open, setOpen] = useState(false)
-  const color = TAG_MAP[entry.tag] || PINK
-
-  return (
-    <div style={{ display:"grid", gridTemplateColumns:"16px 1fr", gap:"0 16px" }}>
-      <div style={{ display:"flex", flexDirection:"column", alignItems:"center" }}>
-        <div style={{ width:10, height:10, borderRadius:"50%", background:color, boxShadow:`0 0 7px ${color}60`, flexShrink:0, marginTop:16 }}/>
-        {!isLast && <div style={{ width:1, flex:1, background:"var(--border)", minHeight:20, marginTop:5 }}/>}
-      </div>
-      <div style={{ paddingBottom: isLast ? 0 : 20 }}>
-        <div onClick={()=>setOpen(o=>!o)} style={{ cursor:"pointer", padding:"12px 16px", borderRadius:9, background:open?`${color}06`:"transparent", border:`1px solid ${open?color+"22":"transparent"}`, transition:"all 0.2s" }}
-          onMouseEnter={e=>{ if(!open) e.currentTarget.style.background="var(--bg-secondary)" }}
-          onMouseLeave={e=>{ if(!open) e.currentTarget.style.background="transparent" }}
-        >
-          <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:5, flexWrap:"wrap" }}>
-            <span style={{ fontSize:9, fontWeight:700, color, background:`${color}15`, border:`1px solid ${color}30`, borderRadius:100, padding:"2px 8px", textTransform:"uppercase", letterSpacing:"0.06em" }}>{entry.tag}</span>
-            <span style={{ fontSize:10.5, color:"var(--text-tertiary)", fontWeight:300 }}>{entry.date}</span>
-          </div>
-          <div style={{ fontSize:13, fontWeight:600, color:"var(--text)", lineHeight:1.3, marginBottom: open ? 10 : 0 }}>{entry.title}</div>
-          {open && (
-            <div>
-              <p style={{ fontSize:12, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, margin:"0 0 10px" }}>{entry.body}</p>
-              <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
-                <span style={{ fontSize:10.5, color:"var(--text-tertiary)", fontWeight:300 }}>{entry.meta}</span>
-                {entry.link && (
-                  <button onClick={e=>{ e.stopPropagation(); navigate(entry.link) }} style={{ background:"none", border:`1px solid ${color}40`, color, borderRadius:100, padding:"3px 11px", fontSize:10.5, fontWeight:500, cursor:"pointer", fontFamily:"var(--font)", transition:"all 0.15s" }}
-                    onMouseEnter={e=>e.currentTarget.style.background=`${color}12`}
-                    onMouseLeave={e=>e.currentTarget.style.background="none"}
-                  >View →</button>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ── Page ─────────────────────────────────────────────────────────────────────
-export default function Blog() {
-  const navigate = useNavigate()
-
-  return (
-    <div style={{ minHeight:"100vh", background:"var(--bg)" }}>
-      <style>{`@keyframes heroPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }`}</style>
-      <Navbar/>
-
-      {/* Hero */}
-      <div style={{ position:"relative", overflow:"hidden", minHeight:380, display:"flex", alignItems:"center", borderBottom:"1px solid var(--border)" }}>
-        <LiquidChrome baseColor={[0.07, 0.0, 0.18]} speed={0.10} amplitude={0.22} style={{ position:"absolute", inset:0, zIndex:0 }}/>
-        <div style={{ position:"absolute", inset:0, zIndex:1, opacity:0.5 }}><EMGPulse/></div>
-        <div style={{ position:"absolute", inset:0, background:"linear-gradient(to bottom,rgba(3,0,18,0.72),rgba(3,0,18,0.60) 60%,rgba(3,0,18,0.88))", zIndex:2 }}/>
-        <div style={{ position:"relative", zIndex:3, width:"100%", maxWidth:960, margin:"0 auto", padding:"100px 32px 64px" }}>
-          <Reveal>
-            <div style={{ display:"inline-flex", alignItems:"center", gap:7, background:"rgba(255,45,120,0.12)", border:"1px solid rgba(255,45,120,0.3)", borderRadius:100, padding:"4px 14px", marginBottom:20 }}>
-              <span style={{ width:5, height:5, borderRadius:"50%", background:PINK, display:"inline-block", animation:"heroPulse 2s infinite" }}/>
-              <span style={{ fontSize:11, fontWeight:600, color:PINK, letterSpacing:"0.06em", textTransform:"uppercase" }}>EMG Facts & Project Journal</span>
-            </div>
-            <h1 style={{ fontSize:"clamp(32px,6vw,58px)", fontWeight:700, letterSpacing:"-2px", lineHeight:1.05, color:"#fff", marginBottom:18 }}>
-              What's happening<br/><span style={{ color:PINK }}>at myojam.</span>
-            </h1>
-            <p style={{ fontSize:16, color:"rgba(255,255,255,0.65)", fontWeight:300, lineHeight:1.75, maxWidth:460, marginBottom:32 }}>
-              Five deep dives into EMG science — each with its own data visualization — and a running log of every launch and milestone since September 2024.
+            <span style={{fontSize:10,fontWeight:700,color:BLUE,background:`${BLUE}15`,border:`1px solid ${BLUE}35`,borderRadius:100,padding:"3px 12px",letterSpacing:"0.06em",textTransform:"uppercase"}}>Deep Dive 02</span>
+            <h2 style={{fontSize:32,fontWeight:800,color:"#fff",letterSpacing:"-1.2px",lineHeight:1.05,margin:"14px 0 10px"}}>The generalization<br/><span style={{color:BLUE}}>problem.</span></h2>
+            <p style={{fontSize:13,color:"rgba(255,255,255,0.5)",fontWeight:300,lineHeight:1.75,maxWidth:400,margin:0}}>
+              Training and testing on the same person gives inflated numbers. Cross-subject testing — the only honest measure — reveals an 11.25 percentage-point gap.
             </p>
-            <div style={{ display:"flex", gap:32, flexWrap:"wrap" }}>
-              {[["5","EMG fact series"],["9","project updates"],["Sep 2024","project start"]].map(([v,l])=>(
+          </div>
+          <div style={{textAlign:"right",flexShrink:0}}>
+            <div style={{fontSize:72,fontWeight:900,color:BLUE,letterSpacing:"-4px",lineHeight:0.85,opacity:0.85}}>−11.25</div>
+            <div style={{fontSize:11,fontWeight:700,color:`${BLUE}55`,letterSpacing:"0.08em",textTransform:"uppercase",marginTop:6}}>pp accuracy drop</div>
+            <div style={{fontSize:9.5,color:`${BLUE}38`,marginTop:2}}>intra → cross subject</div>
+          </div>
+        </div>
+        <SubjectGapChart vis={vis}/>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)"}}>
+        {[
+          {stat:"84.85%",label:"Cross-subject average",sub:"The honest number",c:BLUE},
+          {stat:"96.1%",label:"Intra-subject average",sub:"Test on training person",c:PURPLE},
+          {stat:"1 in 7",label:"Predictions wrong",sub:"At 84.85% accuracy",c:RED},
+        ].map((item,i)=>(
+          <div key={i} style={{padding:"22px 24px",borderRight:i<2?`1px solid ${BLUE}10`:"",borderTop:`1px solid ${BLUE}12`}}>
+            <div style={{fontSize:28,fontWeight:800,color:item.c,letterSpacing:"-1px",lineHeight:1,marginBottom:5,
+              opacity:vis?1:0,transform:vis?"translateY(0)":"translateY(10px)",transition:`opacity 0.5s ${0.6+i*0.12}s,transform 0.5s ${0.6+i*0.12}s`}}>{item.stat}</div>
+            <div style={{fontSize:11.5,fontWeight:600,color:"rgba(255,255,255,0.7)",marginBottom:2}}>{item.label}</div>
+            <div style={{fontSize:10,color:"rgba(255,255,255,0.3)"}}>{item.sub}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{padding:"20px 28px",borderTop:`1px solid ${BLUE}12`,background:`${BLUE}05`}}>
+        <p style={{fontSize:12.5,color:"rgba(255,255,255,0.42)",fontWeight:300,lineHeight:1.85,margin:0}}>
+          <strong style={{color:`${BLUE}CC`,fontWeight:600}}>Why this matters:</strong> Most published EMG classifiers report intra-subject accuracy — that number tells you how well a model memorized its training user. Cross-subject accuracy is the real test: does it work for someone it has never seen? The 11.25pp gap is an unsolved domain adaptation problem that makes EMG interfaces hard to ship at scale.
+        </p>
+      </div>
+    </article>
+  )
+}
+
+// ── CARD 3: FOREARM ANATOMY ───────────────────────────────────────────────────
+function ForearmSVG({size=200}){
+  return(
+    <svg width={size} height={size*1.15} viewBox="0 0 200 230" style={{display:"block"}}>
+      <defs>
+        <radialGradient id="faSkG" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor={`${PURPLE}20`}/><stop offset="100%" stopColor={`${PURPLE}07`}/>
+        </radialGradient>
+        <radialGradient id="fam1"><stop offset="0%" stopColor={`${PURPLE}55`}/><stop offset="100%" stopColor={`${PURPLE}20`}/></radialGradient>
+        <radialGradient id="fam2"><stop offset="0%" stopColor={`${PINK}45`}/><stop offset="100%" stopColor={`${PINK}18`}/></radialGradient>
+        <radialGradient id="fam3"><stop offset="0%" stopColor={`${BLUE}45`}/><stop offset="100%" stopColor={`${BLUE}18`}/></radialGradient>
+        <radialGradient id="fam4"><stop offset="0%" stopColor={`${CYAN}45`}/><stop offset="100%" stopColor={`${CYAN}18`}/></radialGradient>
+        <radialGradient id="fam5"><stop offset="0%" stopColor={`${AMBER}45`}/><stop offset="100%" stopColor={`${AMBER}18`}/></radialGradient>
+        <radialGradient id="fam6"><stop offset="0%" stopColor={`${GREEN}40`}/><stop offset="100%" stopColor={`${GREEN}15`}/></radialGradient>
+      </defs>
+      <ellipse cx={100} cy={115} rx={72} ry={90} fill="url(#faSkG)" stroke={`${PURPLE}30`} strokeWidth={1.5}/>
+      <ellipse cx={100} cy={115} rx={58} ry={75} fill="none" stroke={`${PURPLE}18`} strokeWidth={1} strokeDasharray="4,3"/>
+      <ellipse cx={88} cy={90} rx={18} ry={22} fill="url(#fam1)" stroke={`${PURPLE}40`} strokeWidth={1}/>
+      <ellipse cx={118} cy={88} rx={16} ry={20} fill="url(#fam2)" stroke={`${PINK}35`} strokeWidth={1}/>
+      <ellipse cx={78} cy={128} rx={14} ry={18} fill="url(#fam3)" stroke={`${BLUE}35`} strokeWidth={1}/>
+      <ellipse cx={122} cy={125} rx={15} ry={19} fill="url(#fam4)" stroke={`${CYAN}35`} strokeWidth={1}/>
+      <ellipse cx={100} cy={150} rx={12} ry={14} fill="url(#fam5)" stroke={`${AMBER}35`} strokeWidth={1}/>
+      <ellipse cx={100} cy={110} rx={8} ry={10} fill="url(#fam6)" stroke={`${GREEN}35`} strokeWidth={1}/>
+      <ellipse cx={82} cy={115} rx={5} ry={6} fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.22)" strokeWidth={1}/>
+      <ellipse cx={118} cy={115} rx={6} ry={7} fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.22)" strokeWidth={1}/>
+      {Array.from({length:5},(_,i)=>{
+        const angle=(i/5)*Math.PI*2-Math.PI/2
+        const ex=100+Math.cos(angle)*68, ey=115+Math.sin(angle)*86
+        return(
+          <g key={i}>
+            <circle cx={ex} cy={ey} r={7} fill="none" stroke={PINK} strokeWidth={1.5} opacity={0.45}/>
+            <circle cx={ex} cy={ey} r={5} fill={PINK} opacity={0.85} stroke="rgba(255,255,255,0.5)" strokeWidth={1}/>
+            <circle cx={ex} cy={ey} r={2} fill="rgba(255,255,255,0.5)"/>
+          </g>
+        )
+      })}
+      <line x1={88} y1={95} x2={118} y2={92} stroke={`${PINK}55`} strokeWidth={1.2} strokeDasharray="3,2"/>
+      <line x1={78} y1={130} x2={122} y2={128} stroke={`${BLUE}55`} strokeWidth={1.2} strokeDasharray="3,2"/>
+      <text x={72} y={82} textAnchor="middle" fill={`${PURPLE}DD`} fontSize={7.5} fontWeight={700}>FDS</text>
+      <text x={130} y={80} textAnchor="middle" fill={`${PINK}DD`} fontSize={7.5} fontWeight={700}>FDP</text>
+      <text x={60} y={130} textAnchor="middle" fill={`${BLUE}DD`} fontSize={7.5} fontWeight={700}>ECU</text>
+      <text x={140} y={127} textAnchor="middle" fill={`${CYAN}DD`} fontSize={7.5} fontWeight={700}>ECRL</text>
+      <text x={100} y={168} textAnchor="middle" fill={`${AMBER}DD`} fontSize={7.5} fontWeight={700}>FCR</text>
+      <text x={100} y={106} textAnchor="middle" fill={`${GREEN}DD`} fontSize={7} fontWeight={700}>FCU</text>
+    </svg>
+  )
+}
+
+function ForearmCard(){
+  const [ref,vis]=useInView(0.05)
+  const muscles=[
+    {abbr:"FDS",name:"Flexor Digitorum Superficialis",role:"Flexes middle phalanges; shared belly for all 4 fingers",c:PURPLE},
+    {abbr:"FDP",name:"Flexor Digitorum Profundus",role:"Flexes distal phalanges; cross-talk with FDS",c:PINK},
+    {abbr:"ECU",name:"Extensor Carpi Ulnaris",role:"Extends and adducts wrist",c:BLUE},
+    {abbr:"ECRL",name:"Extensor Carpi Radialis Longus",role:"Extends and abducts wrist; side-by-side with ECU",c:CYAN},
+    {abbr:"FCR",name:"Flexor Carpi Radialis",role:"Flexes and abducts wrist",c:AMBER},
+    {abbr:"FCU",name:"Flexor Carpi Ulnaris",role:"Flexes and adducts wrist",c:GREEN},
+  ]
+  return(
+    <article ref={ref} style={{borderRadius:20,overflow:"hidden",marginBottom:36,border:`1px solid ${PURPLE}30`,background:"var(--bg)"}}>
+      <div style={{display:"grid",gridTemplateColumns:"1fr auto",borderBottom:`1px solid ${PURPLE}15`}}>
+        <div style={{padding:"36px 36px"}}>
+          <span style={{fontSize:10,fontWeight:700,color:PURPLE,background:`${PURPLE}14`,border:`1px solid ${PURPLE}30`,borderRadius:100,padding:"3px 12px",letterSpacing:"0.06em",textTransform:"uppercase"}}>Deep Dive 03</span>
+          <h2 style={{fontSize:32,fontWeight:800,color:"var(--text)",letterSpacing:"-1.2px",lineHeight:1.05,margin:"14px 0 10px"}}>20+ muscles.<br/><span style={{color:PURPLE}}>One electrode.</span></h2>
+          <p style={{fontSize:13,color:"var(--text-secondary)",fontWeight:300,lineHeight:1.75,maxWidth:380,marginBottom:24}}>
+            A 2cm surface electrode sits on skin overlying 2–3 muscles simultaneously. The recorded signal is the summed electrical field of every motor unit within range — separating them is mathematically underdetermined.
+          </p>
+          <div style={{display:"grid",gap:7,marginBottom:22}}>
+            {muscles.map((m,i)=>(
+              <div key={m.abbr} style={{display:"grid",gridTemplateColumns:"44px 1fr",gap:10,alignItems:"center",
+                opacity:vis?1:0,transform:vis?"translateX(0)":"translateX(-12px)",
+                transition:`opacity 0.4s ${0.2+i*0.07}s,transform 0.4s ${0.2+i*0.07}s`}}>
+                <div style={{fontSize:10,fontWeight:800,color:m.c,background:`${m.c}14`,border:`1px solid ${m.c}30`,borderRadius:7,padding:"4px 0",textAlign:"center"}}>{m.abbr}</div>
+                <div>
+                  <div style={{fontSize:11,fontWeight:600,color:"var(--text)",lineHeight:1.2}}>{m.name}</div>
+                  <div style={{fontSize:9.5,color:"var(--text-tertiary)",fontWeight:300}}>{m.role}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{padding:"13px 16px",background:`${PURPLE}07`,border:`1px solid ${PURPLE}18`,borderLeft:`3px solid ${PURPLE}`,borderRadius:"0 10px 10px 0"}}>
+            <div style={{fontSize:13,fontWeight:700,color:PURPLE,marginBottom:3}}>16 electrodes → 64 features</div>
+            <div style={{fontSize:11,color:"var(--text-tertiary)",lineHeight:1.7,fontWeight:300}}>Ninapro DB5 places 16 electrodes around the forearm. 4 statistical features per channel (MAV, RMS, WL, ZCR) gives a 64-dimensional vector — enough spatial diversity to separate gestures that share underlying muscle activity.</div>
+          </div>
+        </div>
+        <div style={{padding:"32px 28px 32px 0",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",borderLeft:`1px solid ${PURPLE}12`}}>
+          <div style={{fontSize:8.5,fontWeight:700,color:`${PURPLE}48`,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:12,textAlign:"center"}}>Forearm cross-section</div>
+          <ForearmSVG size={185}/>
+          <div style={{marginTop:12,display:"grid",gap:5}}>
+            {[["●","Electrode (5 of 16 shown)",PINK],["– –","Cross-talk signal leakage",`${PINK}70`],["○","Bone (ulna / radius)","rgba(200,200,200,0.45)"]].map(([sym,label,c])=>(
+              <div key={label} style={{display:"flex",alignItems:"center",gap:6}}>
+                <span style={{fontSize:10,color:c,minWidth:18,textAlign:"center"}}>{sym}</span>
+                <span style={{fontSize:9.5,color:"var(--text-tertiary)",fontWeight:300}}>{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      <div style={{padding:"20px 36px",background:`${PURPLE}04`}}>
+        <p style={{fontSize:12.5,color:"var(--text-secondary)",fontWeight:300,lineHeight:1.85,margin:0}}>
+          <strong style={{color:PURPLE,fontWeight:600}}>The cross-talk problem:</strong> The flexor digitorum superficialis has four separate tendon slips but a shared muscle belly — bending your middle finger partially activates fibres adjacent to your index and ring tendons. The dashed lines show this leakage. A classifier cannot remove it; it can only learn to work around it with sufficient spatial sampling across all 16 channels.
+        </p>
+      </div>
+    </article>
+  )
+}
+
+// ── CARD 4: SIGNAL PROCESSING ─────────────────────────────────────────────────
+function FreqSpectrumSVG({filtered=false,vis=true,uid="a"}){
+  const W=330, H=150, PL=10, PR=10, PT=14, PB=26
+  const CW=W-PL-PR, CH=H-PT-PB
+  const freq=Array.from({length:200},(_,i)=>i)
+  function rawPow(f){
+    const muscle=0.85*Math.exp(-Math.pow(f-80,2)/(2*45*45))
+    const motion=f<22?0.55*Math.exp(-f/5):0
+    const powerline=0.42*Math.exp(-Math.pow(f-50,2)/(2*1.8*1.8))
+    return Math.min(1,muscle+motion+powerline+0.07)
+  }
+  function filtPow(f){
+    if(f<20||f>90)return 0.02
+    if(f>=48&&f<=52)return 0.015
+    return rawPow(f)*0.88
+  }
+  const pow=filtered?filtPow:rawPow
+  const pts=freq.map(f=>({f,p:pow(f)}))
+  const tx=f=>PL+(f/199)*CW, ty=p=>PT+(1-p)*CH
+  const pathD=pts.map((p,i)=>`${i===0?"M":"L"}${tx(p.f)},${ty(p.p)}`).join(" ")
+  const areaD=`${pathD} L${tx(199)},${ty(0)} L${tx(0)},${ty(0)} Z`
+  const color=filtered?GREEN:CYAN
+  return(
+    <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{overflow:"visible"}}>
+      <defs>
+        <linearGradient id={`sfg${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.32"/><stop offset="100%" stopColor={color} stopOpacity="0.01"/>
+        </linearGradient>
+        <clipPath id={`sfc${uid}`}><rect x={PL} y={PT} width={CW} height={CH}/></clipPath>
+      </defs>
+      {!filtered&&(
+        <>
+          <rect x={PL} y={PT} width={tx(20)-PL} height={CH} fill="rgba(239,68,68,0.08)" clipPath={`url(#sfc${uid})`}/>
+          <rect x={tx(20)} y={PT} width={tx(90)-tx(20)} height={CH} fill={`${GREEN}08`} clipPath={`url(#sfc${uid})`}/>
+          <rect x={tx(90)} y={PT} width={tx(199)-tx(90)} height={CH} fill="rgba(100,100,100,0.05)" clipPath={`url(#sfc${uid})`}/>
+          <text x={tx(10)} y={PT+13} textAnchor="middle" fill={`${RED}70`} fontSize={7.5} fontWeight={600}>motion</text>
+          <text x={tx(55)} y={PT+13} textAnchor="middle" fill={`${GREEN}80`} fontSize={7.5} fontWeight={600}>useful 20–90Hz</text>
+          <text x={tx(145)} y={PT+13} textAnchor="middle" fill="rgba(150,150,150,0.5)" fontSize={7.5}>noise</text>
+          <text x={tx(50)} y={ty(0.42)-5} textAnchor="middle" fill={`${RED}80`} fontSize={7.5} fontWeight={700}>50Hz spike</text>
+        </>
+      )}
+      {filtered&&(
+        <>
+          <rect x={tx(20)} y={PT} width={tx(90)-tx(20)} height={CH} fill={`${GREEN}10`} clipPath={`url(#sfc${uid})`}/>
+          <text x={tx(55)} y={PT+13} textAnchor="middle" fill={`${GREEN}90`} fontSize={7.5} fontWeight={600}>20–90Hz preserved</text>
+          <text x={tx(10)} y={PT+13} textAnchor="middle" fill="rgba(120,120,120,0.4)" fontSize={7.5}>removed</text>
+          <text x={tx(145)} y={PT+13} textAnchor="middle" fill="rgba(120,120,120,0.4)" fontSize={7.5}>removed</text>
+        </>
+      )}
+      <path d={areaD} fill={`url(#sfg${uid})`} clipPath={`url(#sfc${uid})`} opacity={vis?1:0} style={{transition:"opacity 0.6s 0.4s"}}/>
+      <path d={pathD} fill="none" stroke={color} strokeWidth={1.8} clipPath={`url(#sfc${uid})`}
+        strokeDasharray={700} strokeDashoffset={vis?0:700} style={{transition:"stroke-dashoffset 1.6s cubic-bezier(0.22,1,0.36,1) 0.2s"}}/>
+      {[0,50,100,150,200].map(f=>(
+        <text key={f} x={tx(f)} y={H-4} textAnchor="middle" fill={`${color}40`} fontSize={7.5}>{f}Hz</text>
+      ))}
+    </svg>
+  )
+}
+
+function FrequencyCard(){
+  const [ref,vis]=useInView(0.08)
+  const CHAIN=[
+    {step:"20–90Hz bandpass",desc:"4th-order Butterworth. Maximally flat passband — no amplitude distortion within the useful band. –40 dB/decade rolloff outside.",c:GREEN},
+    {step:"50Hz notch filter",desc:"Removes the powerline interference spike that sits directly in the center of the muscle signal band.",c:AMBER},
+    {step:"DC offset removal",desc:"Eliminates the electrode–skin interface potential that biases the amplifier baseline.",c:CYAN},
+    {step:"Full-wave rectification",desc:"Optional. Converts bipolar EMG to envelope-friendly unipolar signal for amplitude-based features like MAV.",c:PURPLE},
+  ]
+  return(
+    <article ref={ref} style={{borderRadius:20,overflow:"hidden",marginBottom:36,border:`1px solid ${GREEN}30`,background:"#001208"}}>
+      <div style={{padding:"36px 36px 28px",borderBottom:`1px solid ${GREEN}15`}}>
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:24,flexWrap:"wrap",marginBottom:24}}>
+          <div>
+            <span style={{fontSize:10,fontWeight:700,color:GREEN,background:`${GREEN}18`,border:`1px solid ${GREEN}35`,borderRadius:100,padding:"3px 12px",letterSpacing:"0.06em",textTransform:"uppercase"}}>Deep Dive 04</span>
+            <h2 style={{fontSize:32,fontWeight:800,color:"#fff",letterSpacing:"-1.2px",lineHeight:1.05,margin:"14px 0 10px"}}>Carving signal<br/><span style={{color:GREEN}}>from noise.</span></h2>
+            <p style={{fontSize:13,color:"rgba(255,255,255,0.5)",fontWeight:300,lineHeight:1.75,maxWidth:380,margin:0}}>
+              Raw EMG is dominated by motion artefacts, powerline interference, and thermal noise. Gesture information occupies a 70Hz window between 20–90Hz.
+            </p>
+          </div>
+          <div style={{textAlign:"right",flexShrink:0}}>
+            <div style={{fontSize:60,fontWeight:900,color:GREEN,letterSpacing:"-3px",lineHeight:0.88,opacity:0.85}}>70Hz</div>
+            <div style={{fontSize:11,fontWeight:700,color:`${GREEN}55`,letterSpacing:"0.08em",textTransform:"uppercase",marginTop:6}}>useful bandwidth</div>
+            <div style={{fontSize:9.5,color:`${GREEN}38`,marginTop:2}}>of 10,000Hz sampled</div>
+          </div>
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20}}>
+          <div>
+            <div style={{fontSize:9.5,fontWeight:700,color:`${RED}80`,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:10}}>Before — raw EMG</div>
+            <FreqSpectrumSVG filtered={false} vis={vis} uid="raw"/>
+          </div>
+          <div>
+            <div style={{fontSize:9.5,fontWeight:700,color:GREEN,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:10}}>After — filtered</div>
+            <FreqSpectrumSVG filtered={true} vis={vis} uid="flt"/>
+          </div>
+        </div>
+      </div>
+      <div style={{padding:"28px 36px"}}>
+        <div style={{fontSize:9.5,fontWeight:700,color:"rgba(255,255,255,0.38)",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:16}}>Processing chain</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:12}}>
+          {CHAIN.map((item,i)=>(
+            <div key={i} style={{padding:"14px 16px",borderRadius:12,background:`${item.c}08`,border:`1px solid ${item.c}20`,borderLeft:`3px solid ${item.c}70`,
+              opacity:vis?1:0,transform:vis?"translateY(0)":"translateY(8px)",
+              transition:`opacity 0.4s ${0.6+i*0.1}s,transform 0.4s ${0.6+i*0.1}s`}}>
+              <div style={{fontSize:11.5,fontWeight:700,color:item.c,marginBottom:5}}>{item.step}</div>
+              <div style={{fontSize:10.5,color:"rgba(255,255,255,0.4)",lineHeight:1.7,fontWeight:300}}>{item.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </article>
+  )
+}
+
+// ── CARD 5: HISTORY ───────────────────────────────────────────────────────────
+const MILESTONES=[
+  {year:"1791",icon:"⚡",color:AMBER,era:"Foundation",title:"Galvani's discovery",detail:"Luigi Galvani discovers animal electricity — a frog's leg twitches when touched with two dissimilar metals. First evidence that electricity mediates muscle contraction. Published in De Viribus Electricitatis in Motu Musculari Commentarius."},
+  {year:"1849",icon:"🔬",color:"#E8A030",era:"Discovery",title:"First intentional EMG",detail:"Emil du Bois-Reymond records the first deliberate EMG signal from human muscle contraction using a galvanometer. Establishes the measurability of bioelectric phenomena at the muscle surface."},
+  {year:"1940s",icon:"📡",color:"#D4922A",era:"Clinical",title:"Practical surface EMG",detail:"Amplifiers become powerful enough for skin-surface detection. EMG transitions from lab curiosity to clinical diagnostic tool, used primarily for nerve conduction studies and muscle disease diagnosis."},
+  {year:"1960s",icon:"🦾",color:"#C07820",era:"Prosthetics",title:"First myoelectric arm",detail:"First commercial myoelectric prosthetic: a single degree-of-freedom hook controlled by bicep EMG amplitude threshold. One muscle, one motion. The core principle is identical to myojam's classifier input."},
+  {year:"2012",icon:"💾",color:"#F59E0B",era:"Benchmark",title:"Ninapro DB5 released",detail:"Ninapro DB5: 10 subjects, 16 high-density surface EMG channels, 53 hand and wrist gesture classes. The first large-scale public benchmark enabling cross-laboratory cross-subject comparison."},
+  {year:"2025",icon:"🚀",color:AMBER,era:"myojam",title:"84.85% cross-subject",detail:"myojam achieves 84.85% cross-subject accuracy on Ninapro DB5 using Random Forest with 64-feature vectors. Open source, open education, browser-accessible classifier. Desktop app. 11 articles. MIT license."},
+]
+
+function HistoryCard(){
+  const [ref,vis]=useInView(0.05)
+  const [active,setActive]=useState(5)
+  return(
+    <article ref={ref} style={{borderRadius:20,overflow:"hidden",marginBottom:36,border:`1px solid ${AMBER}30`}}>
+      <div style={{background:"linear-gradient(135deg,#120C00,#0A0800)",padding:"36px 36px 28px",borderBottom:`1px solid ${AMBER}15`}}>
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:24,flexWrap:"wrap",marginBottom:28}}>
+          <div>
+            <span style={{fontSize:10,fontWeight:700,color:AMBER,background:`${AMBER}18`,border:`1px solid ${AMBER}35`,borderRadius:100,padding:"3px 12px",letterSpacing:"0.06em",textTransform:"uppercase"}}>Deep Dive 05</span>
+            <h2 style={{fontSize:32,fontWeight:800,color:"#fff",letterSpacing:"-1.2px",lineHeight:1.05,margin:"14px 0 10px"}}>234 years of<br/><span style={{color:AMBER}}>EMG science.</span></h2>
+            <p style={{fontSize:13,color:"rgba(255,255,255,0.5)",fontWeight:300,lineHeight:1.75,maxWidth:360,margin:0}}>
+              From a frog's leg to a browser-accessible gesture classifier. Click any node to explore the milestone.
+            </p>
+          </div>
+          <div style={{textAlign:"right",flexShrink:0}}>
+            <div style={{fontSize:64,fontWeight:900,color:AMBER,letterSpacing:"-4px",lineHeight:0.88,opacity:0.85}}>1791</div>
+            <div style={{fontSize:11,fontWeight:700,color:`${AMBER}55`,letterSpacing:"0.1em",textTransform:"uppercase",marginTop:6}}>first recording</div>
+          </div>
+        </div>
+        <div style={{position:"relative",paddingBottom:0}}>
+          <div style={{position:"absolute",top:18,left:0,right:0,height:2,background:`${AMBER}14`,borderRadius:99}}/>
+          <div style={{position:"absolute",top:18,left:0,height:2,background:`linear-gradient(90deg,${AMBER},${AMBER}80)`,borderRadius:99,
+            width:vis?"100%":"0%",transition:"width 2s cubic-bezier(0.22,1,0.36,1) 0.3s"}}/>
+          <div style={{display:"flex",justifyContent:"space-between",position:"relative"}}>
+            {MILESTONES.map((m,i)=>(
+              <div key={m.year} onClick={()=>setActive(i)} style={{display:"flex",flexDirection:"column",alignItems:"center",cursor:"pointer",flex:1,paddingBottom:4}}>
+                <div style={{width:36,height:36,borderRadius:"50%",
+                  background:active===i?m.color:`${m.color}18`,
+                  border:`2px solid ${active===i?m.color:m.color+"35"}`,
+                  display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,
+                  transition:"all 0.25s",boxShadow:active===i?`0 0 18px ${m.color}60`:"none",
+                  opacity:vis?1:0,transform:vis?"scale(1)":"scale(0.3)",
+                  transitionDelay:`${0.3+i*0.12}s`}}>{m.icon}</div>
+                <div style={{fontSize:8.5,fontWeight:700,color:active===i?m.color:`${m.color}48`,marginTop:6,textAlign:"center"}}>{m.year}</div>
+                <div style={{fontSize:7.5,color:`${m.color}38`,textAlign:"center",lineHeight:1.2}}>{m.era}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      {MILESTONES.map((m,i)=>(
+        <div key={m.year} style={{display:active===i?"grid":"none",gridTemplateColumns:"80px 1fr",gap:0,
+          padding:"26px 36px",background:"linear-gradient(135deg,#120C00,#0A0800)",borderBottom:`1px solid ${AMBER}12`}}>
+          <div style={{display:"flex",flexDirection:"column",alignItems:"center",paddingTop:2}}>
+            <div style={{fontSize:28,marginBottom:6}}>{m.icon}</div>
+            <div style={{fontSize:14,fontWeight:800,color:m.color,letterSpacing:"-0.5px"}}>{m.year}</div>
+            <div style={{fontSize:8.5,color:`${m.color}60`,textTransform:"uppercase",letterSpacing:"0.06em",marginTop:2,textAlign:"center"}}>{m.era}</div>
+          </div>
+          <div style={{paddingLeft:24,borderLeft:`2px solid ${m.color}30`}}>
+            <div style={{fontSize:17,fontWeight:700,color:"#fff",letterSpacing:"-0.4px",marginBottom:8}}>{m.title}</div>
+            <div style={{fontSize:13,color:"rgba(255,255,255,0.52)",fontWeight:300,lineHeight:1.85}}>{m.detail}</div>
+          </div>
+        </div>
+      ))}
+      <div style={{padding:"18px 36px",background:"rgba(245,158,11,0.03)"}}>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+          {MILESTONES.map((m,i)=>(
+            <div key={m.year} onClick={()=>setActive(i)} style={{padding:"10px 12px",borderRadius:10,cursor:"pointer",
+              background:active===i?`${m.color}10`:"transparent",
+              border:`1px solid ${active===i?m.color+"30":"transparent"}`,transition:"all 0.2s"}}
+              onMouseEnter={e=>{if(active!==i){e.currentTarget.style.background=`${m.color}07`}}}
+              onMouseLeave={e=>{if(active!==i){e.currentTarget.style.background="transparent"}}}>
+              <div style={{fontSize:10,fontWeight:700,color:m.color,marginBottom:2}}>{m.year}</div>
+              <div style={{fontSize:10.5,fontWeight:600,color:"rgba(255,255,255,0.65)",lineHeight:1.3}}>{m.title}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </article>
+  )
+}
+
+// ── JOURNAL ───────────────────────────────────────────────────────────────────
+const TAG_MAP={"Launch":PINK,"Content":PURPLE,"Milestone":GREEN,"Open source":BLUE,"Research":AMBER}
+const JOURNAL=[
+  {id:"n9",tag:"Launch",date:"Apr 27, 2025",title:"Desktop app — completely rebuilt",body:"Dark theme, live waveform, 3D hand model, session tracking. Animated confidence bars, rotating 3D hand that mirrors your gesture in real time.",meta:"v1.0 · macOS 12+ · ~295 MB · MIT",link:"/download"},
+  {id:"n7",tag:"Milestone",date:"Apr 10, 2025",title:"11 articles and counting",body:"Neuromuscular junction, windowing, bioethics, phantom limb, and more. Started as build notes; became a genuine EMG education resource.",meta:"11 articles · 9 topics · 450+ reads",link:"/education"},
+  {id:"n6",tag:"Launch",date:"Mar 18, 2025",title:"The educators hub is live",body:"Three full lesson plans with curriculum standards, differentiation, assessment rubrics, and built-in quizzes. Designed for 75 minutes with a class new to EMG.",meta:"3 plans · Grades 7–uni · Free",link:"/educators"},
+  {id:"n4",tag:"Launch",date:"Feb 20, 2025",title:"Four browser demos. No hardware.",body:"Signal playground, confusion matrix explorer, frequency analyzer, gesture game — all running on real Ninapro data. No sensor required.",meta:"4 tools · Browser-only · Real data",link:"/demos"},
+  {id:"n2",tag:"Open source",date:"Jan 14, 2025",title:"Everything is open source",body:"Signal pipeline, ML model, React frontend, FastAPI backend — all MIT-licensed on GitHub. No private forks, no login, no waitlist.",meta:"MIT · GitHub · Full source",link:null},
+  {id:"n1",tag:"Research",date:"Dec 18, 2024",title:"84.85% — and we mean it",body:"Cross-subject accuracy, tested on people never seen during training. 1 in 7 predictions still wrong. That is the honest baseline.",meta:"16,269 windows · 10 subjects · LOSO",link:"/research/paper"},
+]
+
+function JournalCard({entry,navigate}){
+  const color=TAG_MAP[entry.tag]||PINK
+  return(
+    <div style={{padding:"20px",borderRadius:14,border:`1px solid ${color}20`,background:"var(--bg-secondary)",transition:"all 0.2s",cursor:"default"}}
+      onMouseEnter={e=>{e.currentTarget.style.borderColor=`${color}45`;e.currentTarget.style.transform="translateY(-2px)"}}
+      onMouseLeave={e=>{e.currentTarget.style.borderColor=`${color}20`;e.currentTarget.style.transform="translateY(0)"}}>
+      <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:10}}>
+        <span style={{fontSize:9,fontWeight:700,color,background:`${color}15`,border:`1px solid ${color}30`,borderRadius:100,padding:"2px 9px",textTransform:"uppercase",letterSpacing:"0.06em"}}>{entry.tag}</span>
+        <span style={{fontSize:10,color:"var(--text-tertiary)",fontWeight:300}}>{entry.date}</span>
+      </div>
+      <div style={{fontSize:13.5,fontWeight:700,color:"var(--text)",lineHeight:1.25,marginBottom:8,letterSpacing:"-0.2px"}}>{entry.title}</div>
+      <p style={{fontSize:12,color:"var(--text-secondary)",fontWeight:300,lineHeight:1.75,margin:"0 0 12px"}}>{entry.body}</p>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:8,flexWrap:"wrap"}}>
+        <span style={{fontSize:10,color:"var(--text-tertiary)",fontWeight:300}}>{entry.meta}</span>
+        {entry.link&&(
+          <button onClick={()=>navigate(entry.link)} style={{background:"none",border:`1px solid ${color}35`,color,borderRadius:100,padding:"3px 12px",fontSize:10.5,fontWeight:500,cursor:"pointer",fontFamily:"var(--font)",transition:"all 0.15s"}}
+            onMouseEnter={e=>e.currentTarget.style.background=`${color}12`}
+            onMouseLeave={e=>e.currentTarget.style.background="none"}>View →</button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ── PAGE ──────────────────────────────────────────────────────────────────────
+export default function Blog(){
+  const navigate=useNavigate()
+  return(
+    <div style={{minHeight:"100vh",background:"var(--bg)"}}>
+      <style>{`@keyframes heroPulse{0%,100%{opacity:1}50%{opacity:0.3}}`}</style>
+      <Navbar/>
+      <div style={{position:"relative",overflow:"hidden",minHeight:400,display:"flex",alignItems:"center",borderBottom:"1px solid var(--border)"}}>
+        <LiquidChrome baseColor={[0.07,0.0,0.18]} speed={0.10} amplitude={0.22} style={{position:"absolute",inset:0,zIndex:0}}/>
+        <div style={{position:"absolute",inset:0,zIndex:1,opacity:0.45}}><EMGPulse/></div>
+        <div style={{position:"absolute",inset:0,background:"linear-gradient(to bottom,rgba(3,0,18,0.72),rgba(3,0,18,0.58) 60%,rgba(3,0,18,0.92))",zIndex:2}}/>
+        <div style={{position:"relative",zIndex:3,width:"100%",maxWidth:960,margin:"0 auto",padding:"100px 32px 72px"}}>
+          <Reveal>
+            <div style={{display:"inline-flex",alignItems:"center",gap:7,background:"rgba(255,45,120,0.12)",border:"1px solid rgba(255,45,120,0.3)",borderRadius:100,padding:"4px 14px",marginBottom:20}}>
+              <span style={{width:5,height:5,borderRadius:"50%",background:PINK,display:"inline-block",animation:"heroPulse 2s infinite"}}/>
+              <span style={{fontSize:11,fontWeight:600,color:PINK,letterSpacing:"0.06em",textTransform:"uppercase"}}>EMG Facts & Project Journal</span>
+            </div>
+            <h1 style={{fontSize:"clamp(32px,6vw,60px)",fontWeight:700,letterSpacing:"-2.5px",lineHeight:1.0,color:"#fff",marginBottom:18}}>
+              Five hard truths<br/><span style={{color:PINK}}>about surface EMG.</span>
+            </h1>
+            <p style={{fontSize:16,color:"rgba(255,255,255,0.58)",fontWeight:300,lineHeight:1.8,maxWidth:480,marginBottom:36}}>
+              Each article has a unique data visualization built from the actual Ninapro DB5 dataset. Every number is sourced from published literature or our own pipeline.
+            </p>
+            <div style={{display:"flex",gap:36,flexWrap:"wrap"}}>
+              {[["5","deep dives"],["16,269","EMG windows analyzed"],["234","years of EMG history"]].map(([v,l])=>(
                 <div key={l}>
-                  <div style={{ fontSize:20, fontWeight:700, color:"#fff", letterSpacing:"-0.5px" }}>{v}</div>
-                  <div style={{ fontSize:9.5, color:"rgba(255,255,255,0.4)", fontWeight:300, textTransform:"uppercase", letterSpacing:"0.08em", marginTop:2 }}>{l}</div>
+                  <div style={{fontSize:22,fontWeight:700,color:"#fff",letterSpacing:"-0.5px"}}>{v}</div>
+                  <div style={{fontSize:9.5,color:"rgba(255,255,255,0.36)",fontWeight:300,textTransform:"uppercase",letterSpacing:"0.08em",marginTop:2}}>{l}</div>
                 </div>
               ))}
             </div>
@@ -827,64 +658,56 @@ export default function Blog() {
         </div>
       </div>
 
-      {/* Two-column body */}
-      <div style={{ maxWidth:1140, margin:"0 auto", padding:"52px 32px 80px", display:"grid", gridTemplateColumns:"1fr 360px", gap:48, alignItems:"start" }}>
+      <div style={{maxWidth:900,margin:"0 auto",padding:"60px 32px 80px"}}>
+        <Reveal>
+          <SectionPill>EMG Deep Dives</SectionPill>
+          <h2 style={{fontSize:"clamp(18px,2.5vw,28px)",fontWeight:700,letterSpacing:"-0.8px",color:"var(--text)",marginBottom:8}}>Five articles. One number each.</h2>
+          <p style={{fontSize:13.5,color:"var(--text-secondary)",fontWeight:300,lineHeight:1.75,marginBottom:40,maxWidth:520}}>
+            Each card tells one complete story about EMG science. No padding. No simplification. The actual data, always visible.
+          </p>
+        </Reveal>
 
-        {/* Left: EMG Fact cards */}
-        <div>
-          <Reveal>
-            <SectionPill>EMG Facts</SectionPill>
-            <h2 style={{ fontSize:"clamp(18px,2.5vw,26px)", fontWeight:700, letterSpacing:"-0.7px", color:"var(--text)", marginBottom:6 }}>Five hard truths about surface EMG.</h2>
-            <p style={{ fontSize:13, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, marginBottom:28, maxWidth:500 }}>
-              Each card has a unique visualization. Every number is from the actual Ninapro DB5 dataset or published EMG literature.
-            </p>
-          </Reveal>
-          <LatencyCard/>
-          <CrossSubjectCard/>
-          <ForearmCard/>
-          <FrequencyCard/>
-          <HistoryCard/>
-          <Reveal delay={0.1}>
-            <div style={{ marginTop:4, padding:"16px 20px", background:"var(--bg-secondary)", borderRadius:12, border:"1px solid var(--border)", display:"flex", alignItems:"center", justifyContent:"space-between", gap:16 }}>
-              <p style={{ fontSize:12.5, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.6, margin:0, maxWidth:360 }}>
-                Want to go deeper? 11 full-length articles cover EMG neuroscience, signal processing, and ML.
-              </p>
-              <button onClick={()=>navigate("/education")} style={{ flexShrink:0, background:"var(--accent)", color:"#fff", border:"none", borderRadius:100, padding:"9px 20px", fontSize:12.5, fontWeight:500, cursor:"pointer", fontFamily:"var(--font)", boxShadow:`0 4px 14px ${PINK}28`, transition:"transform 0.15s, box-shadow 0.15s" }}
-                onMouseEnter={e=>{ e.currentTarget.style.transform="scale(1.04)"; e.currentTarget.style.boxShadow=`0 8px 20px ${PINK}40` }}
-                onMouseLeave={e=>{ e.currentTarget.style.transform="scale(1)"; e.currentTarget.style.boxShadow=`0 4px 14px ${PINK}28` }}
-              >Education hub →</button>
+        <LatencyCard/>
+        <CrossSubjectCard/>
+        <ForearmCard/>
+        <FrequencyCard/>
+        <HistoryCard/>
+
+        <Reveal delay={0.1}>
+          <div style={{margin:"8px 0 56px",padding:"24px 28px",background:"var(--bg-secondary)",borderRadius:16,border:"1px solid var(--border)",display:"flex",alignItems:"center",justifyContent:"space-between",gap:20,flexWrap:"wrap"}}>
+            <div>
+              <div style={{fontSize:15,fontWeight:700,color:"var(--text)",marginBottom:4,letterSpacing:"-0.3px"}}>Go deeper — 11 full articles</div>
+              <p style={{fontSize:12.5,color:"var(--text-secondary)",fontWeight:300,lineHeight:1.6,margin:0}}>The education hub covers neuromuscular anatomy, signal processing theory, ML pipeline, bioethics, and more.</p>
             </div>
-          </Reveal>
-        </div>
-
-        {/* Right: Project Journal */}
-        <div style={{ position:"sticky", top:24 }}>
-          <Reveal>
-            <SectionPill>Project journal</SectionPill>
-            <h2 style={{ fontSize:"clamp(16px,2vw,21px)", fontWeight:700, letterSpacing:"-0.6px", color:"var(--text)", marginBottom:5 }}>Every step. Documented.</h2>
-            <p style={{ fontSize:11.5, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.7, marginBottom:20 }}>
-              From first classifier to v1.0 desktop app — every launch, milestone, and honest mistake.
-            </p>
-          </Reveal>
-          <div style={{ background:"var(--bg-secondary)", border:"1px solid var(--border)", borderRadius:12, padding:"18px 16px", maxHeight:"72vh", overflowY:"auto" }}>
-            {JOURNAL.map((entry,i) => (
-              <Reveal key={entry.id} delay={i * 0.03}>
-                <JournalEntry entry={entry} navigate={navigate} isLast={i===JOURNAL.length-1}/>
-              </Reveal>
-            ))}
-          </div>
-          <Reveal delay={0.15}>
-            <button onClick={()=>navigate("/changelog")} style={{ marginTop:10, width:"100%", background:"none", border:"1px solid var(--border)", borderRadius:10, padding:"11px", fontSize:12, color:"var(--text-secondary)", fontFamily:"var(--font)", cursor:"pointer", transition:"all 0.15s", display:"flex", alignItems:"center", justifyContent:"center", gap:6 }}
-              onMouseEnter={e=>{ e.currentTarget.style.borderColor="var(--accent)"; e.currentTarget.style.color="var(--accent)" }}
-              onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--border)"; e.currentTarget.style.color="var(--text-secondary)" }}
-            >
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="1.2"/><path d="M3.5 4h5M3.5 6h5M3.5 8h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
-              Full technical changelog →
+            <button onClick={()=>navigate("/education")} style={{flexShrink:0,background:"var(--accent)",color:"#fff",border:"none",borderRadius:100,padding:"11px 24px",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"var(--font)",boxShadow:`0 4px 16px ${PINK}28`,transition:"transform 0.15s,box-shadow 0.15s",whiteSpace:"nowrap"}}
+              onMouseEnter={e=>{e.currentTarget.style.transform="scale(1.04)";e.currentTarget.style.boxShadow=`0 8px 24px ${PINK}40`}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="scale(1)";e.currentTarget.style.boxShadow=`0 4px 16px ${PINK}28`}}>
+              Education hub →
             </button>
-          </Reveal>
-        </div>
-      </div>
+          </div>
+        </Reveal>
 
+        <Reveal>
+          <SectionPill>Project journal</SectionPill>
+          <h2 style={{fontSize:"clamp(18px,2.5vw,26px)",fontWeight:700,letterSpacing:"-0.7px",color:"var(--text)",marginBottom:6}}>Every step. Documented.</h2>
+          <p style={{fontSize:13,color:"var(--text-secondary)",fontWeight:300,lineHeight:1.7,marginBottom:24,maxWidth:480}}>Six key moments from first classifier to v1.0 desktop app.</p>
+        </Reveal>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14,marginBottom:16}}>
+          {JOURNAL.map((entry,i)=>(
+            <Reveal key={entry.id} delay={i*0.04}>
+              <JournalCard entry={entry} navigate={navigate}/>
+            </Reveal>
+          ))}
+        </div>
+        <Reveal delay={0.15}>
+          <button onClick={()=>navigate("/changelog")} style={{width:"100%",background:"none",border:"1px solid var(--border)",borderRadius:12,padding:"13px",fontSize:12.5,color:"var(--text-secondary)",fontFamily:"var(--font)",cursor:"pointer",transition:"all 0.15s",display:"flex",alignItems:"center",justifyContent:"center",gap:7}}
+            onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)"}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor="var(--border)";e.currentTarget.style.color="var(--text-secondary)"}}>
+            <svg width="13" height="13" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="1.2"/><path d="M3.5 4h5M3.5 6h5M3.5 8h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+            Full technical changelog →
+          </button>
+        </Reveal>
+      </div>
       <Footer/>
     </div>
   )

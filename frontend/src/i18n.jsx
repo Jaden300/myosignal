@@ -13,7 +13,7 @@ const EN = {
   nav_corporations:   "For corporations",
   nav_changelog:      "Changelog",
   nav_research:       "Research paper",
-  nav_download:       "Download for Mac",
+  nav_download:       "Download",
 
   // Landing – hero
   landing_badge:      "Open education platform · EMG science · Open source",

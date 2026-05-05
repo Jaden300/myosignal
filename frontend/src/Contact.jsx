@@ -36,12 +36,11 @@ export default function Contact() {
               <div style={{ fontSize:11, fontWeight:600, color:"var(--accent)", textTransform:"uppercase", letterSpacing:"0.1em", marginBottom:16 }}>Follow the project</div>
               <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:10 }}>
                 {[
-                  { icon:"fab fa-github",     href:"https://github.com/Jaden300/myojam",  label:"GitHub",   sub:"Source code" },
-                  { icon:"fab fa-linkedin-in", href:"https://linkedin.com/in/jaden-wong09",label:"LinkedIn", sub:"Updates"     },
-                  { icon:"fab fa-instagram",  href:"https://instagram.com/YOUR_HANDLE",   label:"Instagram",sub:"@myojam"     },
-                  { icon:"fab fa-x-twitter",  href:"https://x.com/YOUR_HANDLE",           label:"X",        sub:"@myojam"     },
-                  { icon:"fab fa-youtube",    href:"https://youtube.com/YOUR_CHANNEL",    label:"YouTube",  sub:"Demos"       },
-                  { icon:"fab fa-tiktok",     href:"https://tiktok.com/@YOUR_HANDLE",    label:"TikTok",   sub:"@myojam"     },
+                  { icon:"fab fa-github",      href:"https://github.com/Jaden300/myojam",            label:"GitHub",    sub:"Source code"      },
+                  { icon:"fab fa-linkedin-in", href:"https://www.linkedin.com/company/myojam/",     label:"LinkedIn",  sub:"@myojam"          },
+                  { icon:"fab fa-instagram",   href:"https://www.instagram.com/myojam_official/",   label:"Instagram", sub:"@myojam_official"  },
+                  { icon:"fab fa-x-twitter",   href:"https://x.com/myojam_official",                label:"X",         sub:"@myojam_official"  },
+                  { icon:"fab fa-youtube",     href:"https://www.youtube.com/@myojam-official",      label:"YouTube",   sub:"@myojam-official"  },
                 ].map(s => (
                   <a key={s.label} href={s.href} target="_blank" rel="noreferrer" style={{
                     textDecoration:"none",

@@ -16,7 +16,7 @@ export default function Terms() {
             Terms of Service
           </h1>
           <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", fontWeight: 300, marginBottom: 0 }}>
-            Last updated: March 2025
+            Last updated: May 2025
           </p>
         </div>
       </div>
@@ -31,7 +31,7 @@ export default function Terms() {
             },
             {
               title: "2. Description of Service",
-              body: "myojam is an open-source electromyographic gesture classification platform for research and assistive technology purposes. It includes a web-based demo, a macOS desktop application, and associated documentation."
+              body: "myojam is an open-source electromyographic gesture classification platform for research and assistive technology purposes. It includes a web-based demo, desktop applications for macOS, Windows, and Linux, and associated documentation."
             },
             {
               title: "3. Medical Disclaimer",

@@ -411,7 +411,7 @@ function MacDownloadButton({ hovered }) {
       <svg width="15" height="15" viewBox="0 0 12 12" fill="none">
         <path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
-      Download for Mac — Free
+      Download for macOS — Free
     </a>
   )
 }
@@ -914,7 +914,7 @@ void loop() {
                 onMouseLeave={e => { e.currentTarget.style.transform="scale(1)"; e.currentTarget.style.boxShadow="0 6px 24px rgba(255,45,120,0.40)" }}
               >
                 <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M6 1v7M3 5l3 3 3-3M1 10h10" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                Download for Mac
+                Download for macOS
               </a>
               <a href={WIN_URL} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(0,120,215,0.18)", border: "1px solid rgba(0,120,215,0.35)", color: "#3BAAFF", textDecoration: "none", borderRadius: 100, padding: "14px 28px", fontSize: 15, fontWeight: 600, transition: "all 0.18s" }}
                 onMouseEnter={e => { e.currentTarget.style.transform="scale(1.04)"; e.currentTarget.style.background="rgba(0,120,215,0.28)" }}

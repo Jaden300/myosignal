@@ -457,12 +457,11 @@ export default function Landing() {
               </div>
               <div style={{ display:"flex", gap:10 }}>
                 {[
-                  { icon:"fab fa-github",      href:"https://github.com/Jaden300/myojam",          label:"GitHub"    },
-                  { icon:"fab fa-linkedin-in",  href:"https://linkedin.com/in/jaden-wong09",        label:"LinkedIn"  },
-                  { icon:"fab fa-instagram",    href:"https://instagram.com/YOUR_HANDLE",           label:"Instagram" },
-                  { icon:"fab fa-x-twitter",    href:"https://x.com/YOUR_HANDLE",                  label:"X"         },
-                  { icon:"fab fa-youtube",      href:"https://youtube.com/YOUR_CHANNEL",            label:"YouTube"   },
-                  { icon:"fab fa-tiktok",       href:"https://tiktok.com/@YOUR_HANDLE",            label:"TikTok"    },
+                  { icon:"fab fa-github",      href:"https://github.com/Jaden300/myojam",            label:"GitHub"    },
+                  { icon:"fab fa-linkedin-in", href:"https://www.linkedin.com/company/myojam/",     label:"LinkedIn"  },
+                  { icon:"fab fa-instagram",   href:"https://www.instagram.com/myojam_official/",   label:"Instagram" },
+                  { icon:"fab fa-x-twitter",   href:"https://x.com/myojam_official",                label:"X"         },
+                  { icon:"fab fa-youtube",     href:"https://www.youtube.com/@myojam-official",      label:"YouTube"   },
                 ].map(s => (
                   <a key={s.label} href={s.href} target="_blank" rel="noreferrer" title={s.label} style={{
                     width:44, height:44, borderRadius:"50%",
