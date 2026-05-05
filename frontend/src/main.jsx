@@ -50,6 +50,8 @@ import DesktopApp from "./DesktopApp"
 import PipelineExplorer from "./PipelineExplorer"
 import ResearchExplorer from "./ResearchExplorer"
 import Mission from "./Mission"
+import MyoCode from "./MyoCode"
+import LiveSignal from "./App"
 
 import { initTheme } from "./theme"
 initTheme()
@@ -107,6 +109,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/pipeline" element={<PipelineExplorer />} />
         <Route path="/research/explorer" element={<ResearchExplorer />} />
         <Route path="/mission" element={<Mission />} />
+        <Route path="/myocode" element={<MyoCode />} />
+        <Route path="/signal" element={<LiveSignal />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

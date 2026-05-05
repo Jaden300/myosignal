@@ -38,6 +38,24 @@ const LIN_WAVE_1 = buildWave(W, 110, 38, 1.4)
 const LIN_WAVE_2 = buildWave(W, 110, 24, 2.5)
 const LIN_WAVE_3 = buildWave(W, 110, 14, 0.2)
 
+function buildMiniWave(cy, amp, phase) {
+  const pts = []
+  for (let x = 0; x <= 300; x += 4) {
+    const n = x / 300
+    const y = cy
+      + amp * 0.55 * Math.sin(n * 8 * Math.PI + phase)
+      + amp * 0.30 * Math.sin(n * 20 * Math.PI + phase * 1.3 + 0.8)
+      + amp * 0.15 * Math.sin(n * 48 * Math.PI + phase * 0.7 + 1.5)
+    pts.push(`${x},${y.toFixed(1)}`)
+  }
+  return "M " + pts.join(" L ")
+}
+const MINI_CH1 = buildMiniWave(12, 8, 0.0)
+const MINI_CH2 = buildMiniWave(12, 6, 1.3)
+const MINI_CH3 = buildMiniWave(12, 4.5, 2.6)
+const MINI_CH4 = buildMiniWave(12, 7, 0.7)
+const MINI_CH5 = buildMiniWave(12, 5, 3.9)
+
 const PLATFORM_ACCENT = { mac: "#FF2D78", windows: "#3BAAFF", linux: "#10B981" }
 const PLATFORM_RGBA   = {
   mac:     (a) => `rgba(255,45,120,${a})`,
@@ -53,85 +71,101 @@ function MacBanner({ hovered }) {
     <div style={{
       position: "relative", width: "100%", height: 220, overflow: "hidden",
       borderRadius: "20px 20px 0 0",
-      background: "linear-gradient(160deg, #0c0020 0%, #160830 40%, #0c0020 100%)",
+      background: "linear-gradient(160deg, #0a001a 0%, #130828 50%, #0a001a 100%)",
     }}>
       <style>{`
-        @keyframes macWave1 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-        @keyframes macWave2 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-        @keyframes macWave3 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-        @keyframes macGlow  { 0%,100%{opacity:0.45} 50%{opacity:0.75} }
-        @keyframes macPulse { 0%,100%{transform:scale(1);opacity:0.07} 50%{transform:scale(1.08);opacity:0.11} }
-        @keyframes macScan  { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+        @keyframes macWaveBg { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        @keyframes macGlow   { 0%,100%{opacity:0.35} 50%{opacity:0.58} }
+        @keyframes macScan   { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
       `}</style>
 
-      {/* Radial glow */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
-        background: "radial-gradient(ellipse 70% 80% at 50% 55%, rgba(255,45,120,0.28) 0%, transparent 70%)",
-        animation: "macGlow 3.2s ease-in-out infinite",
+        background: "radial-gradient(ellipse 80% 80% at 50% 60%, rgba(255,45,120,0.14) 0%, transparent 70%)",
+        animation: "macGlow 3.5s ease-in-out infinite",
       }}/>
-
-      {/* Hover glow intensifier */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
-        background: "radial-gradient(ellipse 60% 70% at 50% 55%, rgba(255,45,120,0.22) 0%, transparent 65%)",
-        opacity: hovered ? 1 : 0, transition: "opacity 0.4s ease",
+        background: "radial-gradient(ellipse 60% 70% at 50% 55%, rgba(255,45,120,0.12) 0%, transparent 65%)",
+        opacity: hovered ? 1 : 0, transition: "opacity 0.4s",
       }}/>
-
-      {/* Animated waveforms */}
-      <svg viewBox={`0 0 ${W} 220`} preserveAspectRatio="none"
-        style={{ position:"absolute", top:0, left:0, width:"200%", height:"100%",
-          animation:"macWave1 6s linear infinite", willChange:"transform" }}>
-        <path d={MAC_WAVE_3} stroke="rgba(255,45,120,0.12)" strokeWidth="1" fill="none"/>
-        <path d={MAC_WAVE_2} stroke="rgba(200,80,180,0.22)" strokeWidth="1.4" fill="none"/>
-        <path d={MAC_WAVE_1} stroke="rgba(255,45,120,0.70)" strokeWidth="2" fill="none"
-          style={{ filter:"drop-shadow(0 0 6px rgba(255,45,120,0.7))" }}/>
+      <svg viewBox={`0 0 ${W} 220`} preserveAspectRatio="none" style={{
+        position: "absolute", top: 0, left: 0, width: "200%", height: "100%",
+        opacity: 0.14, animation: "macWaveBg 8s linear infinite", willChange: "transform",
+      }}>
+        <path d={MAC_WAVE_1} stroke="rgba(255,45,120,1)" strokeWidth="1.5" fill="none"/>
       </svg>
 
-      {/* Large background symbol */}
+      {/* macOS window mockup */}
       <div style={{
-        position: "absolute", top: "50%", left: "50%",
-        transform: "translate(-50%, -50%)",
-        fontSize: 120, color: "rgba(255,45,120,0.07)",
-        fontWeight: 700, userSelect: "none", letterSpacing: -2,
-        animation: "macPulse 4s ease-in-out infinite",
-        lineHeight: 1,
-      }}>⌘</div>
-
-      {/* Scan line on hover */}
-      {hovered && (
+        position: "absolute", top: 18, left: 18, right: 18,
+        background: "rgba(10,3,24,0.9)",
+        border: "1px solid rgba(255,45,120,0.2)",
+        borderRadius: 10,
+        overflow: "hidden",
+        boxShadow: "0 12px 40px rgba(0,0,0,0.6)",
+      }}>
+        {/* Title bar */}
         <div style={{
-          position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none",
+          display: "flex", alignItems: "center",
+          padding: "0 12px", height: 30,
+          background: "rgba(255,255,255,0.025)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
         }}>
-          <div style={{
-            position: "absolute", top: 0, bottom: 0, width: "30%",
-            background: "linear-gradient(90deg, transparent, rgba(255,45,120,0.06), transparent)",
-            animation: "macScan 1.4s ease-in-out infinite",
-          }}/>
+          <div style={{ display: "flex", gap: 5.5, marginRight: 12 }}>
+            <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FF5F57" }}/>
+            <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FFBD2E" }}/>
+            <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28CA42" }}/>
+          </div>
+          <div style={{ flex: 1, textAlign: "center", fontSize: 10, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>
+            myojam — Live Signal
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 4, background: "rgba(255,45,120,0.18)", border: "1px solid rgba(255,45,120,0.3)", borderRadius: 100, padding: "2px 7px" }}>
+            <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#FF2D78" }}/>
+            <span style={{ fontSize: 8, color: "#FF2D78", fontWeight: 700, letterSpacing: "0.05em" }}>LIVE</span>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div style={{ padding: "10px 14px" }}>
+          {/* Status row */}
+          <div style={{ display: "flex", gap: 20, marginBottom: 10 }}>
+            {[
+              { label: "Gesture", val: "FIST", color: "#FF2D78" },
+              { label: "Confidence", val: "94.2%", color: "rgba(255,255,255,0.9)" },
+              { label: "Latency", val: "<5ms", color: "#22D3EE" },
+            ].map(({ label, val, color }) => (
+              <div key={label}>
+                <div style={{ fontSize: 7, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 2 }}>{label}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color, letterSpacing: "-0.3px" }}>{val}</div>
+              </div>
+            ))}
+          </div>
+          {/* EMG channels */}
+          {[
+            { ch: "CH1", wave: MINI_CH1, color: "rgba(255,45,120,0.85)",  glow: "rgba(255,45,120,0.5)"  },
+            { ch: "CH2", wave: MINI_CH2, color: "rgba(167,139,250,0.8)",  glow: "rgba(167,139,250,0.4)" },
+            { ch: "CH3", wave: MINI_CH3, color: "rgba(34,211,238,0.75)",  glow: "rgba(34,211,238,0.4)"  },
+            { ch: "CH4", wave: MINI_CH4, color: "rgba(16,185,129,0.75)",  glow: "rgba(16,185,129,0.35)" },
+            { ch: "CH5", wave: MINI_CH5, color: "rgba(249,115,22,0.70)",  glow: "rgba(249,115,22,0.35)" },
+          ].map(({ ch, wave, color, glow }, i) => (
+            <div key={ch} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: i < 4 ? 5 : 0 }}>
+              <span style={{ fontSize: 7, color: "rgba(255,255,255,0.28)", fontFamily: "monospace", minWidth: 18 }}>{ch}</span>
+              <div style={{ flex: 1, height: 22, background: "rgba(255,255,255,0.02)", borderRadius: 3, overflow: "hidden" }}>
+                <svg viewBox="0 0 300 24" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
+                  <path d={wave} stroke={color} strokeWidth="1.4" fill="none" style={{ filter: `drop-shadow(0 0 3px ${glow})` }}/>
+                </svg>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {hovered && (
+        <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+          <div style={{ position: "absolute", top: 0, bottom: 0, width: "30%", background: "linear-gradient(90deg, transparent, rgba(255,45,120,0.04), transparent)", animation: "macScan 1.4s ease-in-out infinite" }}/>
         </div>
       )}
-
-      {/* OS label */}
-      <div style={{ position: "absolute", top: 18, left: 22, display: "flex", alignItems: "center", gap: 8 }}>
-        <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(255,45,120,0.18)", border: "1px solid rgba(255,45,120,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
-            <path d="M9 1.5C9 1.5 6.5 1 5.5 4C4.5 1.5 2 1 2 1C2 1 0 1 0 4C0 8.5 4.5 12.5 6 13.5C7.5 12.5 12 8.5 12 4C12 1 9 1.5 9 1.5Z" fill="rgba(255,45,120,0.9)" transform="translate(3, 2)"/>
-          </svg>
-        </div>
-        <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.9)", letterSpacing: "0.02em" }}>macOS</span>
-      </div>
-
-      {/* Live badge */}
-      <div style={{
-        position: "absolute", top: 18, right: 18,
-        background: "rgba(255,45,120,0.15)", border: "1px solid rgba(255,45,120,0.35)",
-        borderRadius: 100, padding: "3px 10px",
-        fontSize: 10, fontWeight: 600, color: "#FF2D78", letterSpacing: "0.06em",
-        display: "flex", alignItems: "center", gap: 5,
-      }}>
-        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#FF2D78" }}/>
-        AVAILABLE
-      </div>
     </div>
   )
 }
@@ -141,90 +175,112 @@ function WindowsBanner({ hovered }) {
     <div style={{
       position: "relative", width: "100%", height: 220, overflow: "hidden",
       borderRadius: "20px 20px 0 0",
-      background: "linear-gradient(160deg, #020c1e 0%, #061525 40%, #020c1e 100%)",
+      background: "linear-gradient(160deg, #020c1e 0%, #061525 50%, #020c1e 100%)",
     }}>
       <style>{`
-        @keyframes winWave1 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-        @keyframes winWave2 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-        @keyframes winWave3 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-        @keyframes winGlow  { 0%,100%{opacity:0.45} 50%{opacity:0.70} }
-        @keyframes winPulse { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.07} 50%{transform:translate(-50%,-50%) scale(1.07);opacity:0.11} }
-        @keyframes winScan  { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+        @keyframes winWaveBg { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        @keyframes winGlow   { 0%,100%{opacity:0.40} 50%{opacity:0.60} }
+        @keyframes winScan   { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
       `}</style>
 
-      {/* Radial glow */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
-        background: "radial-gradient(ellipse 70% 80% at 50% 55%, rgba(0,120,215,0.30) 0%, transparent 70%)",
-        animation: "winGlow 3.5s ease-in-out infinite",
+        background: "radial-gradient(ellipse 80% 80% at 50% 60%, rgba(0,120,215,0.18) 0%, transparent 70%)",
+        animation: "winGlow 3.8s ease-in-out infinite",
       }}/>
-
-      {/* Hover glow intensifier */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
-        background: "radial-gradient(ellipse 60% 70% at 50% 55%, rgba(0,140,255,0.22) 0%, transparent 65%)",
-        opacity: hovered ? 1 : 0, transition: "opacity 0.4s ease",
+        background: "radial-gradient(ellipse 60% 70% at 50% 55%, rgba(0,140,255,0.14) 0%, transparent 65%)",
+        opacity: hovered ? 1 : 0, transition: "opacity 0.4s",
       }}/>
-
-      {/* Animated waveforms */}
-      <svg viewBox={`0 0 ${W} 220`} preserveAspectRatio="none"
-        style={{ position:"absolute", top:0, left:0, width:"200%", height:"100%",
-          animation:"winWave1 7s linear infinite", willChange:"transform" }}>
-        <path d={WIN_WAVE_3} stroke="rgba(0,140,255,0.10)" strokeWidth="1" fill="none"/>
-        <path d={WIN_WAVE_2} stroke="rgba(30,160,255,0.20)" strokeWidth="1.4" fill="none"/>
-        <path d={WIN_WAVE_1} stroke="rgba(0,120,215,0.68)" strokeWidth="2" fill="none"
-          style={{ filter:"drop-shadow(0 0 6px rgba(0,120,215,0.7))" }}/>
+      <svg viewBox={`0 0 ${W} 220`} preserveAspectRatio="none" style={{
+        position: "absolute", top: 0, left: 0, width: "200%", height: "100%",
+        opacity: 0.14, animation: "winWaveBg 9s linear infinite", willChange: "transform",
+      }}>
+        <path d={WIN_WAVE_1} stroke="rgba(0,120,215,1)" strokeWidth="1.5" fill="none"/>
       </svg>
 
-      {/* Large background Windows logo */}
+      {/* Windows app window mockup */}
       <div style={{
-        position: "absolute", top: "50%", left: "50%",
-        transform: "translate(-50%, -50%)",
-        animation: "winPulse 4.5s ease-in-out infinite",
+        position: "absolute", top: 18, left: 18, right: 18,
+        background: "rgba(2,8,20,0.92)",
+        border: "1px solid rgba(0,120,215,0.22)",
+        borderRadius: 6,
+        overflow: "hidden",
+        boxShadow: "0 12px 40px rgba(0,0,0,0.6)",
       }}>
-        <svg width="100" height="100" viewBox="0 0 16 16" fill="none">
-          <rect x="0" y="0" width="7" height="7" rx="1" fill="rgba(0,140,255,0.9)"/>
-          <rect x="9" y="0" width="7" height="7" rx="1" fill="rgba(0,140,255,0.7)"/>
-          <rect x="0" y="9" width="7" height="7" rx="1" fill="rgba(0,140,255,0.7)"/>
-          <rect x="9" y="9" width="7" height="7" rx="1" fill="rgba(0,140,255,0.5)"/>
-        </svg>
+        {/* Windows title bar */}
+        <div style={{
+          display: "flex", alignItems: "center",
+          padding: "0 0 0 10px", height: 30,
+          background: "rgba(0,40,80,0.4)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+        }}>
+          <div style={{ marginRight: 7 }}>
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <rect x="0" y="0" width="7" height="7" rx="1" fill="rgba(0,180,255,0.85)"/>
+              <rect x="9" y="0" width="7" height="7" rx="1" fill="rgba(0,180,255,0.65)"/>
+              <rect x="0" y="9" width="7" height="7" rx="1" fill="rgba(0,180,255,0.65)"/>
+              <rect x="9" y="9" width="7" height="7" rx="1" fill="rgba(0,180,255,0.45)"/>
+            </svg>
+          </div>
+          <span style={{ flex: 1, fontSize: 10, color: "rgba(255,255,255,0.5)", fontWeight: 500 }}>myojam — EMG Classifier</span>
+          {["─", "□", "✕"].map((sym, i) => (
+            <div key={sym} style={{
+              width: 36, height: 30, display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: i === 2 ? 10 : 11, color: i === 2 ? "rgba(255,100,100,0.8)" : "rgba(255,255,255,0.35)",
+            }}>{sym}</div>
+          ))}
+        </div>
+
+        {/* Tab bar */}
+        <div style={{ display: "flex", borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(0,0,0,0.2)" }}>
+          {[{ label: "Signal", active: true }, { label: "Training", active: false }, { label: "Settings", active: false }].map(({ label, active }) => (
+            <div key={label} style={{
+              padding: "5px 14px", fontSize: 9, fontWeight: active ? 600 : 400,
+              color: active ? "#3BAAFF" : "rgba(255,255,255,0.3)",
+              borderBottom: active ? "1.5px solid #3BAAFF" : "1.5px solid transparent",
+            }}>{label}</div>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div style={{ padding: "10px 12px" }}>
+          {/* Prediction row */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+            <div style={{ background: "rgba(0,120,215,0.15)", border: "1px solid rgba(0,120,215,0.3)", borderRadius: 4, padding: "3px 10px" }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#3BAAFF", letterSpacing: "0.04em" }}>OPEN HAND</span>
+            </div>
+            <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,0.05)", borderRadius: 100, overflow: "hidden" }}>
+              <div style={{ width: "89%", height: "100%", background: "linear-gradient(90deg, #0078D7, #3BAAFF)", borderRadius: 100 }}/>
+            </div>
+            <span style={{ fontSize: 10, color: "rgba(255,255,255,0.55)", fontWeight: 600 }}>89%</span>
+            <span style={{ fontSize: 10, color: "#22D3EE", fontWeight: 600 }}>&lt;5ms</span>
+          </div>
+          {/* Channels */}
+          {[
+            { ch: "CH1", wave: MINI_CH1, color: "rgba(0,180,255,0.85)",  glow: "rgba(0,120,215,0.5)"  },
+            { ch: "CH2", wave: MINI_CH2, color: "rgba(59,170,255,0.75)", glow: "rgba(0,140,255,0.4)"  },
+            { ch: "CH3", wave: MINI_CH3, color: "rgba(34,211,238,0.70)", glow: "rgba(34,211,238,0.35)" },
+            { ch: "CH4", wave: MINI_CH4, color: "rgba(139,92,246,0.70)", glow: "rgba(139,92,246,0.35)" },
+          ].map(({ ch, wave, color, glow }, i) => (
+            <div key={ch} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: i < 3 ? 5 : 0 }}>
+              <span style={{ fontSize: 7, color: "rgba(255,255,255,0.28)", fontFamily: "monospace", minWidth: 18 }}>{ch}</span>
+              <div style={{ flex: 1, height: 22, background: "rgba(255,255,255,0.02)", borderRadius: 2, overflow: "hidden" }}>
+                <svg viewBox="0 0 300 24" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
+                  <path d={wave} stroke={color} strokeWidth="1.4" fill="none" style={{ filter: `drop-shadow(0 0 3px ${glow})` }}/>
+                </svg>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Scan line on hover */}
       {hovered && (
         <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
-          <div style={{
-            position: "absolute", top: 0, bottom: 0, width: "30%",
-            background: "linear-gradient(90deg, transparent, rgba(0,120,215,0.06), transparent)",
-            animation: "winScan 1.6s ease-in-out infinite",
-          }}/>
+          <div style={{ position: "absolute", top: 0, bottom: 0, width: "30%", background: "linear-gradient(90deg, transparent, rgba(0,120,215,0.05), transparent)", animation: "winScan 1.6s ease-in-out infinite" }}/>
         </div>
       )}
-
-      {/* OS label */}
-      <div style={{ position: "absolute", top: 18, left: 22, display: "flex", alignItems: "center", gap: 8 }}>
-        <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(0,120,215,0.20)", border: "1px solid rgba(0,120,215,0.35)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-            <rect x="0" y="0" width="7" height="7" rx="1" fill="rgba(0,180,255,0.9)"/>
-            <rect x="9" y="0" width="7" height="7" rx="1" fill="rgba(0,180,255,0.7)"/>
-            <rect x="0" y="9" width="7" height="7" rx="1" fill="rgba(0,180,255,0.7)"/>
-            <rect x="9" y="9" width="7" height="7" rx="1" fill="rgba(0,180,255,0.5)"/>
-          </svg>
-        </div>
-        <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.9)", letterSpacing: "0.02em" }}>Windows</span>
-      </div>
-
-      {/* Available badge */}
-      <div style={{
-        position: "absolute", top: 18, right: 18,
-        background: "rgba(0,120,215,0.18)", border: "1px solid rgba(0,120,215,0.40)",
-        borderRadius: 100, padding: "3px 10px",
-        fontSize: 10, fontWeight: 600, color: "#3BAAFF", letterSpacing: "0.06em",
-        display: "flex", alignItems: "center", gap: 5,
-      }}>
-        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#3BAAFF" }}/>
-        AVAILABLE
-      </div>
     </div>
   )
 }
@@ -234,81 +290,90 @@ function LinuxBanner({ hovered }) {
     <div style={{
       position: "relative", width: "100%", height: 220, overflow: "hidden",
       borderRadius: "20px 20px 0 0",
-      background: "linear-gradient(160deg, #020f08 0%, #061a0e 40%, #020f08 100%)",
+      background: "linear-gradient(160deg, #020f08 0%, #061a0e 50%, #020f08 100%)",
     }}>
       <style>{`
-        @keyframes linWave1 { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-        @keyframes linGlow  { 0%,100%{opacity:0.45} 50%{opacity:0.72} }
-        @keyframes linPulse { 0%,100%{transform:scale(1);opacity:0.07} 50%{transform:scale(1.08);opacity:0.12} }
-        @keyframes linScan  { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+        @keyframes linWaveBg { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+        @keyframes linGlow   { 0%,100%{opacity:0.35} 50%{opacity:0.55} }
+        @keyframes linScan   { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+        @keyframes linCursor { 0%,49%{opacity:1} 50%,100%{opacity:0} }
       `}</style>
 
-      {/* Radial glow */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
-        background: "radial-gradient(ellipse 70% 80% at 50% 55%, rgba(16,185,129,0.26) 0%, transparent 70%)",
+        background: "radial-gradient(ellipse 80% 80% at 50% 60%, rgba(16,185,129,0.14) 0%, transparent 70%)",
         animation: "linGlow 4s ease-in-out infinite",
       }}/>
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
-        background: "radial-gradient(ellipse 60% 70% at 50% 55%, rgba(16,185,129,0.18) 0%, transparent 65%)",
-        opacity: hovered ? 1 : 0, transition: "opacity 0.4s ease",
+        background: "radial-gradient(ellipse 60% 70% at 50% 55%, rgba(16,185,129,0.10) 0%, transparent 65%)",
+        opacity: hovered ? 1 : 0, transition: "opacity 0.4s",
       }}/>
-
-      {/* Animated waveforms */}
-      <svg viewBox={`0 0 ${W} 220`} preserveAspectRatio="none"
-        style={{ position:"absolute", top:0, left:0, width:"200%", height:"100%",
-          animation:"linWave1 9s linear infinite", willChange:"transform" }}>
-        <path d={LIN_WAVE_3} stroke="rgba(16,185,129,0.10)" strokeWidth="1" fill="none"/>
-        <path d={LIN_WAVE_2} stroke="rgba(52,211,153,0.18)" strokeWidth="1.4" fill="none"/>
-        <path d={LIN_WAVE_1} stroke="rgba(16,185,129,0.65)" strokeWidth="2" fill="none"
-          style={{ filter:"drop-shadow(0 0 6px rgba(16,185,129,0.65))" }}/>
+      <svg viewBox={`0 0 ${W} 220`} preserveAspectRatio="none" style={{
+        position: "absolute", top: 0, left: 0, width: "200%", height: "100%",
+        opacity: 0.12, animation: "linWaveBg 10s linear infinite", willChange: "transform",
+      }}>
+        <path d={LIN_WAVE_1} stroke="rgba(16,185,129,1)" strokeWidth="1.5" fill="none"/>
       </svg>
 
-      {/* Large terminal symbol */}
+      {/* Terminal window mockup */}
       <div style={{
-        position: "absolute", top: "50%", left: "50%",
-        transform: "translate(-50%, -50%)",
-        fontSize: 72, color: "rgba(16,185,129,0.07)",
-        fontFamily: "monospace", fontWeight: 700, userSelect: "none", letterSpacing: -2,
-        animation: "linPulse 4.8s ease-in-out infinite",
-        whiteSpace: "nowrap",
-      }}>$_</div>
+        position: "absolute", top: 18, left: 18, right: 18,
+        background: "rgba(2,10,5,0.93)",
+        border: "1px solid rgba(16,185,129,0.22)",
+        borderRadius: 8,
+        overflow: "hidden",
+        boxShadow: "0 12px 40px rgba(0,0,0,0.7)",
+      }}>
+        {/* Terminal title bar */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: 5.5,
+          padding: "0 12px", height: 28,
+          background: "rgba(255,255,255,0.025)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+        }}>
+          <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FF5F57" }}/>
+          <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FFBD2E" }}/>
+          <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28CA42" }}/>
+          <div style={{ flex: 1, textAlign: "center", fontSize: 9, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>bash — myojam</div>
+        </div>
 
-      {/* Scan line on hover */}
+        {/* Terminal content */}
+        <div style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 10, lineHeight: 1.85 }}>
+          <div>
+            <span style={{ color: "rgba(52,211,153,0.7)" }}>user@host</span>
+            <span style={{ color: "rgba(255,255,255,0.3)" }}>:</span>
+            <span style={{ color: "rgba(99,179,237,0.8)" }}>~/myojam</span>
+            <span style={{ color: "rgba(255,255,255,0.5)" }}>$ </span>
+            <span style={{ color: "rgba(255,255,255,0.85)" }}>python3 -m myojam --port /dev/ttyUSB0</span>
+          </div>
+          <div style={{ color: "rgba(255,255,255,0.38)" }}>
+            [myojam] Serial connected → <span style={{ color: "rgba(52,211,153,0.75)" }}>/dev/ttyUSB0</span> @ 115200 baud
+          </div>
+          <div style={{ color: "rgba(255,255,255,0.38)" }}>
+            [myojam] RF model loaded · <span style={{ color: "rgba(52,211,153,0.75)" }}>6 gestures</span> · 500 trees · 64 features
+          </div>
+          <div style={{ color: "rgba(255,255,255,0.38)" }}>──────────────────────────────────────────</div>
+          <div>
+            <span style={{ color: "rgba(255,255,255,0.4)" }}>gesture: </span>
+            <span style={{ color: "#34D399", fontWeight: 700 }}>FIST</span>
+            <span style={{ color: "rgba(255,255,255,0.3)" }}>{"  "}conf: </span>
+            <span style={{ color: "#34D399" }}>0.942</span>
+            <span style={{ color: "rgba(255,255,255,0.3)" }}>{"  "}lat: </span>
+            <span style={{ color: "#22D3EE" }}>3ms</span>
+          </div>
+          <div>
+            <span style={{ color: "rgba(52,211,153,0.55)" }}>{">"} </span>
+            <span style={{ animation: "linCursor 1s step-end infinite", color: "rgba(52,211,153,0.9)" }}>▌</span>
+          </div>
+        </div>
+      </div>
+
       {hovered && (
         <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
-          <div style={{
-            position: "absolute", top: 0, bottom: 0, width: "30%",
-            background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.06), transparent)",
-            animation: "linScan 1.7s ease-in-out infinite",
-          }}/>
+          <div style={{ position: "absolute", top: 0, bottom: 0, width: "30%", background: "linear-gradient(90deg, transparent, rgba(16,185,129,0.04), transparent)", animation: "linScan 1.7s ease-in-out infinite" }}/>
         </div>
       )}
-
-      {/* OS label */}
-      <div style={{ position: "absolute", top: 18, left: 22, display: "flex", alignItems: "center", gap: 8 }}>
-        <div style={{ width: 28, height: 28, borderRadius: 8, background: "rgba(16,185,129,0.18)", border: "1px solid rgba(16,185,129,0.32)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-            <rect x="1" y="1" width="14" height="14" rx="2" stroke="rgba(16,185,129,0.85)" strokeWidth="1.4" fill="none"/>
-            <path d="M4 5.5l3.5 3-3.5 3" stroke="rgba(16,185,129,0.85)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-            <line x1="9.5" y1="11.5" x2="14" y2="11.5" stroke="rgba(52,211,153,0.65)" strokeWidth="1.4" strokeLinecap="round"/>
-          </svg>
-        </div>
-        <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.9)", letterSpacing: "0.02em" }}>Linux</span>
-      </div>
-
-      {/* Available badge */}
-      <div style={{
-        position: "absolute", top: 18, right: 18,
-        background: "rgba(16,185,129,0.16)", border: "1px solid rgba(16,185,129,0.38)",
-        borderRadius: 100, padding: "3px 10px",
-        fontSize: 10, fontWeight: 600, color: "#34D399", letterSpacing: "0.06em",
-        display: "flex", alignItems: "center", gap: 5,
-      }}>
-        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#34D399" }}/>
-        AVAILABLE
-      </div>
     </div>
   )
 }
@@ -527,7 +592,7 @@ const STEPS = [
   {
     num: "01",
     title: "Connect your sensor",
-    body: "Plug a MyoWare 2.0 sensor into an Arduino and connect it to your Mac via USB. The app auto-detects the serial port.",
+    body: "Plug a MyoWare 2.0 sensor into an Arduino and connect it to your computer via USB. The app auto-detects the serial port.",
     accent: "#FF2D78",
   },
   {
@@ -865,7 +930,7 @@ void loop() {
               <SectionPill>Requirements</SectionPill>
               <h3 style={{ fontSize: 24, fontWeight: 600, letterSpacing: "-0.8px", color: "var(--text)", marginBottom: 24, marginTop: 16 }}>What you need</h3>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {[["Operating system", "macOS 12 Monterey or later"], ["Hardware sensor", "MyoWare 2.0 EMG sensor"], ["Microcontroller", "Arduino Uno or compatible"], ["Processor", "Apple Silicon or Intel"], ["Download size", "~295 MB (app bundle)"], ["License", "MIT — free to use, modify, and distribute"]].map(([k, v]) => (
+                {[["Operating system", "macOS 12+ · Windows 10+ · Ubuntu 20.04+"], ["Hardware sensor", "MyoWare 2.0 EMG sensor"], ["Microcontroller", "Arduino Uno or compatible"], ["Processor", "Apple Silicon · Intel · x64 · ARM64"], ["Download size", "~280–295 MB (platform bundle)"], ["License", "MIT — free to use, modify, and distribute"]].map(([k, v]) => (
                   <div key={k} style={{ display: "flex", gap: 16, padding: "10px 0", borderBottom: "1px solid var(--border)" }}>
                     <span style={{ fontSize: 13, color: "var(--text-tertiary)", fontWeight: 300, minWidth: 140 }}>{k}</span>
                     <span style={{ fontSize: 13, color: "var(--text)", fontWeight: 400 }}>{v}</span>
