@@ -6,6 +6,7 @@ const SOCIALS = [
   { icon:"fab fa-instagram",   href:"https://www.instagram.com/myojam_official/",     label:"Instagram" },
   { icon:"fab fa-x-twitter",   href:"https://x.com/myojam_official",                  label:"X"         },
   { icon:"fab fa-youtube",     href:"https://www.youtube.com/@myojam-official",        label:"YouTube"   },
+  { icon:"fab fa-tiktok",      href:"https://www.tiktok.com/@myojam_official",          label:"TikTok"    },
 ]
 
 export default function Footer() {

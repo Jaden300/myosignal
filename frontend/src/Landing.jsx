@@ -877,6 +877,7 @@ export default function Landing() {
                   { icon:"fab fa-linkedin-in", href:"https://www.linkedin.com/company/myojam/",     label:"LinkedIn"  },
                   { icon:"fab fa-instagram",   href:"https://www.instagram.com/myojam_official/",   label:"Instagram" },
                   { icon:"fab fa-x-twitter",   href:"https://x.com/myojam_official",                label:"X"         },
+                  { icon:"fab fa-tiktok",      href:"https://www.tiktok.com/@myojam_official",       label:"TikTok"    },
                   { icon:"fab fa-youtube",     href:"https://www.youtube.com/@myojam-official",      label:"YouTube"   },
                 ].map(s => (
                   <a key={s.label} href={s.href} target="_blank" rel="noreferrer" title={s.label} style={{ width:42, height:42, borderRadius:"50%", border:"1px solid var(--border)", display:"flex", alignItems:"center", justifyContent:"center", color:"var(--text-secondary)", fontSize:15, background:"var(--bg)", transition:"all 0.2s" }}
