@@ -364,66 +364,56 @@ function StickyReasons() {
 
 const ROLES = [
   {
-    title:"ML Research Contributor",
-    type:"Volunteer · Remote",
-    tags:["Python","scikit-learn","EMG","Signal Processing"],
-    desc:"Help improve the gesture classifier - better features, new architectures, cross-subject adaptation. You'll work directly with Ninapro DB5 and real sensor data.",
+    area: "Research",  color: "#8B5CF6", urgent: true,
+    title: "ML Research Contributor",
+    commitment: "5–10 hrs / week",
+    tags: ["Python", "scikit-learn", "EMG", "Signal Processing"],
+    desc: "The current model hits 84.85% LOSO cross-subject accuracy. The ceiling isn't the mean — it's the three subjects that drag it down. S02 (79.3%), S06 (76.1%), and S09 (78.4%) are the open research question. Better features, domain adaptation, or personalized calibration — we don't know which, and that's the point.",
+    now: "Comparing WL vs. wavelet features on S06 raw data. Investigating whether electrode placement variance explains the accuracy gap on high-variability subjects.",
   },
   {
-    title:"Frontend Developer",
-    type:"Volunteer · Remote",
-    tags:["React","Three.js","Vite","CSS"],
-    desc:"Build new interactive features for myojam.com. The signal playground, education hub, and 3D hand model are good examples of what we make.",
+    area: "Engineering", color: "#3B82F6", urgent: true,
+    title: "Cross-platform Desktop Contributor",
+    commitment: "4–8 hrs / week",
+    tags: ["Python", "PyQt6", "Windows", "Linux"],
+    desc: "The desktop app runs on macOS only because it uses cliclick and osascript for mouse and keyboard control. Windows and Linux users are locked out. This is the single biggest barrier to new users — and it's a solvable problem with pyautogui, win32api, or xdotool.",
+    now: "macOS input layer is ~80 lines in src/input/macos.py. Windows and Linux stubs exist. They need real implementations.",
   },
   {
-    title:"Hardware Engineer",
-    type:"Volunteer · Remote",
-    tags:["Arduino","MyoWare","Embedded C","Signal Acquisition"],
-    desc:"Improve the Arduino firmware, explore higher-density electrode configurations, and help make the hardware setup more accessible to new users.",
+    area: "Engineering", color: "#3B82F6", urgent: false,
+    title: "Hardware & Firmware Engineer",
+    commitment: "3–8 hrs / week",
+    tags: ["Arduino", "C++", "MyoWare", "Embedded"],
+    desc: "The current rig needs MyoWare 2.0 + Arduino Uno + a laptop — three devices, ~$150 minimum. The goal is one device, under $50, battery-powered. The real bottleneck is ADC resolution: 10-bit at 200 Hz on the Uno isn't enough headroom for low-amplitude gestures.",
+    now: "Evaluating the RP2040 as an Uno replacement — better ADC, native USB HID, same form factor. Looking for someone to prototype the firmware.",
   },
   {
-    title:"Biomedical Research Contributor",
-    type:"Volunteer · Remote",
-    tags:["Neuroscience","EMG","Research Methods","Academic Writing"],
-    desc:"Contribute to the scientific documentation of myojam's methodology. Help design experiments, review signal processing decisions, and improve cross-subject generalisation.",
+    area: "Product", color: "#FF2D78", urgent: false,
+    title: "Frontend Developer",
+    commitment: "4–10 hrs / week",
+    tags: ["React", "Canvas API", "WebGL", "Vite"],
+    desc: "myojam.com is a full React SPA — WebGL hero backgrounds, a real-time signal playground, a block-based gesture coding environment, and a research education hub. The code is public. The bar is high. We build things that belong in a design portfolio, not a settings panel.",
+    now: "MyoCode needs persistent variable state across script runs. The signal playground needs a frequency analysis overlay. The EMG explainer needs a dynamic windowing animation.",
   },
   {
-    title:"Technical Writer",
-    type:"Volunteer · Remote",
-    tags:["Documentation","Markdown","API docs","Education"],
-    desc:"Write and maintain technical documentation - API references, setup guides, hardware walkthroughs, and tutorials. Make the project accessible to people at every skill level.",
+    area: "Education", color: "#10B981", urgent: false,
+    title: "Education Content Creator",
+    commitment: "2–5 hrs / week",
+    tags: ["Science Writing", "Biology", "CS Education"],
+    desc: "The education hub publishes articles on EMG science, signal processing, and gesture recognition. The best ones have real data, cite primary sources, and teach something a biology student couldn't find in a textbook. We're not looking for blog posts — we're looking for pieces that hold up to scrutiny.",
+    now: "Next article queue: muscle fiber type differences in EMG amplitude, fatigue effects on classifier accuracy, and a deep-dive on the Ninapro DB5 recording protocol.",
   },
   {
-    title:"Education Content Creator",
-    type:"Volunteer · Remote",
-    tags:["Curriculum Design","Biology","CS Education","Writing"],
-    desc:"Develop lesson plans, articles, and educational resources for the myojam educators hub. Background in science communication, biology, or computer science education is a plus.",
-  },
-  {
-    title:"iOS / Android Developer",
-    type:"Volunteer · Remote",
-    tags:["React Native","iOS","Android","Bluetooth"],
-    desc:"Build a companion mobile app for monitoring gesture classification in real time - current gesture, confidence score, and session statistics over Bluetooth.",
-  },
-  {
-    title:"UX / Accessibility Researcher",
-    type:"Volunteer · Remote",
-    tags:["UX Research","Accessibility","User Testing","A11y"],
-    desc:"Conduct user research with people who have motor impairments, evaluate the usability of myojam's interfaces, and recommend improvements grounded in real user needs.",
-  },
-  {
-    title:"Community Manager",
-    type:"Volunteer · Remote",
-    tags:["Community","Social Media","Outreach","Writing"],
-    desc:"Help grow the myojam community - manage communications, support the Discord, onboard new contributors, and amplify the project's reach.",
-  },
-  {
-    title:"Windows / Linux Port Contributor",
-    type:"Volunteer · Remote",
-    tags:["Python","PyQt6","Windows","Linux","Cross-platform"],
-    desc:"The desktop app currently only supports macOS due to cliclick and osascript dependencies. Help build a cross-platform input layer so myojam works on Windows and Linux.",
+    area: "Research", color: "#8B5CF6", urgent: false,
+    title: "UX & Accessibility Researcher",
+    commitment: "3–6 hrs / week",
+    tags: ["UX Research", "A11y", "User Testing", "Assistive Tech"],
+    desc: "myojam is built for people with limited hand mobility, motor impairments, or RSI. But we've done almost no formal user research with that population. This role closes that gap — structured testing, recruitment, and ethics frameworks for a real user study.",
+    now: "Drafting a recruitment protocol for participants with upper-limb motor impairments. Need help designing the study methodology before any testing begins.",
   },
 ]
+
+const AREA_COLORS = { Research:"#8B5CF6", Engineering:"#3B82F6", Product:"#FF2D78", Education:"#10B981" }
 
 export default function Careers() {
   const [visible, setVisible] = useState({})
@@ -491,46 +481,105 @@ export default function Careers() {
       <StickyReasons />
 
       {/* Open roles */}
-      <section id="roles" style={{ padding: "80px 32px" }}>
-        <div style={{ maxWidth: 860, margin: "0 auto" }}>
-          <div style={{ marginBottom: 48 }}>
-            <p style={{ fontSize: 13, fontWeight: 500, color: "var(--accent)", letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 12 }}>Open roles</p>
-            <h2 style={{ fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 600, letterSpacing: "-1px", color: "var(--text)", marginBottom: 16 }}>Where you fit in.</h2>
-            <p style={{ fontSize: 16, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7, maxWidth: 520 }}>All roles are volunteer and remote. This is a portfolio-building, mission-driven project - not a job. But the work is real and the impact is real.</p>
+      <section id="roles" style={{ padding:"80px 32px 96px" }}>
+        <div style={{ maxWidth:900, margin:"0 auto" }}>
+
+          {/* Section header */}
+          <div style={{ marginBottom:48 }}>
+            <p style={{ fontSize:12, fontWeight:600, color:"var(--accent)", letterSpacing:"0.07em", textTransform:"uppercase", marginBottom:12 }}>Open roles</p>
+            <h2 style={{ fontSize:"clamp(28px,4vw,46px)", fontWeight:600, letterSpacing:"-1.4px", color:"var(--text)", marginBottom:16, lineHeight:1.1 }}>
+              Right now, we need<br/>help with these.
+            </h2>
+            <p style={{ fontSize:16, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:540 }}>
+              All roles are volunteer and fully remote. This isn't a job — it's a research project with real users, real data, and real open problems. Every role below has a specific current challenge, not a vague mandate.
+            </p>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 64 }}>
-            {ROLES.map((role, i) => (
-              <div key={role.title} ref={ref(`role_${i}`)} style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius)", border: "1px solid var(--border)", padding: "28px 32px", opacity: visible[`role_${i}`] ? 1 : 0, transform: visible[`role_${i}`] ? "translateY(0)" : "translateY(20px)", transition: `opacity 0.5s ${i * 0.12}s ease, transform 0.5s ${i * 0.12}s ease`, cursor: "default" }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,45,120,0.2)"; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(255,45,120,0.07)" }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none" }}
-              >
-                <div style={{ marginBottom: 10 }}>
-                  <span style={{ fontSize: 17, fontWeight: 600, color: "var(--text)" }}>{role.title}</span>
+          {/* How it works strip */}
+          <div style={{ background:"var(--bg-secondary)", border:"1px solid var(--border)", borderRadius:16, padding:"26px 30px", marginBottom:44 }}>
+            <div style={{ fontSize:10, fontWeight:700, color:"var(--text-tertiary)", textTransform:"uppercase", letterSpacing:"0.09em", marginBottom:20 }}>How contributing works</div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:28 }}>
+              {[
+                { n:"01", title:"Find your angle", body:"Browse the roles below. Each one has a specific open problem and a 'what we're working on right now' callout — not a job description, a research brief." },
+                { n:"02", title:"Start the conversation", body:"Open a GitHub issue, reply to an existing thread, or use the application form at the bottom. We read and respond to every message." },
+                { n:"03", title:"Ship something small", body:"Your first contribution doesn't have to be large. A fixed doc, a failing test, a bug report with reproduction steps — that's how every long-term contributor started." },
+              ].map(s=>(
+                <div key={s.n} style={{ display:"flex", gap:14 }}>
+                  <div style={{ fontSize:11, fontWeight:700, color:"var(--accent)", opacity:0.45, lineHeight:1, marginTop:2, flexShrink:0 }}>{s.n}</div>
+                  <div>
+                    <div style={{ fontSize:13, fontWeight:600, color:"var(--text)", marginBottom:5 }}>{s.title}</div>
+                    <p style={{ fontSize:12, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.68, margin:0 }}>{s.body}</p>
+                  </div>
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 500, color: "var(--accent)", background: "var(--accent-soft)", border: "1px solid rgba(255,45,120,0.15)", borderRadius: 100, padding: "3px 10px" }}>{role.type}</span>
-                <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7, fontWeight: 300, marginTop: 12, marginBottom: 14 }}>{role.desc}</p>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {role.tags.map(tag => (
-                    <span key={tag} style={{ fontSize: 12, color: "var(--text-secondary)", background: "var(--bg)", border: "1px solid var(--border-mid)", borderRadius: 100, padding: "3px 12px", fontWeight: 400 }}>{tag}</span>
-                  ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Role cards */}
+          <div style={{ display:"flex", flexDirection:"column", gap:16, marginBottom:72 }}>
+            {ROLES.map((role, i) => (
+              <div key={role.title} ref={ref(`role_${i}`)} style={{
+                background:"var(--bg-secondary)", borderRadius:16,
+                border:"1px solid var(--border)", overflow:"hidden",
+                opacity:visible[`role_${i}`]?1:0,
+                transform:visible[`role_${i}`]?"translateY(0)":"translateY(16px)",
+                transition:`opacity 0.5s ${i*0.09}s ease, transform 0.5s ${i*0.09}s ease`,
+              }}
+                onMouseEnter={e=>{ e.currentTarget.style.borderColor=role.color+"44"; e.currentTarget.style.boxShadow=`0 6px 28px ${role.color}12` }}
+                onMouseLeave={e=>{ e.currentTarget.style.borderColor="var(--border)"; e.currentTarget.style.boxShadow="none" }}
+              >
+                {/* Colored top bar */}
+                <div style={{ height:3, background:role.color, opacity:0.8 }}/>
+
+                <div style={{ padding:"24px 28px 26px" }}>
+                  {/* Top row */}
+                  <div style={{ display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:16, marginBottom:14, flexWrap:"wrap" }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:10, flexWrap:"wrap" }}>
+                      <span style={{ fontSize:17, fontWeight:600, color:"var(--text)", letterSpacing:"-0.3px" }}>{role.title}</span>
+                      {role.urgent && (
+                        <span style={{ fontSize:10, fontWeight:700, color:role.color, background:role.color+"14", border:`1px solid ${role.color}30`, borderRadius:100, padding:"2px 9px", textTransform:"uppercase", letterSpacing:"0.07em" }}>Active</span>
+                      )}
+                    </div>
+                    <div style={{ display:"flex", gap:8, alignItems:"center", flexShrink:0 }}>
+                      <span style={{ fontSize:11, color:role.color, background:role.color+"12", border:`1px solid ${role.color}28`, borderRadius:100, padding:"3px 11px", fontWeight:500 }}>{role.area}</span>
+                      <span style={{ fontSize:11, color:"var(--text-tertiary)", background:"var(--bg)", border:"1px solid var(--border)", borderRadius:100, padding:"3px 11px", fontWeight:400 }}>
+                        ⏱ {role.commitment}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p style={{ fontSize:14, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.78, margin:"0 0 18px", maxWidth:680 }}>{role.desc}</p>
+
+                  {/* Tags */}
+                  <div style={{ display:"flex", gap:7, flexWrap:"wrap", marginBottom:18 }}>
+                    {role.tags.map(tag=>(
+                      <span key={tag} style={{ fontSize:11, color:"var(--text-secondary)", background:"var(--bg)", border:"1px solid var(--border)", borderRadius:100, padding:"3px 11px", fontWeight:400 }}>{tag}</span>
+                    ))}
+                  </div>
+
+                  {/* "Right now" callout */}
+                  <div style={{ background:"#0A0A18", border:`1px solid ${role.color}28`, borderLeft:`3px solid ${role.color}`, borderRadius:8, padding:"12px 16px", display:"flex", gap:10, alignItems:"flex-start" }}>
+                    <div style={{ fontSize:9, fontWeight:700, color:role.color, textTransform:"uppercase", letterSpacing:"0.1em", lineHeight:1, marginTop:2, flexShrink:0 }}>Now</div>
+                    <p style={{ fontSize:12, color:"rgba(255,255,255,0.55)", fontFamily:"monospace", lineHeight:1.65, margin:0, fontWeight:400 }}>{role.now}</p>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Tally application form */}
-          <div ref={ref("form")} style={{ opacity: visible["form"] ? 1 : 0, transform: visible["form"] ? "translateY(0)" : "translateY(20px)", transition: "opacity 0.6s ease, transform 0.6s ease" }}>
-            <div style={{ marginBottom: 24 }}>
-              <h3 style={{ fontSize: 22, fontWeight: 600, color: "var(--text)", letterSpacing: "-0.4px", marginBottom: 8 }}>Apply to contribute</h3>
-              <p style={{ fontSize: 14, color: "var(--text-secondary)", fontWeight: 300, lineHeight: 1.7 }}>Tell us about yourself, what role interests you, and what you'd like to build. We review every application personally.</p>
+          {/* Application form */}
+          <div ref={ref("form")} style={{ opacity:visible["form"]?1:0, transform:visible["form"]?"translateY(0)":"translateY(20px)", transition:"opacity 0.6s ease, transform 0.6s ease" }}>
+            <div style={{ marginBottom:24 }}>
+              <h3 style={{ fontSize:24, fontWeight:600, color:"var(--text)", letterSpacing:"-0.6px", marginBottom:8 }}>Apply to contribute</h3>
+              <p style={{ fontSize:14, color:"var(--text-secondary)", fontWeight:300, lineHeight:1.75, maxWidth:480 }}>Tell us which role interests you, what you've worked on before, and what you'd like to build. We review every application and respond to every message.</p>
             </div>
-            <div style={{ background: "var(--bg-secondary)", borderRadius: "var(--radius)", border: "1px solid var(--border)", overflow: "hidden", padding: "0 24px" }}>
+            <div style={{ background:"var(--bg-secondary)", borderRadius:16, border:"1px solid var(--border)", overflow:"hidden", padding:"0 24px" }}>
               <ContactForm
                 source="careers"
                 namePlaceholder="Your name"
                 emailPlaceholder="your@email.com"
-                messagePlaceholder="Tell us about yourself, the role you're interested in, and what you'd like to build."
+                messagePlaceholder="Which role interests you? What have you worked on before? What do you want to build?"
                 submitLabel="Submit application"
               />
             </div>
